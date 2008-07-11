@@ -1,0 +1,9 @@
+# POWERMAIL_FRONTEND PLUGIN #
+
+plugin.tx_powermailfrontend_pi1 {
+	template.list = {$plugin.powermail_frontend.template.list}
+	template.all = {$plugin.powermail_frontend.template.all}
+	emptylabels.hide = {$plugin.powermail_frontend.emptylabels.hide}
+	list.orderby = {$plugin.powermail_frontend.list.orderby}
+	list.limit = {$plugin.powermail_frontend.list.limit}
+}
