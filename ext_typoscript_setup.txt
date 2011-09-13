@@ -118,23 +118,23 @@ plugin.tx_powermailfrontend_pi1 {
 		}
 	
 		# example to link email (overwrites settings of fieldwrap)
-		uid3333 = TEXT
-		uid3333.field = uid3333
-		uid3333.typolink.parameter.field = uid3333
+		#uid3333 = TEXT
+		#uid3333.field = uid3333
+		#uid3333.typolink.parameter.field = uid3333
 		
 		# example for value of second level (checkbox, radiobutton, etc...) (overwrites settings of fieldwrap)
-		uid4444_0 = TEXT
-		uid4444_0.field = uid4444_0
-		uid4444_0.wrap = <b>|</b>
+		#uid4444_0 = TEXT
+		#uid4444_0.field = uid4444_0
+		#uid4444_0.wrap = <b>|</b>
 		
-		uid4444_1 = TEXT
-		uid4444_1.field = uid4444_1
-		uid4444_1.wrap = <b style="color: red;">|</b>
+		#uid4444_1 = TEXT
+		#uid4444_1.field = uid4444_1
+		#uid4444_1.wrap = <b style="color: red;">|</b>
 		
 		# example of changing a timestamp to a date format (overwrites settings of fieldwrap)
-		uid5555 = TEXT
-		uid5555.field = uid5555
-		uid5555.strftime = %d.%m.%Y
+		#uid5555 = TEXT
+		#uid5555.field = uid5555
+		#uid5555.strftime = %d.%m.%Y
 		
 	}
 	
@@ -152,23 +152,23 @@ plugin.tx_powermailfrontend_pi1 {
 		
 		
 		# example to link email
-		uid3333 = TEXT
-		uid3333.field = uid3333
-		uid3333.typolink.parameter.field = uid3333
+		#uid3333 = TEXT
+		#uid3333.field = uid3333
+		#uid3333.typolink.parameter.field = uid3333
 		
 		# example for value of second level (checkbox, radiobutton, etc...)
-		uid4444_0 = TEXT
-		uid4444_0.field = uid4444_0
-		uid4444_0.wrap = <b>|</b>
+		#uid4444_0 = TEXT
+		#uid4444_0.field = uid4444_0
+		#uid4444_0.wrap = <b>|</b>
 		
-		uid4444_1 = TEXT
-		uid4444_1.field = uid4444_1
-		uid4444_1.wrap = <b style="color: red;">|</b>
+		#uid4444_1 = TEXT
+		#uid4444_1.field = uid4444_1
+		#uid4444_1.wrap = <b style="color: red;">|</b>
 		
 		# example of changing a timestamp to a date format
-		uid5555 = TEXT
-		uid5555.field = uid5555
-		uid5555.strftime = %d.%m.%Y
+		#uid5555 = TEXT
+		#uid5555.field = uid5555
+		#uid5555.strftime = %d.%m.%Y
 		
 	}
 	
@@ -180,23 +180,23 @@ plugin.tx_powermailfrontend_pi1 {
 		
 	
 		# example to link email
-		uid3333 = TEXT
-		uid3333.field = uid3333
-		uid3333.typolink.parameter.field = uid3333
+		#uid3333 = TEXT
+		#uid3333.field = uid3333
+		#uid3333.typolink.parameter.field = uid3333
 		
 		# example for value of second level (checkbox, radiobutton, etc...)
-		uid4444_0 = TEXT
-		uid4444_0.field = uid4444_0
-		uid4444_0.wrap = <b>|</b>
+		#uid4444_0 = TEXT
+		#uid4444_0.field = uid4444_0
+		#uid4444_0.wrap = <b>|</b>
 		
-		uid4444_1 = TEXT
-		uid4444_1.field = uid4444_1
-		uid4444_1.wrap = <b style="color: red;">|</b>
+		#uid4444_1 = TEXT
+		#uid4444_1.field = uid4444_1
+		#uid4444_1.wrap = <b style="color: red;">|</b>
 		
 		# example of changing a timestamp to a date format
-		uid5555 = TEXT
-		uid5555.field = uid5555
-		uid5555.strftime = %d.%m.%Y
+		#uid5555 = TEXT
+		#uid5555.field = uid5555
+		#uid5555.strftime = %d.%m.%Y
 		
 	}
 	
