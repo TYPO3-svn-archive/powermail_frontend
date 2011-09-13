@@ -1,0 +1,258 @@
+# POWERMAIL_FRONTEND PLUGIN #
+includeLibs.user_powermailfrontend_pagebrowser = EXT:powermail_frontend/lib/user_powermailfrontend_pagebrowser.php
+
+# main settings
+plugin.tx_powermailfrontend_pi1 {
+	# settings for constants
+	template.list = {$plugin.powermail_frontend.template.list}
+	template.latest = {$plugin.powermail_frontend.template.latest}
+	template.single = {$plugin.powermail_frontend.template.single}
+	template.all = {$plugin.powermail_frontend.template.all}
+	template.pagebrowser = {$plugin.powermail_frontend.template.pagebrowser}
+	template.search = {$plugin.powermail_frontend.template.search}
+	template.edit = {$plugin.powermail_frontend.template.edit}
+	emptylabels.hide = {$plugin.powermail_frontend.emptylabels.hide}
+	admin.feusergroup = {$plugin.powermail_frontend.admin.feusergroup}
+	query.limit = {$plugin.powermail_frontend.query.limit}
+	query.orderby = {$plugin.powermail_frontend.query.orderby}
+	
+	# Standardwrap settings for listview
+	list {
+	
+		# CONSTANTS
+		orderby = {$plugin.powermail_frontend.list.orderby}
+		perPage = {$plugin.powermail_frontend.list.perPage}
+		delta = {$plugin.powermail_frontend.list.delta}
+		limit = {$plugin.powermail_frontend.list.limit}
+		
+		
+		# Main Settings for field stdWrap
+		fieldValue = CASE
+		fieldValue.key.field = type
+		fieldValue {
+			text = TEXT
+			text.field = value
+			
+			textarea = TEXT
+			textarea.field = value
+			textarea.stdWrap.br = 1
+			
+			select = TEXT
+			select.field = value
+			
+			check = TEXT
+			check.field = value
+			
+			radio = TEXT
+			radio.field = value
+			
+			submit = TEXT
+			submit.field = value
+			
+			
+			##### additional fields #####
+			
+			captcha = TEXT
+			captcha.field = value
+			
+			reset = TEXT
+			reset.field = value
+			
+			label = TEXT
+			label.field = value
+			
+			content = TEXT
+			content.field = value
+			
+			html = TEXT
+			html.field = value
+			
+			password = TEXT
+			password.field = value
+			
+			file = TEXT
+			file {
+				field = value
+				typolink.parameter.cObject = COA
+				typolink.parameter.cObject {
+					10 = TEXT
+					10.value = {$plugin.powermail.upload.folder}
+					20 = TEXT
+					20.field = value
+					30 = TEXT
+					30.value = _blank
+					30.noTrimWrap = | ||
+				}
+			}
+			
+			hidden = TEXT
+			hidden.field = value
+			
+			date = TEXT
+			date.field = value
+			
+			datetime = TEXT
+			datetime.field = value
+			
+			time = TEXT
+			time.field = value
+			
+			button = TEXT
+			button.field = value
+			
+			submitgraphic = TEXT
+			submitgraphic.field = value
+			
+			countryselect = TEXT
+			countryselect.field = value
+			
+			typoscript = TEXT
+			typoscript.field = value
+			
+			
+			##### default if new field #####
+			
+			default = TEXT
+			default.field = type
+			default.noTrimWrap = |powermail_frontend: Fieldtype | is not defined|
+		}
+	
+		# example to link email (overwrites settings of fieldwrap)
+		uid3333 = TEXT
+		uid3333.field = uid3333
+		uid3333.typolink.parameter.field = uid3333
+		
+		# example for value of second level (checkbox, radiobutton, etc...) (overwrites settings of fieldwrap)
+		uid4444_0 = TEXT
+		uid4444_0.field = uid4444_0
+		uid4444_0.wrap = <b>|</b>
+		
+		uid4444_1 = TEXT
+		uid4444_1.field = uid4444_1
+		uid4444_1.wrap = <b style="color: red;">|</b>
+		
+		# example of changing a timestamp to a date format (overwrites settings of fieldwrap)
+		uid5555 = TEXT
+		uid5555.field = uid5555
+		uid5555.strftime = %d.%m.%Y
+		
+	}
+	
+	# Standardwrap settings for latestview
+	latest {
+		# CONSTANTS
+		orderby = {$plugin.powermail_frontend.latest.orderby}
+		perPage = {$plugin.powermail_frontend.latest.perPage}
+		delta = {$plugin.powermail_frontend.latest.delta}
+		limit = {$plugin.powermail_frontend.latest.limit}
+	
+		
+		# Main Settings for field stdWrap
+		fieldValue < plugin.tx_powermailfrontend_pi1.list.fieldValue
+		
+		
+		# example to link email
+		uid3333 = TEXT
+		uid3333.field = uid3333
+		uid3333.typolink.parameter.field = uid3333
+		
+		# example for value of second level (checkbox, radiobutton, etc...)
+		uid4444_0 = TEXT
+		uid4444_0.field = uid4444_0
+		uid4444_0.wrap = <b>|</b>
+		
+		uid4444_1 = TEXT
+		uid4444_1.field = uid4444_1
+		uid4444_1.wrap = <b style="color: red;">|</b>
+		
+		# example of changing a timestamp to a date format
+		uid5555 = TEXT
+		uid5555.field = uid5555
+		uid5555.strftime = %d.%m.%Y
+		
+	}
+	
+	# Standardwrap settings for singleview
+	single {
+	
+		# Main Settings for field stdWrap
+		fieldValue < plugin.tx_powermailfrontend_pi1.list.fieldValue
+		
+	
+		# example to link email
+		uid3333 = TEXT
+		uid3333.field = uid3333
+		uid3333.typolink.parameter.field = uid3333
+		
+		# example for value of second level (checkbox, radiobutton, etc...)
+		uid4444_0 = TEXT
+		uid4444_0.field = uid4444_0
+		uid4444_0.wrap = <b>|</b>
+		
+		uid4444_1 = TEXT
+		uid4444_1.field = uid4444_1
+		uid4444_1.wrap = <b style="color: red;">|</b>
+		
+		# example of changing a timestamp to a date format
+		uid5555 = TEXT
+		uid5555.field = uid5555
+		uid5555.strftime = %d.%m.%Y
+		
+	}
+	
+	# Settings for editview
+	edit {
+		template.fieldWrap = {$plugin.powermail.template.fieldWrap}
+		description.wrap = {$plugin.powermail.description.wrap}
+		mandatory.symbol = {$plugin.powermail.mandatory.symbol}
+	}
+	
+	
+	# Pagebrowser
+	pagebrowser = HMENU
+	pagebrowser {
+		special = userfunction
+		special.userFunc = user_powermailfrontend_pagebrowser->user_pagebrowser
+		
+		1 = TMENU
+		1 {
+			wrap = <ul class="powermailfrontend_pagebrowser">|</ul>
+			NO.allWrap = <li>|</li>
+			ACT = 1
+			ACT.allWrap = <li>|</li>
+			ACT.ATagParams = class="act"
+		}
+	}
+}
+
+
+
+
+	# Add Javascript files to page header if a powermail plugin is on current page
+lib.powermail_dynJavascript = TEXT
+lib.powermail_dynJavascript {
+    wrap = <script src="|" type="text/javascript"></script>
+	typolink.parameter.dataWrap = {TSFE:id},3131
+    typolink.returnLast = url
+}
+	# userFunc to check if powermail is on current page
+		# powermail is on current page and prototype should be used
+[userFunc = user_powermailOnCurrentPage2] && [globalVar = LIT:prototype = {$plugin.powermail.libraryToUse}]
+	page.includeJS.file31312 = EXT:powermail/js/mandatoryjs/lib/prototype.js
+	page.includeJS.file31313 = EXT:powermail/js/mandatoryjs/src/effects.js
+	page.includeJS.file31314 = EXT:powermail/js/mandatoryjs/fabtabulous.js
+[end]
+		# powermail is on current page and mootools should be used
+[userFunc = user_powermailOnCurrentPage2] && [globalVar = LIT:mootools = {$plugin.powermail.libraryToUse}]
+	page.includeJS.file31312 = EXT:powermail/js/mootools/mootools-1.2.1-packed.js
+[end]
+		# powermail is on current page
+[userFunc = user_powermailOnCurrentPage2]
+	page.includeJS.file31311 = EXT:powermail/js/misc/misc.js
+	page.headerData.31310 < lib.powermail_dynJavascript
+	seite.headerData.31310 < page.headerData.31310
+	seite.includeJS.31311 < page.includeJS.file31311
+	seite.includeJS.31312 < page.includeJS.file31312
+	seite.includeJS.31313 < page.includeJS.file31313
+	seite.includeJS.31314 < page.includeJS.file31314
+[end]
