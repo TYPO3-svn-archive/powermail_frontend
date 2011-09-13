@@ -75,6 +75,7 @@ class tx_powermailfrontend_filter_search extends tslib_pibase {
 				} else {
 					$this->fieldMarkerArray['###POWERMAILFE_SEARCH_VALUE###'] = '';
 				}
+				$this->markerArray['###POWERMAILFE_SEARCH_NAME###'] = $this->fieldMarkerArray['###POWERMAILFE_SEARCH_NAME###'];
 				
 				$type = $this->div->getFieldTypeFromUid($this->searchfields[$i]); // get type
 				$this->tmpl['filter']['field'] = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['template.']['search']), '###POWERMAILFE_FILTER_SEARCH_FIELD_' . strtoupper($type) . '###');
