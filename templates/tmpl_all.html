@@ -1,0 +1,31 @@
+Powermail_frontend HTML Template if you want to use the marker ###POWERMAILFE_ALL##, this HTML template wraps each line of it
+
+	--- MARKERS INSIDE SUBPARTS ---
+	Label of current field:								###POWERMAILFE_LABEL###
+	Value of current field:								###POWERMAILFE_VALUE###
+	
+	--- GENERAL MARKERS --
+	Displaying any value from pi1/locallang.xml:		###POWERMAILFE_LL_YOURFIELD### (Could be filled via locallang.xml or typoscript - see manual for details)
+	Displaying any value from typoscript:				###POWERMAILFE_TS_YOURFIELD### (Could be filled via typoscript - see manual for details)
+
+Definition list variant
+<!-- ###POWERMAILFE_ALL### begin -->
+	<dl class="powermailfe_all">
+		<!-- ###CONTENT### --><!-- ###ITEM### -->
+			<dt class="powermailfe_all_dl powermailfe_all_label" valign="top"><b>###POWERMAILFE_LABEL###</b></dt> 
+			<dd class="powermailfe_all_dl powermailfe_all_value" valign="top">###POWERMAILFE_VALUE###</dd>
+		<!-- ###ITEM### --><!-- ###CONTENT### -->
+	</dl>
+<!-- ###POWERMAILFE_ALL### end -->
+
+Table variant
+<!-- ###POWERMAILFE_ALL_TABLE### begin -->
+	<table class="powermailfe_all_table">
+		<!-- ###CONTENT### --><!-- ###ITEM### -->
+			<tr class="powermailfe_all_tr">
+				<td class="powermailfe_all_td powermailfe_all_td_label" valign="top"><b>###POWERMAILFE_LABEL###</b></td> 
+				<td class="powermailfe_all_td powermailfe_all_td_value" valign="top">###POWERMAILFE_VALUE###</td>
+			</tr>
+		<!-- ###ITEM### --><!-- ###CONTENT### -->
+	</table>
+<!-- ###POWERMAILFE_ALL_TABLE### end -->
