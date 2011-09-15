@@ -1,0 +1,262 @@
+/**********************************************************/
+/* Less file for Powermail Frontend Basic CSS.            */
+/* Target -> ../css/powermail_frontend_basic.css          */
+/* Use less.app to compile                                */
+/* More info about less.app: http://incident57.com/less/  */
+/**********************************************************/
+
+/* Dimensions definitions start */
+//@labelWidth: 200px;
+//@fieldWidth: 260px;
+@labelWidth: 200px;
+@fieldWidth: 400px;
+@inputPadding: 2px;
+
+/* Dimensions definitions end */
+
+/* Colors definitions start */
+@fieldsetBackgroundColor: #f0f0f0;
+@fieldsetBorderColor: #ccc;
+@inputBorderColor:#ccc;
+@buttonBorderColor: #ccc;
+@buttonColor:#333;
+@deleteBackgroundColor:#ff0000;
+@deleteColor: #fff;
+@inputBackgroundColor: #f8f8f8;
+@actBorderColor:#f2961b;
+@actBackgroundColor:#f2961b;
+@actColor:#fff;
+
+/* Colors definitions end */
+
+/* CSS3 var definitions start */
+@borderRadius: 3px;
+@inputBorderRadius: @borderRadius;
+@errorBorderRadius: @borderRadius;
+@descriptionBorderRadius: @borderRadius;
+@calBorderRadius: @borderRadius;
+@sliderBorderRadius: @borderRadius;
+@buttonBorderRadius: @borderRadius;
+@fieldsetBorderRadius: @borderRadius;
+
+@shadowWidth: 10px;
+@fieldsetShadowWidth: 0;
+@descriptionShadowWidth: @shadowWidth;
+@errorShadowWidth: @shadowWidth;
+@calShadowWidth: @shadowWidth;
+
+@shadowStrength: 0.5;
+@fieldsetShadowStrength: @shadowStrength;
+@descriptionShadowStrength: @shadowStrength;
+@errorShadowStrength: @shadowStrength;
+@calShadowStrength: @shadowStrength;
+/* CSS3 var definitions end */
+
+/* Mixins definitions start */
+.rounded-corners (@radius: 5px) {
+    border-radius: @radius;
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
+}
+
+.box-shadow (@x: 0, @y: 0, @shadowWidth: 10px, @shadowStrength: 0.5) {
+    -moz-box-shadow:@x @y @shadowWidth rgba(0,0,0,@shadowStrength);
+    -webkit-box-shadow:@x @y @shadowWidth rgba(0,0,0,@shadowStrength);
+    box-shadow:@x @y @shadowWidth rgba(0,0,0,@shadowStrength);
+}
+
+.box-shadow-inset (@x: 0, @y: 0, @shadowWidth: 10px, @shadowStrength: 0.5) {
+    -moz-box-shadow:inset @x @y @shadowWidth rgba(0,0,0,@shadowStrength);
+    -webkit-box-shadow:inset @x @y @shadowWidth rgba(0,0,0,@shadowStrength);
+    box-shadow:inset @x @y @shadowWidth rgba(0,0,0,@shadowStrength);
+}
+
+.fieldset-gradient (@colorStart: rgba(255,255,255,1), @colorStop: rgba(229,229,229,1)) {
+	background: @fieldsetBackgroundColor; /* Old browsers */
+	background: -moz-linear-gradient(top, @colorStart 0%, @colorStop 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, @colorStart), color-stop(100%, @colorStop)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, @colorStart 0%,@colorStop 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, @colorStart 0%, @colorStop 100%); /* Opera11.10+ */
+	background: -ms-linear-gradient(top, @colorStart 0%, @colorStop 100%); /* IE10+ */
+	filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e5e5e5', GradientType=0)"; /* IE6-9 */
+	background: linear-gradient(top, @colorStart 0%, @colorStop 100%); /* W3C */
+}
+
+.button-gradient (@buttonColor1: rgba(30,87,153,1), @buttonColor2: rgba(41,137,216,1), @buttonColor3: rgba(32,124,202,1), @buttonColor4: rgba(125,185,232,1)) {
+	background: @buttonBackgroundColor; /* Old browsers */
+	background: -moz-linear-gradient(top, @buttonColor1 0%, @buttonColor2 50%, @buttonColor3 51%, @buttonColor4 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@buttonColor1), color-stop(50%,@buttonColor2), color-stop(51%,@buttonColor3), color-stop(100%,@buttonColor4)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, @buttonColor1 0%,@buttonColor2 50%,@buttonColor3 51%,@buttonColor4 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, @buttonColor1 0%,@buttonColor2 50%,@buttonColor3 51%,@buttonColor4 100%); /* Opera11.10+ */
+	background: -ms-linear-gradient(top, @buttonColor1 0%,@buttonColor2 50%,@buttonColor3 51%,@buttonColor4 100%); /* IE10+ */
+	filter: ~"progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#7db9e8',GradientType=0 )"; /* IE6-9 */
+	background: linear-gradient(top, @buttonColor1 0%,@buttonColor2 50%,@buttonColor3 51%,@buttonColor4 100%); /* W3C */
+}
+
+/* Mixins definitions end */
+
+
+/* Main CSS definitions start */
+
+.tx-powermailfrontend-pi1 {
+	padding: 0;
+}
+
+div.powermailfe_listitem,
+div.powermailfe_latestitem,
+fieldset.powermailfe_search_fieldset,
+fieldset.powermailfe_filter_abc,
+div.powermailfe_single,
+.tx-powermail-pi1_fieldset{
+	border: 1px solid @fieldsetBorderColor;
+	margin: 10px 0 5px 0;
+	padding: 10px;
+	.rounded-corners(@fieldsetBorderRadius);
+	.fieldset-gradient(rgba(247, 247, 247, 1), rgba(232, 232, 232, 1));
+}
+
+div.powermailfe_listitem,
+div.powermailfe_latestitem {
+	margin-top: 20px;
+}
+
+div.powermailfe_listitem_even,
+div.powermailfe_latestitem_even {
+}
+
+dl.powermailfe_all {
+    dt, dd {
+		margin: 0;
+		padding: 0 0 .5em 0;
+		float: left;
+    }
+	dt {
+		font-weight: bold;
+		clear: both;
+		width: @labelWidth;
+		text-align: left;
+		vertical-align: top;
+	}
+	dd {
+		text-align: left;
+		vertical-align: top;
+		width: @fieldWidth;
+		padding-left: 0;
+	}
+}
+
+div.powermailfe_filter_div {
+	clear: both;
+	margin-bottom: 5px;
+    label {
+		float: left;
+		clear: both;
+		width: @labelWidth;
+		font-weight: bold;
+	}
+	input,
+	select {
+        border:1px solid @inputBorderColor;
+        background:@inputBackgroundColor none;
+        padding:@inputPadding;
+        width:@fieldWidth;
+        .box-shadow-inset(0, 0, 2px, 0.1);
+        .rounded-corners(@inputBorderRadius);
+	}
+}
+
+input.powermailfe_filter_submit, .tx-powermail-pi1_fieldset input.pmfe_edit_submit, .tx-powermail-pi1_fieldset input.pmfe_edit_delete, span.powermailfe_button > a {
+	margin: 5px 0 0 @labelWidth;
+	cursor: pointer;
+	padding: 3px 6px;
+	border: 1px solid @buttonBorderColor;
+	.rounded-corners(@buttonBorderRadius);
+	.fieldset-gradient(rgba(247, 247, 247, 1), rgba(232, 232, 232, 1));
+}
+
+span.powermailfe_button > a {
+	margin: 5px 0 0 0;
+	color: @buttonColor;
+}
+
+span.powermailfe_button > a:hover {
+	text-decoration: none;
+}
+
+.tx-powermail-pi1_fieldset input.pmfe_edit_delete {
+	margin: 5px 0 0 12px;
+	color:@deleteColor;
+	background:@deleteBackgroundColor;
+	border-color: @deleteBackgroundColor;
+	.fieldset-gradient(rgba(244, 149, 149, 1), rgba(229, 0, 0, 1));
+}
+
+span.powermailfe_abc_letter {
+	padding: 2px;
+}
+
+/* Edit */
+div.powermailfe_edititem dl dd {
+	margin: 11px 0;
+}
+
+input.powermail_frontend_edit {
+	width: @fieldWidth;
+}
+
+div.powermailfe_backtolist {
+	margin-bottom: 10px;
+}
+
+.powermailfrontend_pagebrowser {
+	margin-top: 30px;
+	ul, li {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	li {
+		float: left;
+		a {
+			display: block;
+			text-align: center;
+			min-width: 18px;
+			color: @buttonColor;
+			padding: 2px;
+			margin-right: 3px;
+			border: 1px solid @buttonBorderColor;
+			.rounded-corners(@buttonBorderRadius);
+			.fieldset-gradient(rgba(247, 247, 247, 1), rgba(232, 232, 232, 1));
+			&:hover,
+			&.act {
+				background: @actBackgroundColor;
+				color: @actColor;
+				text-decoration: none;
+				.fieldset-gradient(#efbc7a, #f29416);
+				border-color: @actBorderColor;
+			}
+		}
+		&.powermailfrontend_pagebrowser_page {
+			padding: 3px 1px;
+			margin-right: 10px;
+			font-weight: bold;
+		}
+	}
+}
+
+.powermailfe_footer h2 {
+	display: none;
+}
+
+.powermailfe_clearfix:after {
+	visibility: hidden;
+	display: block;
+	font-size: 0;
+	content: " ";
+	clear: both;
+	height: 0;
+}
+
+* html .powermailfe_clearfix, *:first-child+html .powermailfe_clearfix {
+	zoom: 1;
+}

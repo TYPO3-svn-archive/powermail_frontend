@@ -106,7 +106,7 @@ class tx_powermailfrontend_list extends tslib_pibase {
 					$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_EDITLINK###'] = array(); // clear typolinkwrap
 				}
 				
-				$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_DETAILLINK###'] = $this->cObj->typolinkWrap( array('parameter' => ($this->conf['single.']['pid'] > 0 ? $this->conf['single.']['pid'] : $GLOBALS['TSFE']->id), 'additionalParams' => '&' . $this->prefixId . '[show]=' . $rowArray[($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0)][$i]['uid'], 'useCacheHash' => 1) ); // Detail Link
+				$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_DETAILLINK###'] = $this->cObj->typolinkWrap( array('parameter' => ($this->conf['single.']['pid'] > 0 ? $this->conf['single.']['pid'] : $GLOBALS['TSFE']->id), 'additionalParams' => '&' . $this->prefixId . '[show]=' . $rowArray[($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0)][$i]['uid'] . ($this->piVars['pointer'] > 0 ? '&' .$this->prefixId . '[pointer]=' . $this->piVars['pointer'] : ''), 'useCacheHash' => 1) ); // Detail Link
 				
 				$content_item .= $this->cObj->substituteMarkerArrayCached($this->tmpl[$this->mode]['item'], $this->markerArray, array(), $this->wrappedSubpartArray);
 			}

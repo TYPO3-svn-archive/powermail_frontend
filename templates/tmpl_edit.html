@@ -16,6 +16,7 @@ Powermail_frontend HTML Template for edit view
 	
 <!-- ###POWERMAILFE_EDIT### begin -->
 	<div class="powermailfe_edit">
+		<div class="powermailfe_backtolist"><!-- ###POWERMAILFE_SPECIAL_LISTLINK### -->###POWERMAILFE_LL_BACK###<!-- ###POWERMAILFE_SPECIAL_LISTLINK### --></div>
 		<form action="###ACTION###" method="post" id="powermail_frontend_edit" />
     		<fieldset class="tx-powermail-pi1_fieldset powermailfe_edit">
                 <!-- ###CONTENT_EDIT### --><!-- ###ITEM_EDIT### -->
@@ -24,16 +25,9 @@ Powermail_frontend HTML Template for edit view
                 
                 <input type="hidden" name="tx_powermailfrontend_pi1[change][uid]" value="###UID###" />
                 <input type="submit" value="###POWERMAILFE_LL_EDIT_SUBMIT###" class="pmfe_edit_submit" onclick="if (confirm('###POWERMAILFE_LL_EDIT_SUBMIT_SURE###')) return true; else return false;" />
-            
-            <!-- ###POWERMAILFE_SPECIAL_LISTLINK### -->###POWERMAILFE_LL_BACK###<!-- ###POWERMAILFE_SPECIAL_LISTLINK### -->
+            	<input type="button" value="###POWERMAILFE_LL_EDIT_DELETE###" class="pmfe_edit_delete" onclick="if (confirm('###POWERMAILFE_LL_EDIT_DELETE_SURE###')) window.location = '###URLDELETE###';" />
             </fieldset>
-        	<input type="button" value="###POWERMAILFE_LL_EDIT_DELETE###" class="pmfe_edit_delete" onclick="if (confirm('###POWERMAILFE_LL_EDIT_DELETE_SURE###')) window.location = '###URLDELETE###';" />
+
 		</form>
-		<script type="text/javascript">
-			function formCallback(result, form) {
-				window.status = "valiation callback for form '" + form.id + "': result = " + result;
-			}
-			var valid = new Validation('powermail_frontend_edit', {immediate : true, onFormValidate : formCallback});
-        </script>
 	</div>
 <!-- ###POWERMAILFE_EDIT### end -->

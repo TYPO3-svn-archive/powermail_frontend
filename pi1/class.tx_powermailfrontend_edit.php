@@ -92,10 +92,10 @@ class tx_powermailfrontend_edit extends tslib_pibase {
 					$linkConf = array(
 						'returnLast' => 'url', 
 						'parameter' => ($this->conf['list.']['pid'] > 0 ? $this->conf['list.']['pid'] : $GLOBALS['TSFE']->id), 
-						'additionalParams' => '&' . $this->prefixId . '[delete]=' . $this->piVars['edit']
+						'additionalParams' => '&' . $this->prefixId . '[delete]=' . $this->piVars['edit'] . ((intval($piVars['pointer']) > 0) ? '&' . $this->prefixId . '[pointer]=' . intval($piVars['pointer']) : '')
 					);
 					$this->markerArray['###URLDELETE###'] = t3lib_div::makeRedirectUrl($this->cObj->typolink('x', $linkConf));
-					$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_LISTLINK###'] = $this->cObj->typolinkWrap( array('parameter' => ($this->conf['list.']['pid'] > 0 ? $this->conf['list.']['pid'] : $GLOBALS['TSFE']->id), 'useCacheHash' => 1) ); // List Link
+					$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_LISTLINK###'] = $this->cObj->typolinkWrap( array('parameter' => ($this->conf['list.']['pid'] > 0 ? $this->conf['list.']['pid'] : $GLOBALS['TSFE']->id) . '#powermailfe_listitem_' . $row['uid'], 'additionalParams' => ((intval($piVars['pointer']) > 0) ? '&' . $this->prefixId . '[pointer]=' . intval($piVars['pointer']) : ''), 'useCacheHash' => 1) ); // List Link
 					
 					// end
 					$this->hook_pmfe_edit_form(); // hook for array manipulation

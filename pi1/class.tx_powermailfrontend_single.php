@@ -53,8 +53,9 @@ class tx_powermailfrontend_single extends tslib_pibase {
 		$this->allowedfields = t3lib_div::trimExplode(',', $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'fields', $this->mode), 1); // get allowed fields from flexform
 		$this->markers = t3lib_div::makeInstance('tx_powermailfrontend_markers'); // Create new instance for markers class
 		$this->dynamicMarkers = t3lib_div::makeInstance('tx_powermailfrontend_dynamicmarkers'); // New object: TYPO3 dynamicmarker function
+		$this->div = t3lib_div::makeInstance('tx_powermailfrontend_div'); // Create new instance for div class
 		$this->tmpl[$this->mode]['all'] = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['template.'][$this->mode]), '###POWERMAILFE_SINGLE###'); // Load HTML Template
-		
+		//t3lib_div::debug($this->piVars);
 		if ($this->piVars['show'] > 0 && empty($this->piVars['edit'])) { // only if GET param show was set
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
 				'uid, piVars, crdate, recipient, subject_r, sender, senderIP',
@@ -66,6 +67,7 @@ class tx_powermailfrontend_single extends tslib_pibase {
 			);
 			if ($res) $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res); // Result in array
 			$row['piVars'] = t3lib_div::convUmlauts($row['piVars']); // rename not allowed signs
+			$this->piVars = $row['piVars'];
 			$this->vars = t3lib_div::xml2array($row['piVars'], 'pivars'); // xml to array
 			if (!is_array($this->vars)) $this->vars = utf8_encode(t3lib_div::xml2array($row['piVars'], 'pivars')); // xml to array
 			unset($row['piVars']); // delete piVars from row array
@@ -73,8 +75,20 @@ class tx_powermailfrontend_single extends tslib_pibase {
 			$this->hook_pmfe_single($this->vars); // hook for array manipulation
 					
 			$this->markerArray = $this->markers->makeMarkers($this->conf, $this->vars, $this->piVars, $this->cObj, $this->mode); // markerArray fill
-			$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_LISTLINK###'] = $this->cObj->typolinkWrap( array('parameter' => ($this->conf['list.']['pid'] > 0 ? $this->conf['list.']['pid'] : $GLOBALS['TSFE']->id), 'useCacheHash' => 1) ); // List Link
-			
+			$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_LISTLINK###'] = $this->cObj->typolinkWrap( array('parameter' => ($this->conf['list.']['pid'] > 0 ? $this->conf['list.']['pid'] : $GLOBALS['TSFE']->id) . '#powermailfe_listitem_' . $row['uid'], 'additionalParams' => ((intval($piVars['pointer']) > 0) ? '&' . $this->prefixId . '[pointer]=' . intval($piVars['pointer']) : ''), 'useCacheHash' => 1) ); // List Link
+
+			if ( // min one feuser or min one group should be enabled AND current entry is allowed to be edited from current user
+				(!empty($conf['edit.']['feuser']) || !empty($conf['edit.']['fegroup'])) &&
+				!$this->div->allowed($row['uid'], $this->conf)
+			)
+			{
+				$this->markerArray['###POWERMAILFE_EDITLINKTEXT###'] = $this->pi_getLL('edit_label', 'Edit entry'); // edit label
+				$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_EDITLINK###'] = $this->cObj->typolinkWrap( array('parameter' => ($this->conf['edit.']['pid'] > 0 ? $this->conf['edit.']['pid'] : $GLOBALS['TSFE']->id), 'additionalParams' => '&' . $this->prefixId . '[edit]=' . $row['uid'] . ((intval($piVars['pointer']) > 0) ? '&' . $this->prefixId . '[pointer]=' . intval($piVars['pointer']) : ''), 'useCacheHash' => 1) ); // Edit Link
+			} else { // Edit is not allowed
+				$this->markerArray['###POWERMAILFE_EDITLINKTEXT###'] = ''; // clear label
+				$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_EDITLINK###'] = array(); // clear typolinkwrap
+			}
+
 			$this->content = $this->cObj->substituteMarkerArrayCached($this->tmpl[$this->mode]['all'], $this->markerArray, array(), $this->wrappedSubpartArray); // Get html template
 			$this->content = $this->dynamicMarkers->main($this->conf, $this->cObj, $this->content); // Fill dynamic locallang or typoscript markers
 			if (!empty($this->content)) return $this->content; // return HTML

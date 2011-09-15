@@ -114,7 +114,7 @@ class tx_powermailfrontend_filter_abc extends tslib_pibase {
 			// Generate Return string
 			$content .= '<span class="powermailfe_abc_letter">';
 			if ($curLetter[$a]) { // If result (link with letter)
-				$content .= $this->pi_linkTP_keepPIvars ($a, array('filter' => array($this->conf['search.']['abc'] => htmlentities(strtolower($a)) )), 1); // Generate link for each sign
+				$content .= $this->pi_linkTP_keepPIvars ($a, array('filter' => array($this->conf['search.']['abc'] => htmlentities(strtolower($a)) ),'pointer' => array()), 1); // Generate link for each sign
 			} else { // no result: letter only link
 				$content .= $a; 
 			} 
@@ -162,7 +162,7 @@ class tx_powermailfrontend_filter_abc extends tslib_pibase {
 		// Generate Return string
 		$content .= '<span class="powermailfe_abc_letter_09">';
 		if ($curLetter) { // If result (link with letter)
-			$content .= $this->pi_linkTP_keepPIvars ($this->pi_getLL('powermailfe_ll_abclist_numbers', '0-9'), array('filter' => array($this->conf['search.']['abc'] => "@" )), 1); // Generate link for 0-9
+			$content .= $this->pi_linkTP_keepPIvars ($this->pi_getLL('powermailfe_ll_abclist_numbers', '0-9'), array('filter' => array($this->conf['search.']['abc'] => "@" ),'pointer' => array()), 1); // Generate link for 0-9
 		} else { // no result: letter only link
 			$content .= $this->pi_getLL('powermailfe_ll_abclist_numbers', '0-9')."\n"; 
 		} 

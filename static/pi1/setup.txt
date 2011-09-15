@@ -213,10 +213,10 @@ plugin.tx_powermailfrontend_pi1 {
 	pagebrowser {
 		special = userfunction
 		special.userFunc = user_powermailfrontend_pagebrowser->user_pagebrowser
-		
+		//special._LOCAL_LANG < plugin.tx_powermailfrontend_pi1._LOCAL_LANG
 		1 = TMENU
 		1 {
-			wrap = <ul class="powermailfrontend_pagebrowser">|</ul>
+			wrap = <ul class="powermailfrontend_pagebrowser powermailfe_clearfix"><li class="powermailfrontend_pagebrowser_page">###POWERMAILFE_LL_PAGEBROWSER_PAGERESULT###</li>|</ul>
 			NO.allWrap = <li>|</li>
 			ACT = 1
 			ACT.allWrap = <li>|</li>

@@ -3,7 +3,8 @@ if (!defined ('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-t3lib_extMgm::addStaticFile($_EXTKEY, 'static/default_css/', 'Add default CSS');
+t3lib_extMgm::addStaticFile($_EXTKEY, 'static/pi1/', 'Powermail Frontend');
+t3lib_extMgm::addStaticFile($_EXTKEY, 'static/css_basic/', 'Powermail Frontend Basic CSS');
 
 t3lib_div::loadTCA('tt_content');
 $TCA['tt_content']['types']['list']['subtypes_excludelist'][$_EXTKEY . '_pi1'] = 'layout,select_key';
