@@ -23,13 +23,13 @@
 ***************************************************************/
 
 /**
- * user_powermailOnCurrentPage2() checks if a powermail_frontend plugin is inserted on current page
+ * user_powermailfrontendOnCurrentPage() checks if a powermail_frontend plugin is inserted on current page
  *
  * @param	string		$content: The PlugIn content
  * @param	array		$conf: The PlugIn configuration
  * @return	The content that is displayed on the website
  */
-function user_powermailOnCurrentPage2($mode) {
+function user_powermailfrontendOnCurrentPage($mode) {
 	if (TYPO3_MODE != 'FE') { // only in Frontend
 		return false;
 	}
@@ -47,20 +47,15 @@ function user_powermailOnCurrentPage2($mode) {
 		$orderBy = '',
 		$limit = 1
 	);
-	if ($res) {
+	if ($res !== false) {
 		$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res); // Result in array
-		
-		if ($mode != 'ssd') { // if default or realurl
-			if ($row['uid'] > 0) return true;
-		} else {
-			if ($GLOBALS['TSFE']->tmpl->setup['config.']['simulateStaticDocuments'] == 1 && $row['uid'] > 0) { // if ssd activated
-				return true;
-			}
-		}
+		$GLOBALS['TYPO3_DB']->sql_free_result($res);
+		return ($row['uid'] > 0 && ($mode != 'ssd' || (($mode == 'ssd') && $GLOBALS['TSFE']->tmpl->setup['config.']['simulateStaticDocuments'] == 1)));
 	}
+	return false;
 }
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail/lib/user_powermailOnCurrentPage2.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail/lib/user_powermailOnCurrentPage2.php']);
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail/lib/user_powermailfrontendOnCurrentPage.php'])	{
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail/lib/user_powermailfrontendOnCurrentPage.php']);
 }
 ?>

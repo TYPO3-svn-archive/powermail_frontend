@@ -64,7 +64,7 @@ class tx_powermailfrontend_list extends tslib_pibase {
 		if (empty($this->piVars['show']) && empty($this->piVars['edit'])) { // don't show list in single mode
 				
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
-				$this->where['select'] = 'uid, piVars, crdate, recipient, subject_r, sender, senderIP',
+				$this->where['select'] = 'uid, piVars, crdate, recipient, subject_r, sender, senderIP, uploadPath',
 				$this->where['from'] = 'tx_powermail_mails',
 				$this->where['where'] = $this->div->addWhereClause($this),
 				$this->where['groupby'] = '',

@@ -80,9 +80,13 @@ class tx_powermailfrontend_edit extends tslib_pibase {
 					$GLOBALS['TSFE']->storeSessionData(); // Save session
 					
 					// one loop for every field
+					//t3lib_div::debug($this->vars);
 					foreach ((array) $this->vars as $key => $value) { // one loop for every field in xml
-						$this->innerMarkerArray['###POWERMAILFE_FIELDS###'] = $this->fieldgenerator->main($this->conf['edit.'], array($key => $value), $this->cObj, $this->div->fieldDetails($key), array(), 0); // Get HTML code for each field
-						$content_item .= $this->cObj->substituteMarkerArrayCached($this->tmpl[$this->mode]['item'], $this->innerMarkerArray);
+						if($key != 'FILE') {
+							//$this->conf['edit.']['field.']['checkboxJS'] = 1;
+							$this->innerMarkerArray['###POWERMAILFE_FIELDS###'] = $this->fieldgenerator->main($this->conf['edit.'], array($key => $value), $this->cObj, $this->div->fieldDetails($key), array(), 0); // Get HTML code for each field
+							$content_item .= $this->cObj->substituteMarkerArrayCached($this->tmpl[$this->mode]['item'], $this->innerMarkerArray);
+						}
 					}
 					$subpartArray['###CONTENT_'.strtoupper($this->mode).'###'] = $content_item;
 					

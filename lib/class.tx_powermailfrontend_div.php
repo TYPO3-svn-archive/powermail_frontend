@@ -489,11 +489,11 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	* @return 	array	$vars		Return full array form input or only a part of it
 	*/
 	public function allowedUID($vars, $allowed) {
-		if (count($allowed) > 0) { // if there are some fields which are allowed to show (if not show all)
-			$alwd_arr = t3lib_div::trimExplode(',', $allowed, 1); // split allowed string to an array
+		$alwd_arr = t3lib_div::trimExplode(',', $allowed, 1); // split allowed string to an array
+		if (count($alwd_arr) > 0) { // if there are some fields which are allowed to show (if not show all)
 			$new = array();
 			
-			foreach ((array) $vars as $key => $value) { // one loop for every variable in db
+			foreach ($vars as $key => $value) { // one loop for every variable in db
 				if (in_array($key, $alwd_arr)) { // if current key of db is in allowed array
 					$new[$key] = $value; // fill array
 				}

@@ -60,5 +60,8 @@ plugin.powermail_frontend {
 	
 	# cat=plugin.powermail_frontend//0910; type=text; label= SQL orderby: Normaly, you define order via list.orderby, this is only for use with query.limit (e.g. crdate DESC)
 	query.orderby = crdate DESC
+
+	# cat=plugin.powermail_frontend//0920; type=text; label= If uploads are stored in a subfolder (powermail.upload.useTitleAsUploadSubFolderName = 1) add the form name (= subfolder) here
+	upload.subfolder =
 	
 }
