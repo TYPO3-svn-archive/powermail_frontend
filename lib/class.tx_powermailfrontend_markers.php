@@ -72,27 +72,23 @@ class tx_powermailfrontend_markers extends tslib_pibase {
 					$this->markerArrayAll['###POWERMAILFE_LABEL###'] .= $this->div->getTitle($key); // add label
 					$this->markerArrayAll['###POWERMAILFE_KEY###'] .= $key; // add key
 					$this->markerArrayAll['###POWERMAILFE_ALTERNATE###'] .= ($this->div->alternate($i) ? 'odd' : 'even'); // odd or even
-				
-					if ($this->cObj->cObjGetSingle($this->conf[$what . '.'][$key], $this->conf[$what . '.'][$key . '.']) != '') { // if ts for current field available (e.g. uid23 = TEXT ...)
-						
-						$this->markerArrayAll['###POWERMAILFE_VALUE###'] .= $this->cObj->cObjGetSingle($this->conf[$what . '.'][$key], $this->conf[$what . '.'][$key.'.']); // value
-					
-					} else { // no ts for current field, take default TS
-					
-						if ($value != '') { // if there is a value
-							$ts_array = array (
-								'type' => $this->div->getFieldType($key), // fieldtype
-								'uid' => $key, // uid
-								'value' => $value, // value
-								'label' => $this->div->getTitle($key) // label
-							);
-							$this->cObj->start($ts_array, 'tx_powermail_fields'); // enable .field in typoscript
+
+					if ($value != '') { // if there is a value
+						$ts_array = array (
+							'type' => $this->div->getFieldType($key), // fieldtype
+							'uid' => $key, // uid
+							'value' => $value, // value
+							'label' => $this->div->getTitle($key) // label
+						);
+						$this->cObj->start($ts_array, 'tx_powermail_fields'); // enable .field in typoscript
+						if ($this->cObj->cObjGetSingle($this->conf[$what . '.'][$key], $this->conf[$what . '.'][$key . '.']) != '') { // if ts for current field available (e.g. uid23 = TEXT ...)
+							$this->markerArrayAll['###POWERMAILFE_VALUE###'] .= $this->cObj->cObjGetSingle($this->conf[$what . '.'][$key], $this->conf[$what . '.'][$key.'.']); // value
+						} else { // no ts for current field, take default TS
 							$this->markerArrayAll['###POWERMAILFE_VALUE###'] .= $this->cObj->cObjGetSingle($this->conf[$what . '.']['fieldValue'], $this->conf[$what . '.']['fieldValue.']); // add value
-							#$this->markerArrayAll['###POWERMAILFE_VALUE###'] .= $value . (strtolower($key) != 'uid' ? '<!-- NO TS -->' : ''); // add value
 						}
-					
 					}
-								
+
+
 					// adding marker to string
 					$content_item .= $this->cObj->substituteMarkerArrayCached($this->tmpl['all']['item'], $this->markerArrayAll); // Add
 					$i++; // increase counter

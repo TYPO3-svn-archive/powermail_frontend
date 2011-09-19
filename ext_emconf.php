@@ -38,6 +38,7 @@ $EM_CONF[$_EXTKEY] = array(
 			'typo3' => '4.4.6-0.0.0',
 			'wt_doorman' => '1.3.0-0.0.0',
 			'powermail' => '1.6.5-0.0.0',
+			'pagebrowse' => '1.3.0-0.0.0',
 		),
 		'conflicts' => array(
 		),
