@@ -337,9 +337,21 @@ class tx_powermailfrontend_div extends tslib_pibase {
 				foreach ($newArray as $searchResultIndex => $searchResult) {
 					$and = true;
 					foreach ($this->piVars['filter'] as $filterName => $filterValue) { // one loop for every filter
-						if ($filterValue != '' && (strpos(strtolower($searchResult[$filterName]), strtolower($filterValue)) === false) || (strlen($filterValue) == 1 && strpos(strtolower($searchResult[$filterName]), strtolower($filterValue)) != 0)) {
-							$and = false;
-							break;
+						if ($filterValue != '') {
+							if ($filterName == '_all') {
+								$and = false;
+								foreach ($searchResult as $resultKey => $resultValue) {
+									if ((strpos(strtolower($searchResult[$resultKey]), strtolower($filterValue)) !== false) || (strlen($filterValue) == 1 && strpos(strtolower($searchResult[$resultKey]), strtolower($filterValue)) == 0)) {
+										$and = true;
+										break;
+									}
+								}
+							} else {
+								if ((strpos(strtolower($searchResult[$filterName]), strtolower($filterValue)) === false) || (strlen($filterValue) == 1 && strpos(strtolower($searchResult[$filterName]), strtolower($filterValue)) != 0)) {
+									$and = false;
+									break;
+								}
+							}
 						}
 					}
 					if (!$and) {

@@ -75,7 +75,16 @@ class tx_powermailfrontend_single extends tslib_pibase {
 			$this->hook_pmfe_single($this->vars); // hook for array manipulation
 					
 			$this->markerArray = $this->markers->makeMarkers($this->conf, $this->vars, $this->piVars, $this->cObj, $this->mode); // markerArray fill
-			$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_LISTLINK###'] = $this->cObj->typolinkWrap( array('parameter' => ($this->conf['list.']['pid'] > 0 ? $this->conf['list.']['pid'] : $GLOBALS['TSFE']->id) . '#powermailfe_listitem_' . $row['uid'], 'additionalParams' => ((intval($piVars['pointer']) > 0) ? '&' . $this->prefixId . '[pointer]=' . intval($piVars['pointer']) : ''), 'useCacheHash' => 1) ); // List Link
+
+			// build link to list page
+			$listLinkConf = array(
+				'parameter' => ($this->conf['list.']['pid'] > 0 ? $this->conf['list.']['pid'] : $GLOBALS['TSFE']->id) . '#powermailfe_listitem_' . $row['uid'],
+				'useCacheHash' => 1
+			);
+			if (intval($piVars['pointer']) > 0) {
+				$listLinkConf['additionalParams'] = '&' . $this->prefixId . '[pointer]=' . intval($piVars['pointer']);
+			}
+			$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_LISTLINK###'] = $this->cObj->typolinkWrap($listLinkConf); // List Link
 
 			if ( // min one feuser or min one group should be enabled AND current entry is allowed to be edited from current user
 				(!empty($conf['edit.']['feuser']) || !empty($conf['edit.']['fegroup'])) &&
@@ -83,7 +92,16 @@ class tx_powermailfrontend_single extends tslib_pibase {
 			)
 			{
 				$this->markerArray['###POWERMAILFE_EDITLINKTEXT###'] = $this->pi_getLL('edit_label', 'Edit entry'); // edit label
-				$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_EDITLINK###'] = $this->cObj->typolinkWrap( array('parameter' => ($this->conf['edit.']['pid'] > 0 ? $this->conf['edit.']['pid'] : $GLOBALS['TSFE']->id), 'additionalParams' => '&' . $this->prefixId . '[edit]=' . $row['uid'] . ((intval($piVars['pointer']) > 0) ? '&' . $this->prefixId . '[pointer]=' . intval($piVars['pointer']) : ''), 'useCacheHash' => 1) ); // Edit Link
+				// build link to edit page
+				$editLinkConf = array(
+					'parameter' => ($this->conf['edit.']['pid'] > 0 ? $this->conf['edit.']['pid'] : $GLOBALS['TSFE']->id),
+					'useCacheHash' => 1,
+					'additionalParams' => '&' . $this->prefixId . '[edit]=' . $row['uid']
+				);
+				if (intval($piVars['pointer']) > 0) {
+					$editLinkConf['additionalParams'] .= '&' . $this->prefixId . '[pointer]=' . intval($piVars['pointer']);
+				}
+				$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_EDITLINK###'] = $this->cObj->typolinkWrap($editLinkConf); // Edit Link
 			} else { // Edit is not allowed
 				$this->markerArray['###POWERMAILFE_EDITLINKTEXT###'] = ''; // clear label
 				$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_EDITLINK###'] = array(); // clear typolinkwrap

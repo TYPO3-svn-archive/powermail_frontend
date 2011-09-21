@@ -6,8 +6,8 @@
 /**********************************************************/
 
 /* Dimensions definitions start */
-//@labelWidth: 200px;
-//@fieldWidth: 260px;
+//@labelWidth: 180px;
+//@fieldWidth: 300px;
 @labelWidth: 200px;
 @fieldWidth: 400px;
 @inputPadding: 2px;
@@ -170,13 +170,15 @@ input.powermailfe_filter_submit, .tx-powermail-pi1_fieldset input.pmfe_edit_subm
 	cursor: pointer;
 	padding: 3px 6px;
 	border: 1px solid @buttonBorderColor;
+	color: @buttonColor;
+	text-decoration:none;
 	.rounded-corners(@buttonBorderRadius);
 	.fieldset-gradient(rgba(247, 247, 247, 1), rgba(232, 232, 232, 1));
 }
 
 span.powermailfe_button > a {
 	margin: 5px 0 0 0;
-	color: @buttonColor;
+
 }
 
 span.powermailfe_button > a:hover {
@@ -191,8 +193,15 @@ span.powermailfe_button > a:hover {
 	.fieldset-gradient(rgba(244, 149, 149, 1), rgba(229, 0, 0, 1));
 }
 
-span.powermailfe_abc_letter {
-	padding: 2px;
+span.powermailfe_abc_letter,
+span.powermailfe_abc_letter_all {
+	padding: 1px;
+	color:#999;
+}
+span.powermailfe_abc_letter a,
+span.powermailfe_abc_letter_all a {
+	text-decoration:none;
+	color:@buttonColor;
 }
 
 /* Edit */
@@ -219,6 +228,7 @@ div.powermailfe_backtolist {
 		display: inline;
 		a {
 			text-align: center;
+			text-decoration:none;
 			min-width: 18px;
 			color: @buttonColor;
 			padding: 3px 4px 3px 5px;
@@ -240,22 +250,37 @@ div.powermailfe_backtolist {
 			margin-right: 10px;
 			font-weight: bold;
 		}
-		&.tx-pagebrowse-current {
-			border: 1px solid @actBorderColor;
-			padding: 3px 4px 3px 5px;
-			margin-right: 8px;
-			background: @actBackgroundColor;
-			color: @actColor;
-			text-decoration: none;
-			.rounded-corners(@buttonBorderRadius);
-			.fieldset-gradient(#efbc7a, #f29416);
+	}
+	.tx-pagebrowse {
+		text-align:center;
+		list-style:none inside none;
+		width:100%;
+		margin:0;
+		padding:0;
+		li {
+			display:inline;
+			list-style:none;
+			margin:0;
+			padding:0 2px 0 0;
+			&.tx-pagebrowse-pages{
+			    width:80%;
+				ol {
+					display:inline;
+					margin:0;
+					padding:0 3px;
+				}
+			}
+			&.tx-pagebrowse-current {
+				border: 1px solid @actBorderColor;
+				padding: 3px 3px 3px 4px;
+				margin-right: 5px;
+				background: @actBackgroundColor;
+				color: @actColor;
+				text-decoration: none;
+				.rounded-corners(@buttonBorderRadius);
+				.fieldset-gradient(#efbc7a, #f29416);
+			}
 		}
-	}
-	.tx-pagebrowse li {
-		padding-right:0;
-	}
-	.tx-pagebrowse li li {
-		padding-right:4px;
 	}
 }
 
