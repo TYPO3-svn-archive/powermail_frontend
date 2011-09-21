@@ -33,6 +33,11 @@ class tx_powermailfrontend_pagebrowser extends tslib_pibase {
 	var $scriptRelPath = 'pi1/class.tx_powermailfrontend_pi1.php';	// Path to any pi1 script for locallang
 	
 	function main($conf, $piVars, $cObj, $pbarray) {
+
+		if ($pbarray['overall'] == 0) {
+			return '';
+		}
+
 		// Config
 		$this->conf = $conf;
 		$this->piVars = $piVars;
@@ -42,18 +47,38 @@ class tx_powermailfrontend_pagebrowser extends tslib_pibase {
 		$this->tmpl = array ('pagebrowser' => $this->cObj->getSubpart($this->cObj->fileResource($this->conf['template.']['pagebrowser']), '###POWERMAILFRONTEND_PAGEBROWSER###')); // Load HTML Template for pagebrowser
 		$this->dynamicMarkers = t3lib_div::makeInstance('tx_powermailfrontend_dynamicmarkers'); // New object: TYPO3 dynamicmarker function
 		
-		// let's go
 		$this->markerArray['###CURRENT_MIN###'] = ($this->pbarray['pointer'] * $this->conf['list.']['perPage']) + 1; // Current page: From
 		$this->markerArray['###CURRENT_MAX###'] = ($this->pbarray['pointer'] * $this->conf['list.']['perPage']) + $this->pbarray['overall_cur']; // Current page: up to
 		$this->markerArray['###OVERALL###'] = $this->pbarray['overall']; // Overall addresses
-		$this->conf['pagebrowser.']['special.']['userFunc.'] = $this->pbarray; // config for pagebrowser userfunc
-		if ($this->conf['list.']['perPage'] < $this->pbarray['overall']) $this->markerArray['###PAGELINKS###'] = $this->cObj->cObjGetSingle($this->conf['pagebrowser'], $this->conf['pagebrowser.']); // Pagebrowser menu (show only if needed)
-		
+
+		if ($this->conf['list.']['perPage'] < $this->pbarray['overall']) {
+			if (t3lib_extMgm::isLoaded('pagebrowse', 0)) {
+				$numberOfPages = intval($this->pbarray['overall'] / $this->conf['list.']['perPage']) + (($this->pbarray['overall'] % $this->conf['list.']['perPage']) == 0 ? 0 : 1);
+				$pagebrowseConf = array (
+					'includeLibs' => 'EXT:pagebrowse/pi1/class.tx_pagebrowse_pi1.php',
+					'userFunc' => 'tx_pagebrowse_pi1->main',
+					'numberOfPages' => $numberOfPages,
+					'pageParameterName'  => $this->prefixId . '|pointer',
+					'templateFile' => $this->conf['pagebrowse.']['templateFile'],
+					'pagesBefore' => $this->conf['pagebrowse.']['pagesBefore'],
+					'pagesAfter' => $this->conf['pagebrowse.']['pagesAfter'],
+					'enableMorePages' => $this->conf['pagebrowse.']['enableMorePages'],
+					'enableLessPages' => $this->conf['pagebrowse.']['enableLessPages'],
+					'numberOfLinks' => $this->conf['pagebrowse.']['numberOfLinks']
+				);
+				$pagebrowseCObj = t3lib_div::makeInstance('tslib_cObj');
+				$pagebrowseCObj->start(array(), '');
+				$this->markerArray['###PAGELINKS###'] = $pagebrowseCObj->cObjGetSingle('USER', $pagebrowseConf);
+			} else {
+				$this->conf['pagebrowser.']['special.']['userFunc.'] = $this->pbarray; // config for pagebrowser userfunc
+				$this->markerArray['###PAGELINKS###'] = $this->cObj->cObjGetSingle($this->conf['pagebrowser'], $this->conf['pagebrowser.']);
+			}
+		}
 		$this->content = $this->cObj->substituteMarkerArrayCached($this->tmpl['pagebrowser'], $this->markerArray); // substitute Marker in Template
 		$this->content = $this->dynamicMarkers->main($this->conf, $this->cObj, $this->content); // Fill dynamic locallang or typoscript markers
 		$this->content = preg_replace("|###.*?###|i","",$this->content); // Finally clear not filled markers
-		if (!empty($this->content) && $this->pbarray['overall'] > 0) return $this->content; // return only if results
-    }	
+		return $this->content;
+    }
 	
 }
 

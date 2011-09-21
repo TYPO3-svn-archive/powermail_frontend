@@ -216,13 +216,12 @@ div.powermailfe_backtolist {
 		margin: 0;
 	}
 	li {
-		float: left;
+		display: inline;
 		a {
-			display: block;
 			text-align: center;
 			min-width: 18px;
 			color: @buttonColor;
-			padding: 2px;
+			padding: 3px 4px 3px 5px;
 			margin-right: 3px;
 			border: 1px solid @buttonBorderColor;
 			.rounded-corners(@buttonBorderRadius);
@@ -241,6 +240,22 @@ div.powermailfe_backtolist {
 			margin-right: 10px;
 			font-weight: bold;
 		}
+		&.tx-pagebrowse-current {
+			border: 1px solid @actBorderColor;
+			padding: 3px 4px 3px 5px;
+			margin-right: 8px;
+			background: @actBackgroundColor;
+			color: @actColor;
+			text-decoration: none;
+			.rounded-corners(@buttonBorderRadius);
+			.fieldset-gradient(#efbc7a, #f29416);
+		}
+	}
+	.tx-pagebrowse li {
+		padding-right:0;
+	}
+	.tx-pagebrowse li li {
+		padding-right:4px;
 	}
 }
 

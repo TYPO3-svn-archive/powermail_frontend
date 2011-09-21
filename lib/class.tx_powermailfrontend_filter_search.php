@@ -25,6 +25,7 @@
 require_once(PATH_tslib . 'class.tslib_pibase.php');
 require_once(t3lib_extMgm::extPath('powermail_frontend') . 'lib/class.tx_powermailfrontend_dynamicmarkers.php'); // file for dynamicmarker functions
 require_once(t3lib_extMgm::extPath('powermail_frontend') . 'lib/class.tx_powermailfrontend_div.php'); // load div class
+require_once(t3lib_extMgm::extPath('powermail_frontend') . 'lib/class.tx_powermailfrontend_sessions.php'); // load sessions class
 
 class tx_powermailfrontend_filter_search extends tslib_pibase {
 
@@ -53,14 +54,20 @@ class tx_powermailfrontend_filter_search extends tslib_pibase {
 		$this->pi_loadLL();
 		$this->dynamicMarkers = t3lib_div::makeInstance('tx_powermailfrontend_dynamicmarkers'); // New object: TYPO3 dynamicmarker function
 		$this->div = t3lib_div::makeInstance('tx_powermailfrontend_div'); // Create new instance for div class
-		$this->tmpl = $this->outerArray = $this->subpartArray = $this->fieldMarkerArray = $this->innerFieldMarkerArray = $this->subpartArray2 = array(); $content_item = $content_item2 = $this->filter = ''; // init
+		$this->tmpl = $this->outerArray = $this->subpartArray = $this->fieldMarkerArray = $this->innerFieldMarkerArray = $this->subpartArray2 = array();
+		$content_item = $this->filter = ''; // init
 		$this->tmpl['filter'][$this->mode] = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['template.']['search']), '###POWERMAILFE_FILTER_SEARCH###'); // Load HTML Template
 		$this->tmpl['filter']['item'] = $this->cObj->getSubpart($this->tmpl['filter'][$this->mode], '###ITEM###'); // work on subpart 1
 		$this->searchfields = t3lib_div::trimExplode(',', $this->conf['search.']['search'], 1); // array with all needed searchfields
-				
+		$this->sessions = t3lib_div::makeInstance('tx_powermailfrontend_sessions'); // New object: session functions
+
+		if (empty($this->piVars['filter'])) {
+			$this->piVars['filter'] = $this->sessions->getSession($this->conf, $this->cObj);
+		}
+
 		// let's go
 		if (count($this->searchfields) > 0) { // if there should min. 1 searchfield be added
-			$this->outerArray['###POWERMAILFE_SEARCH_ACTION###'] = htmlentities($this->pi_linkTP_keepPIvars_url(array(), 1)); // target url for form
+			$this->outerArray['###POWERMAILFE_SEARCH_ACTION###'] = htmlentities($this->pi_linkTP_keepPIvars_url(array(), 1, 1)); // target url for form
 			
 			for ($i=0; $i<count($this->searchfields); $i++) { // one loop for every needed field
 				if ($this->searchfields[$i] != '_all') { // search a field
@@ -111,6 +118,10 @@ class tx_powermailfrontend_filter_search extends tslib_pibase {
 			$this->subpartArray['###CONTENT###'] = $content_item; // work on subpart 2
 			
 			$this->hook_pmfe_searchfilter(); // hook
+
+			// store filter to session
+			$this->sessions->setSession($this->conf, $this->piVars['filter'], $this->cObj, true);
+
 			$this->content = $this->cObj->substituteMarkerArrayCached($this->tmpl['filter'][$this->mode], $this->outerArray, $this->subpartArray); // substitute Marker in Template
 			$this->content = $this->dynamicMarkers->main($this->conf, $this->cObj, $this->content); // Fill dynamic locallang or typoscript markers
 			$this->content = preg_replace("|###.*?###|i", "", $this->content); // Finally clear not filled markers

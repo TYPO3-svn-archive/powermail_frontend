@@ -30,23 +30,24 @@ class user_powermailfrontend_pagebrowser extends tslib_pibase {
 	var $prefixId = 'tx_powermailfrontend_pi1'; // Same as class name
 	var $scriptRelPath = 'pi1/class.tx_powermailfrontend_pi1.php'; // Path to any pi1 script for locallang
 
-	// Function user_wtcarmarket_pagebrowser() generates HMENU for typoscript
-	function user_pagebrowser($content='', $conf=array()) {
+	// Function user_pagebrowser() generates HMENU for typoscript
+	function user_pagebrowser($content = '', $conf = array()) {
 		// config
 		global $TSFE;
 		$cObj = $TSFE->cObj; // cObject
 		$this->conf = $conf; // conf
 		$this->pi_loadLL();
-		$menuarray = array(); $conf['userFunc.']['pointer'] = 0;
-		
+		$menuarray = array();
+		$conf['userFunc.']['pointer'] = 0;
+
 		// let's go
-		for($i=0; $i < ceil($conf['userFunc.']['overall'] / $conf['userFunc.']['perPage']); $i++) { // one loop for every page
-			if ($conf['userFunc.']['pointer'] == intval($_GET['tx_powermailfrontend_pi1']['pointer'])) $menuarray[$i]['ITEM_STATE'] = 'ACT'; // act status for menu
-			
-			$menuarray[$i]['title'] = sprintf($this->pi_getLL('powermailfe_ll_pagebrowser_page', 'page '.($i+1)), ($i+1)); // menu label
-			$menuarray[$i]['_OVERRIDE_HREF'] = $this->pi_linkTP_keepPIvars_url(array('pointer' => $conf['userFunc.']['pointer']), 1); // url for menu
-			#$conf['userFunc.']['pointer'] += $conf['userFunc.']['perPage'];
-			$conf['userFunc.']['pointer'] = ($i+1);
+		for($i = 0; $i < ceil($conf['userFunc.']['overall'] / $conf['userFunc.']['perPage']); $i++) { // one loop for every page
+			if ($conf['userFunc.']['pointer'] == intval($this->piVars['pointer'])) { // act status for menu
+				$menuarray[$i]['ITEM_STATE'] = 'ACT';
+			}
+			$menuarray[$i]['title'] = sprintf($this->pi_getLL('powermailfe_ll_pagebrowser_page', 'page ' . ($i + 1)), ($i + 1)); // menu label
+			$menuarray[$i]['_OVERRIDE_HREF'] = $this->pi_linkTP_keepPIvars_url(array('pointer' => $conf['userFunc.']['pointer']), 1, 1); // url for menu
+			$conf['userFunc.']['pointer'] = $i + 1;
 		};
 		
 		// return menuitems

@@ -4,64 +4,90 @@
 
 plugin.powermail_frontend {
 
-	# cat=plugin.powermail_frontend/file/0010; type=file[html,htm,tmpl,txt]; label= Template File list: HTML-template file for showing values in a list (see EXT:powermail_frontend/templates/tmpl_list.html for an example)
+	# cat=plugin.powermail_frontend/file/0010; type=file[html,htm,tmpl,txt]; label= Template file list: HTML-template file for showing values in a list (see EXT:powermail_frontend/templates/tmpl_list.html for an example)
 	template.list = EXT:powermail_frontend/templates/tmpl_list.html
 
-	# cat=plugin.powermail_frontend/file/0020; type=file[html,htm,tmpl,txt]; label= Template File latest: HTML-template file for showing latest values in a list (see EXT:powermail_frontend/templates/tmpl_latestt.html for an example)
+	# cat=plugin.powermail_frontend/file/0020; type=file[html,htm,tmpl,txt]; label= Template file latest: HTML-template file for showing latest values in a list (see EXT:powermail_frontend/templates/tmpl_latestt.html for an example)
 	template.latest = EXT:powermail_frontend/templates/tmpl_latest.html
 
-	# cat=plugin.powermail_frontend/file/0030; type=file[html,htm,tmpl,txt]; label= Template File list: HTML-template file for showing values in a detailview (see EXT:powermail_frontend/templates/tmpl_single.html for an example)
+	# cat=plugin.powermail_frontend/file/0030; type=file[html,htm,tmpl,txt]; label= Template file list: HTML-template file for showing values in a detailview (see EXT:powermail_frontend/templates/tmpl_single.html for an example)
 	template.single = EXT:powermail_frontend/templates/tmpl_single.html
 	
-	# cat=plugin.powermail_frontend/file/0040; type=file[html,htm,tmpl,txt]; label= Template File all marker: HTML-template file for display automatic markers (see EXT:powermail_frontend/templates/tmpl_all.html for an example)
+	# cat=plugin.powermail_frontend/file/0040; type=file[html,htm,tmpl,txt]; label= Template file all marker: HTML-template file for display automatic markers (see EXT:powermail_frontend/templates/tmpl_all.html for an example)
 	template.all = EXT:powermail_frontend/templates/tmpl_all.html
 	
-	# cat=plugin.powermail_frontend/file/0050; type=file[html,htm,tmpl,txt]; label= Template File pagebrowser: HTML-template file for display pagebrowser in listview (see EXT:powermail_frontend/templates/tmpl_pagebrowser.html for an example)
+	# cat=plugin.powermail_frontend/file/0050; type=file[html,htm,tmpl,txt]; label= Template file pagebrowser: HTML-template file for display pagebrowser in listview (see EXT:powermail_frontend/templates/tmpl_pagebrowser.html for an example)
 	template.pagebrowser = EXT:powermail_frontend/templates/tmpl_pagebrowser.html
 	
-	# cat=plugin.powermail_frontend/file/0060; type=file[html,htm,tmpl,txt]; label= Template File search: HTML-template file for display searchfilter with listview (see EXT:powermail_frontend/templates/tmpl_search.html for an example)
+	# cat=plugin.powermail_frontend/file/0060; type=file[html,htm,tmpl,txt]; label= Template file if use pagebrowse: HTML-template file for pagebrowser output in listview if extension pagebrowse is installed
+	template.pagebrowse = EXT:powermail_frontend/templates/tmpl_pagebrowser_pagebrowse.html
+
+	# cat=plugin.powermail_frontend/file/0070; type=file[html,htm,tmpl,txt]; label= Template File search: HTML-template file for display searchfilter with listview (see EXT:powermail_frontend/templates/tmpl_search.html for an example)
 	template.search = EXT:powermail_frontend/templates/tmpl_search.html
 	
-	# cat=plugin.powermail_frontend/file/0070; type=file[html,htm,tmpl,txt]; label= Template File edit: HTML-template file for edit in frontend (see EXT:powermail_frontend/templates/tmpl_edit.html for an example)
+	# cat=plugin.powermail_frontend/file/0080; type=file[html,htm,tmpl,txt]; label= Template File edit: HTML-template file for edit in frontend (see EXT:powermail_frontend/templates/tmpl_edit.html for an example)
 	template.edit = EXT:powermail_frontend/templates/tmpl_edit.html
 	
-	# cat=plugin.powermail_frontend//0100; type=boolean; label= Hide label if empty value: Value could be hidden if value is empty
-	emptylabels.hide = 1
+	# cat=plugin.powermail_frontend/enable/0100; type=boolean; label= Hide list view label if empty: Do not show labels and values in list view if there are empty
+	list.hideEmpty = 0
 	
+	# cat=plugin.powermail_frontend/enable/0110; type=boolean; label= Hide latest view label if empty: Do not show labels and values in latest view if there are empty
+	latest.hideEmpty = 0
+
+	# cat=plugin.powermail_frontend/enable/0120; type=boolean; label= Hide single view label if empty: Do not show labels and values in single view if there are empty
+	single.hideEmpty = 0
+
 	# cat=plugin.powermail_frontend//0200; type=text; label= List order: List view order by any powermail field (maybe uid34 DESC or uid11 ASC) crdate, recipient, subject_r, sender, senderIP also possible (if empty crdate DESC)
 	list.orderby = 
 	
-	# cat=plugin.powermail_frontend//0210; type=int; label= List X per page: Define max entries per page for list view (e.g. 10)
+	# cat=plugin.powermail_frontend//0210; type=int+; label= List X per page: Define max entries per page for list view (e.g. 10)
 	list.perPage = 10
 	
-	# cat=plugin.powermail_frontend//0220; type=int; label= List X days: Show only entries of the latest X days (e.g. 10)
+	# cat=plugin.powermail_frontend//0220; type=int+; label= List X days: Show only entries of the latest X days (e.g. 10)
 	list.delta = 
 	
-	# cat=plugin.powermail_frontend//0230; type=int; label= List max. X entries: Show max. X entries (e.g. 10)
+	# cat=plugin.powermail_frontend//0230; type=int+; label= List max. X entries: Show max. X entries (e.g. 10)
 	list.limit = 
 	
 	# cat=plugin.powermail_frontend//0300; type=text; label= Latest order: Latest view order by any powermail field (maybe uid34 DESC or uid11 ASC) crdate, recipient, subject_r, sender, senderIP also possible (if empty crdate DESC)
 	latest.orderby = 
 	
-	# cat=plugin.powermail_frontend//0310; type=int; label= Latest X per page: Define max entries per page for latest view (e.g. 10)
+	# cat=plugin.powermail_frontend//0310; type=int+; label= Latest X per page: Define max entries per page for latest view (e.g. 10)
 	latest.perPage = 10
 	
-	# cat=plugin.powermail_frontend//0320; type=int; label= Latest X days: Show only entries of the latest X days (e.g. 10)
+	# cat=plugin.powermail_frontend//0320; type=int+; label= Latest X days: Show only entries of the latest X days (e.g. 10)
 	latest.delta = 
 	
-	# cat=plugin.powermail_frontend//0330; type=int; label= Latest max. X entries: Show max. latest X entries (e.g. 10)
+	# cat=plugin.powermail_frontend//0330; type=int+; label= Latest max. X entries: Show max. latest X entries (e.g. 10)
 	latest.limit = 
 	
 	# cat=plugin.powermail_frontend//0800; type=int+; label= Usergroup Admin: Admin Usergroup (Admin is allowed to see all entries and to delete entries)
 	admin.feusergroup =
 	
-	# cat=plugin.powermail_frontend//0900; type=int; label= Overall limit: If you have performance problems, you can define a maximum sql query limit (e.g. 1000)
+	# cat=plugin.powermail_frontend//0900; type=int+; label= Overall limit: If you have performance problems, you can define a maximum sql query limit (e.g. 1000)
 	query.limit = 1000
 	
 	# cat=plugin.powermail_frontend//0910; type=text; label= SQL orderby: Normaly, you define order via list.orderby, this is only for use with query.limit (e.g. crdate DESC)
 	query.orderby = crdate DESC
 
-	# cat=plugin.powermail_frontend//0920; type=text; label= If uploads are stored in a subfolder (powermail.upload.useTitleAsUploadSubFolderName = 1) add the form name (= subfolder) here
+	# cat=plugin.powermail_frontend//0990; type=text; label= If uploads are stored in a subfolder (powermail.upload.useTitleAsUploadSubFolderName = 1) add the form name (= subfolder) here
 	upload.subfolder =
+
+	# cat=plugin.powermail_frontend//0910; type=int+; label= Pages before: Number of pages before, if pagebrowse extension is installed
+	pagebrowse.pagesBefore = 2
 	
+	# cat=plugin.powermail_frontend//0920; type=int+; label= Pages after: Number of pages after, if pagebrowse extension is installed
+	pagebrowse.pagesAfter = 2
+
+	# cat=plugin.powermail_frontend//0930; type=int+; label= Number of links: Number of browser links on the screen. Odd number is recommended because it looks more symmetrical on the screen
+	pagebrowse.numberOfLinks = 5
+
+	# cat=plugin.powermail_frontend/enable/0130; type=boolean; label= Enable more pages view: Enable more pages view if pagebrowse extension is installed
+	pagebrowse.enableMorePages = 1
+
+	# cat=plugin.powermail_frontend/enable/0140; type=boolean; label= Enable less pages view: Enable less pages view if pagebrowse extension is installed
+	pagebrowse.enableLessPages = 1
+
+	# cat=plugin.powermail_frontend/enable/0150; type=boolean; label= Filter AND: Combine more than one filter with AND instead of OR (default)
+	filterAnd = 0
 }

@@ -69,10 +69,10 @@ class tx_powermailfrontend_filter_abc extends tslib_pibase {
 	// Function show_all() generates link same page without piVars
 	function show_all() {
 		$content = '<span class="powermailfe_abc_letter_all' . ($this->piVars['list']['all'] || count($this->piVars) == 0 ? ' powermailfe_abc_letter_all_act' : '') . '">';
-		$content .= $this->cObj->typolink($this->pi_getLL('powermailfe_ll_abclist_all', 'All'), array('parameter' => $GLOBALS['TSFE']->id, 'useCacheHash' => 1));
+		$content .= $this->pi_linkTP_keepPIvars($this->pi_getLL('powermailfe_ll_abclist_all', 'All'), array('filter' => array($this->conf['search.']['abc'] => '*'),'pointer' => ''), 1);
+		//$content .= $this->cObj->typolink($this->pi_getLL('powermailfe_ll_abclist_all', 'All'), array('parameter' => $GLOBALS['TSFE']->id, 'useCacheHash' => 1));
 		$content .= '</span>';
-		$content .= "\n";
-		
+
 		if (!empty($content)) return $content;
 	}
 	
@@ -114,7 +114,7 @@ class tx_powermailfrontend_filter_abc extends tslib_pibase {
 			// Generate Return string
 			$content .= '<span class="powermailfe_abc_letter">';
 			if ($curLetter[$a]) { // If result (link with letter)
-				$content .= $this->pi_linkTP_keepPIvars ($a, array('filter' => array($this->conf['search.']['abc'] => htmlentities(strtolower($a)) ),'pointer' => array()), 1); // Generate link for each sign
+				$content .= $this->pi_linkTP_keepPIvars($a, array('filter' => array($this->conf['search.']['abc'] => htmlentities(strtolower($a)) ),'pointer' => ''), 1); // Generate link for each sign
 			} else { // no result: letter only link
 				$content .= $a; 
 			} 

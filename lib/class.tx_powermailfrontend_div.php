@@ -190,9 +190,10 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	*/
 	public function filter() {
 		// config
-		$del_listitem = $newArray = array();
+		$del_listitem = $newArray = $removeFilterPiVars = array();
 		$j = 0;
-		
+		$emptyFormSubmited = true;
+
 		// let's go
 		// 1. if limit set, cut array
 		if ($this->limit > 0) {
@@ -201,7 +202,7 @@ class tx_powermailfrontend_div extends tslib_pibase {
 		
 		// 2. if new mode is set, clear old values
 		if (!empty($this->conf[$this->mode . '.']['new'])) { // if new mode was set
-			for ($i=0; $i < count($this->varray); $i++) { // one loop for every list item
+			for ($i = 0; $i < count($this->varray); $i++) { // one loop for every list item
 				if ($this->varray[$i][$this->conf[$this->mode . '.']['new']] > time()) { // if this value is greater than today
 					$newArray[] = $this->varray[$i];
 				}
@@ -210,19 +211,45 @@ class tx_powermailfrontend_div extends tslib_pibase {
 			$this->varray = $newArray; // define old array
 			$newArray = array(); // clear temp array
 		}
-				
+
+		if (!empty($this->piVars['filter']) && count($this->piVars['filter']) > 0) {
+			foreach ($this->piVars['filter'] as $key => $value) { // one loop for every filter
+				if (!empty($value)) {
+					$emptyFormSubmited = false;
+				}
+				if($value[0] == '*') {
+					$removeFilterPiVars[] .= $key;
+				}
+			}
+		} else {
+			$emptyFormSubmited = false;
+		}
+
+		if (!$emptyFormSubmited) { // if no filter parameter is found in piVars, get filter values from session
+			$this->sessions = t3lib_div::makeInstance('tx_powermailfrontend_sessions'); // New object: session functions
+			$this->piVars['filter'] = $this->sessions->getSession($this->conf, $this->cObj);
+		}
+
+		if (count($removeFilterPiVars) > 0) {
+			foreach($removeFilterPiVars as $filterPiVar) {
+				unset($this->piVars['filter'][$filterPiVar]);
+			}
+			$this->sessions->setSession($this->conf, $this->piVars['filter'], $this->cObj, true);
+		}
+
 		// 3. filter array
 		if (!empty($this->piVars['filter']) && count($this->piVars['filter']) > 0) { // if there are some filter
 			foreach ($this->piVars['filter'] as $key => $value) { // one loop for every filter
 				if (!empty($value)) {
-					for ($i=0; $i < count($this->varray); $i++) { // one loop for every list item
+
+					for ($i = 0; $i < count($this->varray); $i++) { // one loop for every list item
 					
 						if ($key != '_all') { // search in a specified field
 							$del_listitem[$i] = 0; // not to delete is default
 							if (!array_key_exists($key, $this->varray[$i])) {
 								$del_listitem[$i] = 1; // in current list item is not the field which should be filtered - so delete
 							}
-							if ($del_listitem[$i] === 0) { // only if this listitem should not be deleted
+								if ($del_listitem[$i] === 0) { // only if this listitem should not be deleted
 								foreach ($this->varray[$i] as $key2 => $value2) { // one loop for every piVar in current list item
 									if ($key == $key2) { // if current uid is the uid which should be filtered
 										switch (strtolower($value[0])) {
@@ -266,7 +293,7 @@ class tx_powermailfrontend_div extends tslib_pibase {
 												} else { // searchword given
 													if (is_array($value2)) { // second level
 														$tmp_del = 1;
-														foreach ((array) $value2 as $key4 => $value4) {
+														foreach ($value2 as $key4 => $value4) {
 															if (stristr(strtolower($value4), strtolower($value))) {
 																$tmp_del = 0;
 																break;
@@ -305,9 +332,25 @@ class tx_powermailfrontend_div extends tslib_pibase {
 				
 				$j++; // increase counter
 			}
+
+			if ($this->conf['filterAnd'] == 1) {
+				foreach ($newArray as $searchResultIndex => $searchResult) {
+					$and = true;
+					foreach ($this->piVars['filter'] as $filterName => $filterValue) { // one loop for every filter
+						if ($filterValue != '' && (strpos(strtolower($searchResult[$filterName]), strtolower($filterValue)) === false) || (strlen($filterValue) == 1 && strpos(strtolower($searchResult[$filterName]), strtolower($filterValue)) != 0)) {
+							$and = false;
+							break;
+						}
+					}
+					if (!$and) {
+						unset($newArray[$searchResultIndex]);
+					}
+				}
+			}
+
 			unset($this->varray); // delete old array
 			$this->varray = $newArray; // fill into old array
-		} 
+		}
 	}
 	
 	/**
@@ -505,7 +548,7 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	}
 	
 	/**
-	* Function addWhereClause() adds whrere clause for DB select (list, latest, abc filter)
+	* Function addWhereClause() adds where clause for DB select (list, latest, abc filter)
 	*
 	* @return 	string		$where		Where clause
 	*/

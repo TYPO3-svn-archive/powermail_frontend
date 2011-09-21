@@ -11,10 +11,10 @@ plugin.tx_powermailfrontend_pi1 {
 	template.pagebrowser = {$plugin.powermail_frontend.template.pagebrowser}
 	template.search = {$plugin.powermail_frontend.template.search}
 	template.edit = {$plugin.powermail_frontend.template.edit}
-	emptylabels.hide = {$plugin.powermail_frontend.emptylabels.hide}
 	admin.feusergroup = {$plugin.powermail_frontend.admin.feusergroup}
 	query.limit = {$plugin.powermail_frontend.query.limit}
 	query.orderby = {$plugin.powermail_frontend.query.orderby}
+	filterAnd = {$plugin.powermail_frontend.filterAnd}
 	
 	# Standardwrap settings for listview
 	list {
@@ -24,6 +24,7 @@ plugin.tx_powermailfrontend_pi1 {
 		perPage = {$plugin.powermail_frontend.list.perPage}
 		delta = {$plugin.powermail_frontend.list.delta}
 		limit = {$plugin.powermail_frontend.list.limit}
+		hideEmpty = {$plugin.powermail_frontend.list.hideEmpty}
 		
 		
 		# Main Settings for field stdWrap
@@ -165,8 +166,8 @@ plugin.tx_powermailfrontend_pi1 {
 		perPage = {$plugin.powermail_frontend.latest.perPage}
 		delta = {$plugin.powermail_frontend.latest.delta}
 		limit = {$plugin.powermail_frontend.latest.limit}
-	
-		
+		hideEmpty = {$plugin.powermail_frontend.latest.hideEmpty}
+
 		# Main Settings for field stdWrap
 		fieldValue < plugin.tx_powermailfrontend_pi1.list.fieldValue
 		
@@ -195,6 +196,8 @@ plugin.tx_powermailfrontend_pi1 {
 	# Standardwrap settings for singleview
 	single {
 	
+		hideEmpty = {$plugin.powermail_frontend.single.hideEmpty}
+
 		# Main Settings for field stdWrap
 		fieldValue < plugin.tx_powermailfrontend_pi1.list.fieldValue
 		
@@ -243,6 +246,15 @@ plugin.tx_powermailfrontend_pi1 {
 			ACT.allWrap = <li>|</li>
 			ACT.ATagParams = class="act"
 		}
+	}
+	# Pagebrowser with pagebrowse extension
+	pagebrowse {
+		templateFile = {$plugin.powermail_frontend.template.pagebrowse}
+		pagesBefore = {$plugin.powermail_frontend.pagebrowse.pagesBefore}
+		pagesAfter = {$plugin.powermail_frontend.pagebrowse.pagesAfter}
+		enableMorePages = {$plugin.powermail_frontend.pagebrowse.enableMorePages}
+		enableLessPages = {$plugin.powermail_frontend.pagebrowse.enableLessPages}
+		numberOfLinks = {$plugin.powermail_frontend.pagebrowse.numberOfLinks}
 	}
 }
 
