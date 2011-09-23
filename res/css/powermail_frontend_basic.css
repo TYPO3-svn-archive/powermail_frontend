@@ -10,8 +10,9 @@ input.powermailfe_filter_submit,.tx-powermail-pi1_fieldset input.pmfe_edit_submi
 span.powermailfe_button>a{margin:5px 0 0 0;}
 span.powermailfe_button>a:hover{text-decoration:none;}
 .tx-powermail-pi1_fieldset input.pmfe_edit_delete{margin:5px 0 0 12px;color:#ffffff;background:#ff0000;border-color:#ff0000;background:#f0f0f0;background:-moz-linear-gradient(top, #f49595 0%, #e50000 100%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%, #f49595), color-stop(100%, #e50000));background:-webkit-linear-gradient(top, #f49595 0%, #e50000 100%);background:-o-linear-gradient(top, #f49595 0%, #e50000 100%);background:-ms-linear-gradient(top, #f49595 0%, #e50000 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e5e5e5', GradientType=0);background:linear-gradient(top, #f49595 0%, #e50000 100%);}
-span.powermailfe_abc_letter,span.powermailfe_abc_letter_all{padding:1px;color:#999;}
-span.powermailfe_abc_letter a,span.powermailfe_abc_letter_all a{text-decoration:none;color:#333333;}
+span.powermailfe_abc_letter,span.powermailfe_abc_letter_all,span.powermailfe_abc_letter_09{padding:1px;color:#999;}
+span.powermailfe_abc_letter a,span.powermailfe_abc_letter_all a,span.powermailfe_abc_letter_09 a{text-decoration:none;color:#333333;}span.powermailfe_abc_letter a:hover,span.powermailfe_abc_letter_all a:hover,span.powermailfe_abc_letter_09 a:hover{color:#f2961b;}
+span.powermailfe_abc_act a{color:#f2961b;}
 div.powermailfe_edititem dl dd{margin:11px 0;}
 input.powermail_frontend_edit{width:400px;}
 div.powermailfe_backtolist{margin-bottom:10px;}

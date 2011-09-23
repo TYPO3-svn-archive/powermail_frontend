@@ -25,6 +25,7 @@
 @inputBackgroundColor: #f8f8f8;
 @actBorderColor:#f2961b;
 @actBackgroundColor:#f2961b;
+@actAbcColor:#f2961b;
 @actColor:#fff;
 
 /* Colors definitions end */
@@ -194,14 +195,22 @@ span.powermailfe_button > a:hover {
 }
 
 span.powermailfe_abc_letter,
-span.powermailfe_abc_letter_all {
+span.powermailfe_abc_letter_all,
+span.powermailfe_abc_letter_09 {
 	padding: 1px;
 	color:#999;
 }
 span.powermailfe_abc_letter a,
-span.powermailfe_abc_letter_all a {
+span.powermailfe_abc_letter_all a,
+span.powermailfe_abc_letter_09 a {
 	text-decoration:none;
 	color:@buttonColor;
+	&:hover {
+		color:@actAbcColor;
+	}
+}
+span.powermailfe_abc_act a {
+	color:@actAbcColor;
 }
 
 /* Edit */

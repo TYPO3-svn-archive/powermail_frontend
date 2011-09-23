@@ -25,6 +25,7 @@
 require_once(PATH_tslib.'class.tslib_pibase.php');
 require_once(t3lib_extMgm::extPath('powermail_frontend').'lib/class.tx_powermailfrontend_dynamicmarkers.php'); // file for dynamicmarker functions
 require_once(t3lib_extMgm::extPath('powermail_frontend').'lib/class.tx_powermailfrontend_div.php'); // load div class
+require_once(t3lib_extMgm::extPath('powermail_frontend') . 'lib/class.tx_powermailfrontend_sessions.php'); // load sessions class
 
 
 class tx_powermailfrontend_filter_abc extends tslib_pibase {
@@ -48,7 +49,11 @@ class tx_powermailfrontend_filter_abc extends tslib_pibase {
 		$this->div = t3lib_div::makeInstance('tx_powermailfrontend_div'); // Create new instance for div class
 		$this->tmpl = $this->markerArray = array(); $this->filter = ''; // init
 		$this->tmpl['filter'][$this->mode] = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['template.']['search']),'###POWERMAILFE_FILTER_ABC###'); // Load HTML Template
-		
+		$this->sessions = t3lib_div::makeInstance('tx_powermailfrontend_sessions'); // New object: session functions
+		if (empty($this->piVars['filter'])) {
+			$this->piVars['filter'] = $this->sessions->getSession($this->conf, $this->cObj);
+		}
+
 		// let's go
 		if ($this->conf['search.']['abc'] != '') { // if abc should be shown
 			$this->markerArray['###POWERMAILFE_ABC_ALL###'] = $this->show_all(); // Link all
@@ -69,8 +74,11 @@ class tx_powermailfrontend_filter_abc extends tslib_pibase {
 	// Function show_all() generates link same page without piVars
 	function show_all() {
 		$content = '<span class="powermailfe_abc_letter_all' . ($this->piVars['list']['all'] || count($this->piVars) == 0 ? ' powermailfe_abc_letter_all_act' : '') . '">';
-		$content .= $this->pi_linkTP_keepPIvars($this->pi_getLL('powermailfe_ll_abclist_all', 'All'), array('filter' => array($this->conf['search.']['abc'] => '*'),'pointer' => ''), 1);
-		//$content .= $this->cObj->typolink($this->pi_getLL('powermailfe_ll_abclist_all', 'All'), array('parameter' => $GLOBALS['TSFE']->id, 'useCacheHash' => 1));
+		$allLink = $this->pi_linkTP_keepPIvars($this->pi_getLL('powermailfe_ll_abclist_all', 'All'), array('filter' => array($this->conf['search.']['abc'] => '*')), 1, 1);
+		if ($this->piVars['filter'][$this->conf['search.']['abc']] == '*' || empty($this->piVars['filter'][$this->conf['search.']['abc']])) {
+			$allLink =  '<span class="powermailfe_abc_act">' . $allLink . '</span>';
+		}
+		$content .= $allLink;
 		$content .= '</span>';
 
 		if (!empty($content)) return $content;
@@ -114,7 +122,11 @@ class tx_powermailfrontend_filter_abc extends tslib_pibase {
 			// Generate Return string
 			$content .= '<span class="powermailfe_abc_letter">';
 			if ($curLetter[$a]) { // If result (link with letter)
-				$content .= $this->pi_linkTP_keepPIvars($a, array('filter' => array($this->conf['search.']['abc'] => htmlentities(strtolower($a)) ),'pointer' => ''), 1); // Generate link for each sign
+				$letterLink = $this->pi_linkTP_keepPIvars($a, array('filter' => array($this->conf['search.']['abc'] => htmlentities(strtolower($a)) )), 1, 1); // Generate link for each sign
+				if ($this->piVars['filter'][$this->conf['search.']['abc']] == htmlentities(strtolower($a))) {
+					$letterLink =  '<span class="powermailfe_abc_act">' . $letterLink . '</span>';
+				}
+				$content .= $letterLink;
 			} else { // no result: letter only link
 				$content .= $a; 
 			} 
@@ -162,7 +174,11 @@ class tx_powermailfrontend_filter_abc extends tslib_pibase {
 		// Generate Return string
 		$content .= '<span class="powermailfe_abc_letter_09">';
 		if ($curLetter) { // If result (link with letter)
-			$content .= $this->pi_linkTP_keepPIvars ($this->pi_getLL('powermailfe_ll_abclist_numbers', '0-9'), array('filter' => array($this->conf['search.']['abc'] => "@" ),'pointer' => array()), 1); // Generate link for 0-9
+			$numberLink = $this->pi_linkTP_keepPIvars ($this->pi_getLL('powermailfe_ll_abclist_numbers', '0-9'), array('filter' => array($this->conf['search.']['abc'] => "@" )), 1, 1); // Generate link for 0-9
+			if ($this->piVars['filter'][$this->conf['search.']['abc']] == '@') {
+				$numberLink =  '<span class="powermailfe_abc_act">' . $numberLink . '</span>';
+			}
+			$content .= $numberLink;
 		} else { // no result: letter only link
 			$content .= $this->pi_getLL('powermailfe_ll_abclist_numbers', '0-9')."\n"; 
 		} 
