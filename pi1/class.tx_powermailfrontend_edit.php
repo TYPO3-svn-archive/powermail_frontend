@@ -73,8 +73,9 @@ class tx_powermailfrontend_edit extends tslib_pibase {
 					$row['piVars'] = t3lib_div::convUmlauts($row['piVars']); // rename not allowed signs
 					$this->vars = t3lib_div::xml2array($row['piVars'], 'pivars'); // xml to array
 					if (!is_array($this->vars)) $this->vars = utf8_encode(t3lib_div::xml2array($row['piVars'], 'pivars')); // xml to array
-					$this->vars = $this->div->allowedUID($this->vars, $this->conf['edit.']['fields']);
-					
+
+					$this->vars = $this->div->allowedUID($this->vars, $this->conf['edit.']['fields'], $this->conf['edit.']['fieldsmode'], $this->conf['edit.']['powermailuid']);
+
 					// save values in in session
 					$GLOBALS['TSFE']->fe_user->setKey('ses', 'powermail_'.($this->cObj->data['_LOCALIZED_UID'] > 0 ? $this->cObj->data['_LOCALIZED_UID'] : $this->cObj->data['uid']), $this->vars); // Generate Session with piVars array
 					$GLOBALS['TSFE']->storeSessionData(); // Save session

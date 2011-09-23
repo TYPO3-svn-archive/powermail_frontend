@@ -539,24 +539,73 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	/**
 	* Cuts an array and returns only allowed values
 	*
-	* @param 	array 	$vars		All variables from database to current powermail mail	array('uid3' => 'Alex')
-	* @param 	string 	$allowed	Commaseparated string with allowed uids 				(uid3,uid4)
-	* @return 	array	$vars		Return full array form input or only a part of it
+	* @param 	array 	$vars			All variables from database to current powermail mail	array('uid3' => 'Alex')
+	* @param 	string 	$allowed		Commaseparated string with allowed uids 				(uid3,uid4)
+	* @params	string	$fieldsmode		Defines mails / forms mode
+	* @params	int		$powermailuid	Powermail Uid who contains the fields to edit
+	* @return 	array	$vars			Return full array form input or only a part of it
 	*/
-	public function allowedUID($vars, $allowed) {
-		$alwd_arr = t3lib_div::trimExplode(',', $allowed, 1); // split allowed string to an array
-		if (count($alwd_arr) > 0) { // if there are some fields which are allowed to show (if not show all)
-			$new = array();
-			
-			foreach ($vars as $key => $value) { // one loop for every variable in db
-				if (in_array($key, $alwd_arr)) { // if current key of db is in allowed array
-					$new[$key] = $value; // fill array
+	public function allowedUID($vars, $allowed, $fieldsmode = 'mails', $powermailUid = 0) {
+		$allowedArray = t3lib_div::trimExplode(',', $allowed, 1); // split allowed string to an array
+		switch ($fieldsmode) {
+			case 'mails':
+			case '':
+				if (count($allowedArray) > 0) { // if there are some fields which are allowed to show (if not show all)
+					$new = array();
+					foreach ($vars as $key => $value) { // one loop for every variable in db
+						if (in_array($key, $allowedArray)) { // if current key of db is in allowed array
+							$new[$key] = $value; // fill array
+						}
+					}
+					$vars = $new; // overwrite array with new array
 				}
-			}
-			$vars = $new; // overwrite array with new array
+				return $vars;
+
+			case 'forms':
+				$new = array();
+				if (count($allowedArray) > 0) { // if there are some fields which are allowed to show (if not show all)
+					foreach ($allowedArray as $key) {
+						if (!empty($vars[$key])) {
+							$new[$key] = $vars[$key];
+						} else {
+							$new[$key] = '';
+						}
+					}
+				} else if (intval($powermailUid) > 0) {
+					// SQL query
+					$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
+						'tx_powermail_fields.uid',
+						'tx_powermail_fields LEFT JOIN tx_powermail_fieldsets ON tx_powermail_fieldsets.uid = tx_powermail_fields.fieldset',
+						$where_clause = "(tx_powermail_fields.formtype = 'text'
+							OR tx_powermail_fields.formtype = 'radio'
+							OR tx_powermail_fields.formtype = 'check'
+							OR tx_powermail_fields.formtype = 'select'
+							OR tx_powermail_fields.formtype = 'textarea'
+							OR tx_powermail_fields.formtype = 'countryselect'
+							OR tx_powermail_fields.formtype = 'date'
+							OR tx_powermail_fields.formtype = 'datetime'
+							OR tx_powermail_fields.formtype = 'file')
+							AND tx_powermail_fieldsets.tt_content = " . $powermailUid . t3lib_BEfunc::BEenableFields('tx_powermail_fields') . t3lib_BEfunc::BEenableFields('tx_powermail_fieldsets'),
+						$groupBy = '',
+						$orderBy = 'tx_powermail_fields.fieldset, tx_powermail_fields.sorting',
+						$limit = ''
+					);
+
+					if ($res !== false) { // If there is a result
+						// 1. Collecting different field uids to an array
+						while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) { // one loop for every db entry
+							if (!empty($vars['uid' . $row['uid']])) {
+								$new['uid' . $row['uid']] = $vars['uid' . $row['uid']];
+							} else {
+								$new['uid' . $row['uid']] = '';
+							}
+						}
+						$GLOBALS['TYPO3_DB']->sql_free_result($res);
+					}
+
+				}
+				return $new;
 		}
-		
-		return $vars;
 	}
 	
 	/**

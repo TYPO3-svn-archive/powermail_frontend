@@ -13,17 +13,17 @@
 			<label index="pi_flexform.sheet_search">Search</label>
 			<label index="pi_flexform.sheet_latest">Latest</label>
 			<label index="pi_flexform.sheet_edit">FE Edit</label>
-			<label index="pi_flexform.mainconfig.mode">Select mode(s)</label>
+			<label index="pi_flexform.mainconfig.mode">Please select the desired views</label>
 			<label index="pi_flexform.mainconfig.mode.0">List view</label>
 			<label index="pi_flexform.mainconfig.mode.1">Latest view</label>
 			<label index="pi_flexform.mainconfig.mode.2">Single view</label>
 			<label index="pi_flexform.mainconfig.mode.3">Search fields</label>
 			<label index="pi_flexform.mainconfig.mode.4">Edit entries in the frontend</label>
-			<label index="pi_flexform.single.pid">Select page with singleview (empty for same page)</label>
-			<label index="pi_flexform.list.fields">Select some fields to show</label>
-			<label index="pi_flexform.list.pid">Select page with listview (empty for same page)</label>
-			<label index="pi_flexform.latest.fields">Select some fields to show</label>
-			<label index="pi_flexform.latest.pid">Select page with latestview (empty for same page)</label>
+			<label index="pi_flexform.single.pid">Please select page with single view (empty for same page)</label>
+			<label index="pi_flexform.list.fields">Please select some fields to show</label>
+			<label index="pi_flexform.list.pid">Please select page with list view (empty for same page)</label>
+			<label index="pi_flexform.latest.fields">Please select some fields to show</label>
+			<label index="pi_flexform.latest.pid">Please select page with latest view (empty for same page)</label>
 			<label index="pi_flexform.latest.delta">Show entries of the last X days (empty for no limit)</label>
 			<label index="pi_flexform.latest.limit">Show max. X entries (empty for no limit)</label>
 			<label index="pi_flexform.latest.new">Show only entries in future (only if a field is a timestamp)</label>
@@ -31,10 +31,15 @@
 			<label index="pi_flexform.showownonly.0">Show only entries of the currently logged in FEuser</label>
 			<label index="pi_flexform.search.searchfields">Add some searchfields</label>
 			<label index="pi_flexform.search.abc">Add ABC Filter</label>
-			<label index="pi_flexform.edit.fields">Choose fields to update (empty for all fields)</label>
-			<label index="pi_flexform.edit.feuser">Define some FE-Users which are allowed to update</label>
-			<label index="pi_flexform.edit.fegroup">Define some FE-Groups which are allowed to update</label>
-			<label index="pi_flexform.edit.pid">Select page with edit plugin (empty for same page)</label>
+			<label index="pi_flexform.edit.fields">Please select the fields which should be editable (empty = all fields)</label>
+			<label index="pi_flexform.edit.feuser">Please select one or more FE user(s) that should get right to editing</label>
+			<label index="pi_flexform.edit.fegroup">Please select one or more FE group(s) that should get right to editing</label>
+			<label index="pi_flexform.edit.pid">Please select the page containing the edit plugin (empty for same page)</label>
+			<label index="pi_flexform.edit.mode">Please select where the fields should be related to the processing</label>
+			<label index="pi_flexform.edit.mode.0">Fields of found powermail mails (starting point defined at Behavior &gt; Record Storage Page)</label>
+			<label index="pi_flexform.edit.mode.1">Fields of a powermail form</label>
+			<label index="pi_flexform.edit.powermailforms">Please select one of the found powermail forms</label>
+			<label index="pi_flexform.edit.select">Please select...</label>
 			<label index="pi_flexform.empty">[Turn off]</label>
 			<label index="pi_flexform.searchAll">[Search in all fields]</label>
 			<label index="pi_flexform.feuser_owner">[Owner]</label>
@@ -48,28 +53,33 @@
 			<label index="pi_flexform.sheet_search">Suche</label>
 			<label index="pi_flexform.sheet_latest">Letzte</label>
 			<label index="pi_flexform.sheet_edit">Änderungen im FE</label>
-			<label index="pi_flexform.mainconfig.mode">Ansicht(en) auswählen</label>
+			<label index="pi_flexform.mainconfig.mode">Bitte wählen Sie die gewünschten Ansichten aus</label>
 			<label index="pi_flexform.mainconfig.mode.0">Listenansicht</label>
 			<label index="pi_flexform.mainconfig.mode.1">Zeige Letzte</label>
 			<label index="pi_flexform.mainconfig.mode.2">Detailansicht</label>
 			<label index="pi_flexform.mainconfig.mode.3">Suchfelder</label>
 			<label index="pi_flexform.mainconfig.mode.4">Einträge im Frontend bearbeiten</label>
-			<label index="pi_flexform.single.pid">Seite mit Detailansicht auswählen (Leer: gleiche Seite)</label>
-			<label index="pi_flexform.list.fields">Anzuzeigende Felder</label>
-			<label index="pi_flexform.list.pid">Seite mit Listenansicht auswählen (Leer: gleiche Seite)</label>
-			<label index="pi_flexform.latest.fields">Anzuzeigende Felder</label>
-			<label index="pi_flexform.latest.pid">Seite mit der Ansicht der Letzten Datensätze auswählen (Leer: gleiche Seite)</label>
-			<label index="pi_flexform.latest.delta">Zeige Einträge der letzten X Tage (Leer: Funktion deaktiviert)</label>
-			<label index="pi_flexform.latest.limit">Zeige max. X Einträge (Leer: Kein Limit)</label>
+			<label index="pi_flexform.single.pid">Bitte wählen Sie die Seite mit der Detailansicht aus (Leer =  Gleiche Seite)</label>
+			<label index="pi_flexform.list.fields">Bitte wählen Sie die anzuzeigenden Felder</label>
+			<label index="pi_flexform.list.pid">Bitte wählen Sie die Seite mit der Listenansicht aus (Leer = Gleiche Seite)</label>
+			<label index="pi_flexform.latest.fields">Bitte wählen Sie die anzuzeigenden Felder</label>
+			<label index="pi_flexform.latest.pid">Bitte wählen Sie die Seite mit der Ansicht der letzten Datensätze aus (Leer =  Gleiche Seite)</label>
+			<label index="pi_flexform.latest.delta">Zeige Einträge der letzten X Tage (Leer = Funktion deaktiviert)</label>
+			<label index="pi_flexform.latest.limit">Zeige max. X Einträge (Leer = Kein Limit)</label>
 			<label index="pi_flexform.latest.new">Zeige nur künftige Einträge (Nur wenn ein Feld timestamp beinhaltet)</label>
 			<label index="pi_flexform.showownonly">Nur eigene Einträge</label>
 			<label index="pi_flexform.showownonly.0">Zeige nur Einträge des aktuell angemeldeten FEuser</label>
 			<label index="pi_flexform.search.searchfields">Suchfelder hinzufügen</label>
 			<label index="pi_flexform.search.abc">ABC Filter hinzufügen</label>
-			<label index="pi_flexform.edit.fields">Felder zum Bearbeiten auswählen (Leer: alle Felder)</label>
-			<label index="pi_flexform.edit.feuser">Wählen Sie einen oder mehrere FE-User aus, die Datensätze ändern dürfen</label>
-			<label index="pi_flexform.edit.fegroup">Wählen Sie einen oder mehrere FE-Gruppen aus, deren User Datensätze ändern dürfen</label>
-			<label index="pi_flexform.edit.pid">Seite mit Änderungsplugin auswählen (Leer: gleiche Seite)</label>
+			<label index="pi_flexform.edit.fields">Bitte wählen Sie die Felder die bearbeitbar sein sollen (Leer = Alle Felder)</label>
+			<label index="pi_flexform.edit.feuser">Bitte wählen Sie einen oder mehrere FE-User, die Bearbeitungsrechte erhalten sollen</label>
+			<label index="pi_flexform.edit.fegroup">Bitte wählen Sie einen oder mehrere FE-Gruppen aus, die Bearbeitungsrechte erhalten sollen</label>
+			<label index="pi_flexform.edit.pid">Bitte eine Seite mit Änderungsplugin auswählen (Leer = Diese Seite)</label>
+			<label index="pi_flexform.edit.mode">Bitte wählen Sie aus, woher die Felder zur Bearbeitung bezogen werden sollen</label>
+			<label index="pi_flexform.edit.mode.0">Felder von gefundenen Powermail-Mails (Ausgangspunkt definiert unter Verhalten &gt; Datensatzsammlung)</label>
+			<label index="pi_flexform.edit.mode.1">Felder von einem Powermail-Formular</label>
+			<label index="pi_flexform.edit.powermailforms">Bitte wählen Sie eines der gefundenen Powermail-Formulare</label>
+			<label index="pi_flexform.edit.select">Bitte wählen Sie...</label>
 			<label index="pi_flexform.empty">[Abgeschalten]</label>
 			<label index="pi_flexform.searchAll">[Felderübergreifende Suche]</label>
 			<label index="pi_flexform.feuser_owner">[Ersteller]</label>

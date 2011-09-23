@@ -69,7 +69,7 @@
 								<itemListStyle>width:200px</itemListStyle>
 								<itemsProcFunc>user_powermailfe_be_fields->main</itemsProcFunc>
 								<itemsProcFunc_config>
-									<mode>fieldsOnly</mode>
+									<mode>mailFields</mode>
 								</itemsProcFunc_config>
 								<allowNonIdValues>1</allowNonIdValues>
 							</config>
@@ -131,7 +131,7 @@
 								<itemListStyle>width:200px</itemListStyle>
 								<itemsProcFunc>user_powermailfe_be_fields->main</itemsProcFunc>
 								<itemsProcFunc_config>
-									<mode>fieldsOnly</mode>
+									<mode>mailFields</mode>
 								</itemsProcFunc_config>
 								<allowNonIdValues>1</allowNonIdValues>
 							</config>
@@ -235,7 +235,7 @@
 								<itemListStyle>width:200px</itemListStyle>
 								<itemsProcFunc>user_powermailfe_be_fields->main</itemsProcFunc>
 								<itemsProcFunc_config>
-									<mode>fieldsOnly</mode>
+									<mode>mailFields</mode>
 								</itemsProcFunc_config>
 								<allowNonIdValues>1</allowNonIdValues>
 							</config>
@@ -333,6 +333,53 @@
 				</TCEforms>
 				<type>array</type>
 				<el>
+					<fieldsmode>
+						<TCEforms>
+							<exclude>1</exclude>
+							<label>LLL:EXT:powermail_frontend/locallang_db.xml:pi_flexform.edit.mode</label>
+							<onChange>reload</onChange>
+							<config>
+								<type>select</type>
+								<items type="array">
+									<numIndex index="0" type="array">
+										<numIndex index="0">LLL:EXT:powermail_frontend/locallang_db.xml:pi_flexform.edit.mode.0</numIndex>
+										<numIndex index="1">mails</numIndex>
+									</numIndex>
+									<numIndex index="1" type="array">
+										<numIndex index="0">LLL:EXT:powermail_frontend/locallang_db.xml:pi_flexform.edit.mode.1</numIndex>
+										<numIndex index="1">forms</numIndex>
+									</numIndex>
+								</items>
+								<default>0</default>
+								<maxitems>1</maxitems>
+								<minitems>1</minitems>
+								<size>1</size>
+							</config>
+						</TCEforms>
+					</fieldsmode>
+					<powermailuid>
+						<TCEforms>
+							<label>LLL:EXT:powermail_frontend/locallang_db.xml:pi_flexform.edit.powermailforms</label>
+							<displayCond>FIELD:fieldsmode:IN:forms</displayCond>
+							<onChange>reload</onChange>
+							<config>
+								<type>select</type>
+								<items type="array">
+
+								</items>
+								<minitems>1</minitems>
+								<maxitems>1</maxitems>
+								<size>1</size>
+								<autoSizeMax>1</autoSizeMax>
+								<selectedListStyle>width:200px</selectedListStyle>
+								<itemListStyle>width:200px</itemListStyle>
+								<itemsProcFunc>user_powermailfe_be_fields->main</itemsProcFunc>
+								<itemsProcFunc_config>
+									<mode>powermailforms</mode>
+								</itemsProcFunc_config>
+							</config>
+						</TCEforms>
+					</powermailuid>
 					<fields>
 						<TCEforms>
 							<label>LLL:EXT:powermail_frontend/locallang_db.xml:pi_flexform.edit.fields</label>
@@ -349,7 +396,7 @@
 								<itemListStyle>width:200px</itemListStyle>
 								<itemsProcFunc>user_powermailfe_be_fields->main</itemsProcFunc>
 								<itemsProcFunc_config>
-									<mode>fieldsOnly</mode>
+									<mode>fields</mode>
 								</itemsProcFunc_config>
 								<allowNonIdValues>1</allowNonIdValues>
 							</config>
