@@ -58,10 +58,18 @@ class tx_powermailfrontend_filter_search extends tslib_pibase {
 		$content_item = $this->filter = ''; // init
 		$this->tmpl['filter'][$this->mode] = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['template.']['search']), '###POWERMAILFE_FILTER_SEARCH###'); // Load HTML Template
 		$this->tmpl['filter']['item'] = $this->cObj->getSubpart($this->tmpl['filter'][$this->mode], '###ITEM###'); // work on subpart 1
-		$this->searchfields = t3lib_div::trimExplode(',', $this->conf['search.']['search'], 1); // array with all needed searchfields
+		$this->searchfields = t3lib_div::trimExplode(',', $this->conf['search.']['search'], 1); // array with all needed search fields
 		$this->sessions = t3lib_div::makeInstance('tx_powermailfrontend_sessions'); // New object: session functions
 
-		if (empty($this->piVars['filter'])) {
+		if (!empty($this->piVars['filter'])) {
+			if(!empty($this->piVars['filter']['reset'])) {
+				$this->sessions->deleteSession($this->conf, $this->cObj);
+				unset($this->piVars['filter']['reset']);
+				foreach ($this->piVars['filter'] as $filterKey => $filterValue) {
+					$this->piVars['filter'][$filterKey] = '';
+				}
+			}
+		} else {
 			$this->piVars['filter'] = $this->sessions->getSession($this->conf, $this->cObj);
 		}
 
@@ -69,7 +77,7 @@ class tx_powermailfrontend_filter_search extends tslib_pibase {
 		if (count($this->searchfields) > 0) { // if there should min. 1 searchfield be added
 			$this->outerArray['###POWERMAILFE_SEARCH_ACTION###'] = htmlentities($this->pi_linkTP_keepPIvars_url(array(), 1, 1)); // target url for form
 			
-			for ($i=0; $i<count($this->searchfields); $i++) { // one loop for every needed field
+			for ($i = 0; $i < count($this->searchfields); $i++) { // one loop for every needed field
 				if ($this->searchfields[$i] != '_all') { // search a field
 					$this->markerArray['###POWERMAILFE_SEARCH_LABEL###'] = $this->pi_getLL('label_' . $this->searchfields[$i], $this->div->getTitle($this->searchfields[$i]));
 					$this->fieldMarkerArray['###POWERMAILFE_SEARCH_NAME###'] = $this->searchfields[$i]; // uid4

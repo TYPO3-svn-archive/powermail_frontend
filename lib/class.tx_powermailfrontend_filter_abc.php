@@ -50,7 +50,15 @@ class tx_powermailfrontend_filter_abc extends tslib_pibase {
 		$this->tmpl = $this->markerArray = array(); $this->filter = ''; // init
 		$this->tmpl['filter'][$this->mode] = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['template.']['search']),'###POWERMAILFE_FILTER_ABC###'); // Load HTML Template
 		$this->sessions = t3lib_div::makeInstance('tx_powermailfrontend_sessions'); // New object: session functions
-		if (empty($this->piVars['filter'])) {
+		if (!empty($this->piVars['filter'])) {
+			if(!empty($this->piVars['filter']['reset'])) {
+				$this->sessions->deleteSession($this->conf, $this->cObj);
+				unset($this->piVars['filter']['reset']);
+				foreach ($this->piVars['filter'] as $filterKey => $filterValue) {
+					$this->piVars['filter'][$filterKey] = '';
+				}
+			}
+		} else {
 			$this->piVars['filter'] = $this->sessions->getSession($this->conf, $this->cObj);
 		}
 

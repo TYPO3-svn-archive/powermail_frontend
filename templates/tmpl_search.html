@@ -61,6 +61,12 @@ SEARCHFIELD list
 
 <!-- ###POWERMAILFE_FILTER_SEARCH### begin -->
   <div class="powermailfe_filter powermailfe_filter_search">
+	<script type="text/javascript" language="javascript">
+		var powermail_frontend_reset = function (e) {
+			$(e).append('<input type="hidden" name="tx_powermailfrontend_pi1[filter][reset]" value="1" />');
+			$(e.form).submit();
+		}
+	</script>
     <form action="###POWERMAILFE_SEARCH_ACTION###" method="post">
       <fieldset class="powermailfe_search_fieldset">
         <legend>###POWERMAILFE_LL_SEARCHTITLE###</legend>
@@ -70,7 +76,8 @@ SEARCHFIELD list
           ###FIELD###
         </div>
       <!-- ###ITEM### --><!-- ###CONTENT### -->
-      <input type="submit" value="###POWERMAILFE_LL_SEARCHSUBMIT###" class="powermailfe_filter_submit" />
+		<input type="submit" value="###POWERMAILFE_LL_SEARCHSUBMIT###" class="powermailfe_filter_submit" />
+		<input type="button" value="###POWERMAILFE_LL_SEARCHRESET###" class="powermailfe_filter_reset" onclick="powermail_frontend_reset(this);" />
       </fieldset>
     </form>
   </div>

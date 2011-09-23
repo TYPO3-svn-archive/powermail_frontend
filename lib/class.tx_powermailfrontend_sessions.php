@@ -80,6 +80,22 @@ class tx_powermailfrontend_sessions extends tslib_pibase {
 	}
 
 
+	/** Function deleteSession() to delete all session data
+	 *
+	 * @param	array	$conf: Typoscript configuration
+	 * @param	object	$cObj: Content object
+	 * @return	void
+	 */
+	public function deleteSession($conf, $cObj) {
+		// conf
+		$this->conf = $conf;
+		$this->cObj = $cObj;
+
+		$GLOBALS['TSFE']->fe_user->setKey('ses', $this->extKey . '_' . ($this->cObj->data['_LOCALIZED_UID'] > 0 ? $this->cObj->data['_LOCALIZED_UID']
+				: $this->cObj->data['uid']), array()); // Overwrite Session with empty array
+		$GLOBALS['TSFE']->storeSessionData(); // Save session
+	}
+
 	/**
 	 * Apply the function "urldecode" on all values in the incomming array.
 	 * Is the proceeded value always an array, this method will be called recursive.

@@ -17,6 +17,7 @@
 			<label index="powermailfe_ll_searchtitle">Search/Filter</label>
 			<label index="powermailfe_ll_search_choose">Please choose...</label>
 			<label index="powermailfe_ll_searchsubmit">Start search</label>
+			<label index="powermailfe_ll_searchreset">Reset filter</label>
 			<label index="powermailfe_ll_abclist_all">All</label>
 			<label index="powermailfe_ll_abclist_numbers">0-9</label>
 			<label index="powermailfe_ll_edit_submit">Save changes</label>
@@ -45,6 +46,7 @@
 			<label index="powermailfe_ll_searchtitle">Suche nach einem Begriff</label>
 			<label index="powermailfe_ll_search_choose">Bitte wählen...</label>
 			<label index="powermailfe_ll_searchsubmit">Suche beginnen</label>
+			<label index="powermailfe_ll_searchreset">Filter zurücksetzen</label>
 			<label index="powermailfe_ll_abclist_all">Alle</label>
 			<label index="powermailfe_ll_abclist_numbers">0-9</label>
 			<label index="powermailfe_ll_edit_submit">Änderungen speichern</label>
