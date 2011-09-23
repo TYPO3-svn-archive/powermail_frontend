@@ -56,10 +56,10 @@ class tx_powermailfrontend_edit extends tslib_pibase {
 		
 		if ($this->piVars['edit'] > 0) { // only if GET param show was set
 			
-			if (empty($this->piVars['change']['uid'])) { // no values to save, so show form
+			if (!$this->div->allowed($this->piVars['edit'], $this->conf)) { // current user is allowed to make changes
+
+				if (empty($this->piVars['change']['uid'])) { // no values to save, so show form
 			
-				if (!$this->div->allowed($this->piVars['edit'], $this->conf)) { // current user is allowed to make changes
-					
 					// Get XML to current entry
 					$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
 						'uid, piVars, crdate, recipient, subject_r, sender, senderIP',
@@ -107,59 +107,58 @@ class tx_powermailfrontend_edit extends tslib_pibase {
 					$this->content = $this->cObj->substituteMarkerArrayCached($this->tmpl[$this->mode]['all'], $this->markerArray, $subpartArray, $this->wrappedSubpartArray); // Get html template
 					$this->content = $this->dynamicMarkers->main($this->conf, $this->cObj, $this->content); // Fill dynamic locallang or typoscript markers
 					if (!empty($this->content)) return $this->content; // return HTML
-				
-				} else {
+
+				} else { // saving values to database
+
+					// 1. Get vars from GET and clean them
+					$this->uid = intval($this->piVars['change']['uid']); // uid of entry
+					unset($this->piVars['change']['uid']); // delete uid from array
+					$this->newvars = t3lib_div::_GP('tx_powermail_pi1');
+					$this->newvars = $this->sec->sec($this->newvars); // overwrite piVars from doorman class
+
+					// 2. Get values from Database
+					$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
+						'uid, piVars, crdate, recipient, subject_r, sender, senderIP',
+						'tx_powermail_mails',
+						$where_clause = 'tx_powermail_mails.uid = ' . $this->uid . $this->cObj->enableFields('tx_powermail_mails'),
+						$groupBy = '',
+						$orderBy = '',
+						$limit = 1
+					);
+					if ($res) $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res); // Result in array
+					$row['piVars'] = t3lib_div::convUmlauts($row['piVars']); // rename not allowed signs
+					$this->vars = t3lib_div::xml2array($row['piVars'], 'pivars'); // xml to array
+					if (!is_array($this->vars)) $this->vars = utf8_encode(t3lib_div::xml2array($row['piVars'], 'pivars')); // xml to array
+
+					// 3. overwrite values with new values
+					$this->vars = array_merge((array) $this->vars, (array) $this->newvars); // overwrite old with new values
+					$this->xml = t3lib_div::array2xml($this->vars, '', 0, 'piVars'); // change back to xml
+					$this->hook_pmfe_edit_save(); // hook for manipulation
+					if ($this->dbInsert) $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_powermail_mails', 'uid = '.$this->uid, array('piVars' => $this->xml)); // update entry in database
+					else t3lib_div::debug($this->vars, 'This values should be stored');
+
+					$this->markerArray['###POWERMAILFE_SUCCESS_MESSAGE###'] = $this->pi_getLL('edit_updateSuccess', 'Success!');
+					// build link to list page
+					$listLinkConf = array(
+						'parameter' => ($this->conf['list.']['pid'] > 0 ? $this->conf['list.']['pid'] : $GLOBALS['TSFE']->id) . '#powermailfe_listitem_' . $row['uid'],
+						'useCacheHash' => 1
+					);
+					if (intval($piVars['pointer']) > 0) {
+						$listLinkConf['additionalParams'] = '&' . $this->prefixId . '[pointer]=' . intval($piVars['pointer']);
+					}
+					$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_LISTLINK###'] = $this->cObj->typolinkWrap($listLinkConf); // List Link
+
+					$this->tmpl[$this->mode]['success'] = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['template.'][$this->mode]), '###POWERMAILFE_' . strtoupper($this->mode) . '_SUCCESS###'); // Load HTML Template
+
+					$this->content = $this->cObj->substituteMarkerArrayCached($this->tmpl[$this->mode]['success'], $this->markerArray, NULL, $this->wrappedSubpartArray); // Get html template
+					$this->content = $this->dynamicMarkers->main($this->conf, $this->cObj, $this->content); // Fill dynamic locallang or typoscript markers
+
+					return $this->content;
+				}
+			} else {
 					return $this->div->allowed($this->piVars['edit'], $this->conf); // return error message
-				}
-			
-			} else { // saving values to database
-			
-				// 1. Get vars from GET and clean them
-				$this->uid = intval($this->piVars['change']['uid']); // uid of entry
-				unset($this->piVars['change']['uid']); // delete uid from array
-				$this->newvars = t3lib_div::_GP('tx_powermail_pi1');
-				$this->newvars = $this->sec->sec($this->newvars); // overwrite piVars from doorman class
-				
-				// 2. Get values from Database
-				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
-					'uid, piVars, crdate, recipient, subject_r, sender, senderIP',
-					'tx_powermail_mails',
-					$where_clause = 'tx_powermail_mails.uid = ' . $this->uid . $this->cObj->enableFields('tx_powermail_mails'),
-					$groupBy = '',
-					$orderBy = '',
-					$limit = 1
-				);
-				if ($res) $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res); // Result in array
-				$row['piVars'] = t3lib_div::convUmlauts($row['piVars']); // rename not allowed signs
-				$this->vars = t3lib_div::xml2array($row['piVars'], 'pivars'); // xml to array
-				if (!is_array($this->vars)) $this->vars = utf8_encode(t3lib_div::xml2array($row['piVars'], 'pivars')); // xml to array
-				
-				// 3. overwrite values with new values
-				$this->vars = array_merge((array) $this->vars, (array) $this->newvars); // overwrite old with new values
-				$this->xml = t3lib_div::array2xml($this->vars, '', 0, 'piVars'); // change back to xml
-				$this->hook_pmfe_edit_save(); // hook for manipulation
-				if ($this->dbInsert) $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_powermail_mails', 'uid = '.$this->uid, array('piVars' => $this->xml)); // update entry in database
-				else t3lib_div::debug($this->vars, 'This values should be stored');
-				
-				$this->markerArray['###POWERMAILFE_SUCCESS_MESSAGE###'] = $this->pi_getLL('edit_updateSuccess', 'Success!');
-				// build link to list page
-				$listLinkConf = array(
-					'parameter' => ($this->conf['list.']['pid'] > 0 ? $this->conf['list.']['pid'] : $GLOBALS['TSFE']->id) . '#powermailfe_listitem_' . $row['uid'],
-					'useCacheHash' => 1
-				);
-				if (intval($piVars['pointer']) > 0) {
-					$listLinkConf['additionalParams'] = '&' . $this->prefixId . '[pointer]=' . intval($piVars['pointer']);
-				}
-				$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_LISTLINK###'] = $this->cObj->typolinkWrap($listLinkConf); // List Link
-
-				$this->tmpl[$this->mode]['success'] = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['template.'][$this->mode]), '###POWERMAILFE_' . strtoupper($this->mode) . '_SUCCESS###'); // Load HTML Template
-
-				$this->content = $this->cObj->substituteMarkerArrayCached($this->tmpl[$this->mode]['success'], $this->markerArray, NULL, $this->wrappedSubpartArray); // Get html template
-				$this->content = $this->dynamicMarkers->main($this->conf, $this->cObj, $this->content); // Fill dynamic locallang or typoscript markers
-
-				return $this->content;
 			}
-			
+
 		}
 		
     }
