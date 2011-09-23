@@ -109,7 +109,7 @@ class tx_powermailfrontend_edit extends tslib_pibase {
 					if (!empty($this->content)) return $this->content; // return HTML
 				
 				} else {
-					return $this->div->allowed($this->piVars['edit'], $this->conf); // return errormessage
+					return $this->div->allowed($this->piVars['edit'], $this->conf); // return error message
 				}
 			
 			} else { // saving values to database
@@ -141,8 +141,23 @@ class tx_powermailfrontend_edit extends tslib_pibase {
 				if ($this->dbInsert) $GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_powermail_mails', 'uid = '.$this->uid, array('piVars' => $this->xml)); // update entry in database
 				else t3lib_div::debug($this->vars, 'This values should be stored');
 				
-				return $this->pi_getLL('edit_updateSuccess', 'Success!'); // success msg
-				
+				$this->markerArray['###POWERMAILFE_SUCCESS_MESSAGE###'] = $this->pi_getLL('edit_updateSuccess', 'Success!');
+				// build link to list page
+				$listLinkConf = array(
+					'parameter' => ($this->conf['list.']['pid'] > 0 ? $this->conf['list.']['pid'] : $GLOBALS['TSFE']->id) . '#powermailfe_listitem_' . $row['uid'],
+					'useCacheHash' => 1
+				);
+				if (intval($piVars['pointer']) > 0) {
+					$listLinkConf['additionalParams'] = '&' . $this->prefixId . '[pointer]=' . intval($piVars['pointer']);
+				}
+				$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_LISTLINK###'] = $this->cObj->typolinkWrap($listLinkConf); // List Link
+
+				$this->tmpl[$this->mode]['success'] = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['template.'][$this->mode]), '###POWERMAILFE_' . strtoupper($this->mode) . '_SUCCESS###'); // Load HTML Template
+
+				$this->content = $this->cObj->substituteMarkerArrayCached($this->tmpl[$this->mode]['success'], $this->markerArray, NULL, $this->wrappedSubpartArray); // Get html template
+				$this->content = $this->dynamicMarkers->main($this->conf, $this->cObj, $this->content); // Fill dynamic locallang or typoscript markers
+
+				return $this->content;
 			}
 			
 		}
