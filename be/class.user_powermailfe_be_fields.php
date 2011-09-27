@@ -34,7 +34,7 @@ class user_powermailfe_be_fields {
 		}
 
 		if ($params['config']['itemsProcFunc_config']['mode'] == 'fields') {
-			$params['config']['itemsProcFunc_config']['mode'] = ($ffPiVars['data']['edit']['lDEF']['fieldsmode']['vDEF'] == 'mails' || $ffPiVars['data']['edit']['lDEF']['fieldsmode']['vDEF'] == '') ? 'mailFields' : 'formFields';
+			$params['config']['itemsProcFunc_config']['mode'] = ($ffPiVars['data']['mainconfig']['lDEF']['fieldsmode']['vDEF'] == 'mails' || $ffPiVars['data']['mainconfig']['lDEF']['fieldsmode']['vDEF'] == '') ? 'mailFields' : 'formFields';
 		}
 
 		switch ($params['config']['itemsProcFunc_config']['mode']) {
@@ -117,7 +117,7 @@ class user_powermailfe_be_fields {
 
 			case 'formFields':
 
-				$powermailUid = intval($ffPiVars['data']['edit']['lDEF']['powermailuid']['vDEF']);
+				$powermailUid = intval($ffPiVars['data']['mainconfig']['lDEF']['powermailuid']['vDEF']);
 
 				// SQL query
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query

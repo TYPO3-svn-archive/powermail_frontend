@@ -41,7 +41,7 @@ class user_powermailfrontend_pagebrowser extends tslib_pibase {
 		$conf['userFunc.']['pointer'] = 0;
 
 		// let's go
-		for($i = 0; $i < ceil($conf['userFunc.']['overall'] / $conf['userFunc.']['perPage']); $i++) { // one loop for every page
+		for($i = 0; $i < ceil($conf['userFunc.']['numberOfMails'] / $conf['userFunc.']['perPage']); $i++) { // one loop for every page
 			if ($conf['userFunc.']['pointer'] == intval($this->piVars['pointer'])) { // act status for menu
 				$menuarray[$i]['ITEM_STATE'] = 'ACT';
 			}

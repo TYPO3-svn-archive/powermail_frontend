@@ -26,7 +26,9 @@ require_once(PATH_tslib . 'class.tslib_pibase.php');
 require_once(t3lib_extMgm::extPath('powermail_frontend') . 'lib/class.tx_powermailfrontend_markers.php'); // load marker class
 require_once(t3lib_extMgm::extPath('powermail_frontend') . 'lib/class.tx_powermailfrontend_dynamicmarkers.php'); // file for dynamicmarker functions
 require_once(t3lib_extMgm::extPath('powermail_frontend') . 'lib/class.tx_powermailfrontend_div.php'); // load div class
+require_once(t3lib_extMgm::extPath('powermail_frontend') . 'lib/class.tx_powermailfrontend_mails_filter.php'); // load mails filter class
 require_once(t3lib_extMgm::extPath('powermail_frontend') . 'lib/class.tx_powermailfrontend_pagebrowser.php'); // load pagebrowser class
+require_once(t3lib_extMgm::extPath('powermail_frontend') . 'lib/class.tx_powermailfrontend_sessions.php'); // load sessions class
 
 class tx_powermailfrontend_list extends tslib_pibase {
 
@@ -46,11 +48,12 @@ class tx_powermailfrontend_list extends tslib_pibase {
 	public function main($conf, $piVars, $cObj) {
 		// Config
     	$this->cObj = $cObj; // cObject
+
 		$this->conf = $conf;
 		$this->piVars = $piVars;
 		$this->pi_loadLL();
 		$this->pi_initPIflexForm();
-		$this->outerMarkerArray = $this->wrappedSubpartArray = $this->wrappedSubpartArrayOuter = $rowArray = $piVars_array = array(); 
+		$this->outerMarkerArray = $this->wrappedSubpartArray = $this->wrappedSubpartArrayOuter = $mailsArray = $piVars_array = array(); 
 		$this->content = $content_item = $row = $res = '';
 		$this->markers = t3lib_div::makeInstance('tx_powermailfrontend_markers'); // Create new instance for markers class
 		$this->dynamicMarkers = t3lib_div::makeInstance('tx_powermailfrontend_dynamicmarkers'); // New object: TYPO3 dynamicmarker function
@@ -58,13 +61,14 @@ class tx_powermailfrontend_list extends tslib_pibase {
 		$this->pagebrowser = t3lib_div::makeInstance('tx_powermailfrontend_pagebrowser'); // Create new instance for pagebrowser class
 		$this->tmpl[$this->mode]['all'] = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['template.'][$this->mode]),'###POWERMAILFE_' . strtoupper($this->mode) . '###'); // Load HTML Template
 		$this->tmpl[$this->mode]['item'] = $this->cObj->getSubpart($this->tmpl[$this->mode]['all'], '###ITEM_' . strtoupper($this->mode) . '###'); // work on subpart 2
-		
+		$this->sessions = t3lib_div::makeInstance('tx_powermailfrontend_sessions'); // New object: session functions
+
 		// Let's go
 		$this->del = $this->div->delEntry($this); // delete entry if needed
 		if (empty($this->piVars['show']) && empty($this->piVars['edit'])) { // don't show list in single mode
 				
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
-				$this->where['select'] = 'uid, piVars, crdate, recipient, subject_r, sender, senderIP, uploadPath',
+				$this->where['select'] = 'uid, pid, piVars, crdate, recipient, subject_r, sender, senderIP, uploadPath',
 				$this->where['from'] = 'tx_powermail_mails',
 				$this->where['where'] = $this->div->addWhereClause($this),
 				$this->where['groupby'] = '',
@@ -72,47 +76,67 @@ class tx_powermailfrontend_list extends tslib_pibase {
 				$this->where['limit'] = $this->conf['query.']['limit']
 			);
 			
-			// 1. write xml values to an array
-			if ($res) { // If there is a result
-				while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) { // One loop for every tx_powermail_mails entry
+			if ($res !== false) { // If there is a result
+				while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) { // One loop for every matching tx_powermail_mails entry
+					// write xml values to an array
 					$row['piVars'] = t3lib_div::convUmlauts($row['piVars']); // rename not allowed signs
 					$piVars_array = t3lib_div::xml2array($row['piVars'], 'pivars'); // xml to array
 					if (!is_array($piVars_array)) $piVars_array = utf8_encode(t3lib_div::xml2array($row['piVars'], 'pivars')); // xml to array
 					unset($row['piVars']); // delete piVars from row array
-					$rowArray[] = array_merge((array) $piVars_array, (array) $row); // set array
+					$mailsArray[] = array_merge((array) $piVars_array, (array) $row); // set array
 				}
-			}
-			// 2. sort array and split array in parts for pagebrowser
-			$rowArray = $this->div->sortArray($rowArray, $this->conf, $this->mode, $this->piVars); // sort and filter array as wanted (e.g. settings via constants)
-			$this->overall = count($rowArray); // overall numbers of items
-			$rowArray = array_chunk($rowArray, $this->conf[$this->mode . '.']['perPage']); // split array in parts for pagebrowser
-			$this->hook_pmfe_list($rowArray); // hook for array manipulation
-			
-			// 3. substitute markerArray in loop
-			for ($i = 0; $i < count($rowArray[($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0)]); $i++) { // One loop for every tx_powermail_mails entry
-				$this->markerArray = $this->markers->makeMarkers($this->conf, $rowArray[($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0)][$i], $this->piVars, $this->cObj, $this->mode); // markerArray fill
-				$this->markerArray['###ALTERNATE###'] = ($this->div->alternate($i) ? 'odd' : 'even'); // odd or even
-				$this->markerArray['###UID###'] = $rowArray[($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0)][$i]['uid']; // UID of current mail
+				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 
-				if ( // min one feuser or min one group should be enabled AND current entry is allowed to be edited from current user
-					(!empty($conf['edit.']['feuser']) || !empty($conf['edit.']['fegroup'])) && 
-					!$this->div->allowed($rowArray[($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0)][$i]['uid'], $this->conf)
-				) 
-				{
-					$this->markerArray['###POWERMAILFE_EDITLINKTEXT###'] = $this->pi_getLL('edit_label', 'Edit entry'); // edit label
-					$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_EDITLINK###'] = $this->cObj->typolinkWrap( array('parameter' => ($this->conf['edit.']['pid'] > 0 ? $this->conf['edit.']['pid'] : $GLOBALS['TSFE']->id), 'additionalParams' => '&' . $this->prefixId . '[edit]=' . $rowArray[($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0)][$i]['uid'], 'useCacheHash' => 1) ); // Edit Link
-				} else { // Edit is not allowed
-					$this->markerArray['###POWERMAILFE_EDITLINKTEXT###'] = ''; // clear label
-					$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_EDITLINK###'] = array(); // clear typolinkwrap
+				$this->filter = $this->sessions->getSession($this->conf, $this->cObj, 'filter');
+
+				$this->mailsfilter = t3lib_div::makeInstance('tx_powermailfrontend_mails_filter', $mailsArray, $this->conf, $this->mode, $this->cObj, $this->filter); // New object: mails filter functions
+
+				// filter array
+				$this->mailsfilter->filterArray();
+
+				// sort array
+				$this->mailsfilter->sortArray();
+
+				// write mail uids to session, needed for export feature
+				$this->mailsfilter->writeMailUidsToSession();
+
+				$mailsArray = $this->mailsfilter->getResult();
+
+				$this->numberOfMails = count($mailsArray); // numberOfMails numbers of items
+				$mailsArray = array_chunk($mailsArray, $this->conf[$this->mode . '.']['perPage']); // split array in parts for pagebrowser
+				$this->hook_pmfe_list($mailsArray); // hook for array manipulation
+
+
+
+				// 3. substitute markerArray in loop
+				for ($i = 0; $i < count($mailsArray[($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0)]); $i++) { // One loop for every tx_powermail_mails entry
+					$this->markerArray = $this->markers->makeMarkers($this->conf, $mailsArray[($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0)][$i], $this->piVars, $this->cObj, $this->mode); // markerArray fill
+					$this->markerArray['###ALTERNATE###'] = ($this->div->alternate($i) ? 'odd' : 'even'); // odd or even
+					$this->markerArray['###UID###'] = $mailsArray[($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0)][$i]['uid']; // UID of current mail
+
+					if ( // min one feuser or min one group should be enabled AND current entry is allowed to be edited from current user
+						(!empty($conf['edit.']['feuser']) || !empty($conf['edit.']['fegroup'])) &&
+						!$this->div->feuserHasAccess($mailsArray[($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0)][$i]['uid'], $this->conf)
+					)
+					{
+						$this->markerArray['###POWERMAILFE_EDITLINKTEXT###'] = $this->pi_getLL('edit_label', 'Edit entry'); // edit label
+						$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_EDITLINK###'] = $this->cObj->typolinkWrap( array('parameter' => ($this->conf['edit.']['pid'] > 0 ? $this->conf['edit.']['pid'] : $GLOBALS['TSFE']->id), 'additionalParams' => '&' . $this->prefixId . '[edit]=' . $mailsArray[($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0)][$i]['uid'] . ($this->piVars['pointer'] > 0 ? '&' .$this->prefixId . '[pointer]=' . $this->piVars['pointer'] : ''), 'useCacheHash' => 1) ); // Edit Link
+					} else { // Edit is not allowed
+						$this->markerArray['###POWERMAILFE_EDITLINKTEXT###'] = ''; // clear label
+						$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_EDITLINK###'] = array(); // clear typolinkwrap
+					}
+
+					$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_DETAILLINK###'] = $this->cObj->typolinkWrap( array('parameter' => ($this->conf['single.']['pid'] > 0 ? $this->conf['single.']['pid'] : $GLOBALS['TSFE']->id), 'additionalParams' => '&' . $this->prefixId . '[show]=' . $mailsArray[($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0)][$i]['uid'] . ($this->piVars['pointer'] > 0 ? '&' .$this->prefixId . '[pointer]=' . $this->piVars['pointer'] : ''), 'useCacheHash' => 1) ); // Detail Link
+
+					$content_item .= $this->cObj->substituteMarkerArrayCached($this->tmpl[$this->mode]['item'], $this->markerArray, array(), $this->wrappedSubpartArray);
 				}
-				
-				$this->wrappedSubpartArray['###POWERMAILFE_SPECIAL_DETAILLINK###'] = $this->cObj->typolinkWrap( array('parameter' => ($this->conf['single.']['pid'] > 0 ? $this->conf['single.']['pid'] : $GLOBALS['TSFE']->id), 'additionalParams' => '&' . $this->prefixId . '[show]=' . $rowArray[($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0)][$i]['uid'] . ($this->piVars['pointer'] > 0 ? '&' .$this->prefixId . '[pointer]=' . $this->piVars['pointer'] : ''), 'useCacheHash' => 1) ); // Detail Link
-				
-				$content_item .= $this->cObj->substituteMarkerArrayCached($this->tmpl[$this->mode]['item'], $this->markerArray, array(), $this->wrappedSubpartArray);
+
+				$subpartArray['###CONTENT_' . strtoupper($this->mode) . '###'] = $content_item;
+				$this->num = $i; // whole numbers of entries in current page
+			} else {
+				$this->num = 0;
+				$subpartArray['###CONTENT_' . strtoupper($this->mode) . '###'] = 'Keine Daten gefunden';
 			}
-			
-			$subpartArray['###CONTENT_' . strtoupper($this->mode) . '###'] = $content_item;
-			$this->num = $i; // whole numbers of entries in current page
 			$this->additionalMarker(); // fill additional markers
 			
 			$this->content = $this->cObj->substituteMarkerArrayCached($this->tmpl[$this->mode]['all'], $this->outerMarkerArray, $subpartArray, $this->wrappedSubpartArrayOuter); // Get html template
@@ -130,7 +154,7 @@ class tx_powermailfrontend_list extends tslib_pibase {
 	* @return 	void
 	*/
 	private function additionalMarker() {
-		$this->outerMarkerArray['###POWERMAILFE_PAGEBROWSER###'] = $this->pagebrowser->main($this->conf, $this->piVars, $this->cObj, array('overall' => $this->overall, 'overall_cur' => $this->num, 'pointer' => ($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0), 'perPage' => $this->conf[$this->mode . '.']['perPage'])); // Show pagebrowser
+		$this->outerMarkerArray['###POWERMAILFE_PAGEBROWSER###'] = $this->pagebrowser->main($this->conf, $this->piVars, $this->cObj, array('numberOfMails' => $this->numberOfMails, 'numberOfMails_cur' => $this->num, 'pointer' => ($this->piVars['pointer'] > 0 ? $this->piVars['pointer'] : 0), 'perPage' => $this->conf[$this->mode . '.']['perPage'])); // Show pagebrowser
 		if ($this->del) { // if something was deleted and only then
 			$this->outerMarkerArray['###POWERMAILFE_DELETEMSG###'] = $this->cObj->cObjGetSingle($this->conf['edit.']['deletemsg'], $this->conf['edit.']['deletemsg.']); // show delete message
 		}
@@ -142,15 +166,29 @@ class tx_powermailfrontend_list extends tslib_pibase {
 	*
 	* @return 	void
 	*/
-	private function hook_pmfe_list(&$rowArray) {
+	private function hook_pmfe_list(&$mailsArray) {
 		if(is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey][$this->mode])) { // Adds hook for processing
 			foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey][$this->mode] as $_classRef) {
 				$_procObj = & t3lib_div::getUserObj($_classRef);
-				$_procObj->pmfe_list($rowArray, $this->conf, $this->piVars, $this); // Get new marker Array from other extensions
+				$_procObj->pmfe_list($mailsArray, $this->conf, $this->piVars, $this); // Get new marker Array from other extensions
 			}
 		}
 	}
 	
+	/**
+	* Add a hook to change output of export
+	*
+	* @return 	void
+	*/
+	private function hook_pmfe_export(&$mailsArray) {
+		if(is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey][$this->mode])) { // Adds hook for processing
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey][$this->mode] as $_classRef) {
+				$_procObj = & t3lib_div::getUserObj($_classRef);
+				$_procObj->pmfe_list($mailsArray, $this->conf, $this->piVars, $this); // Get new marker Array from other extensions
+			}
+		}
+	}
+
 }
 
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_frontend/pi1/class.tx_powermailfrontend_list.php'])	{

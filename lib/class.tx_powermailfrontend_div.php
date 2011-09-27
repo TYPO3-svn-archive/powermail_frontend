@@ -37,6 +37,8 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	* @return 	string	title
 	*/
 	public function getTitle($uid) {
+
+		$title = $uid;
 		// SQL query
 		if (is_numeric($this->minimize($uid))) { // only if uid4 given
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
@@ -47,10 +49,14 @@ class tx_powermailfrontend_div extends tslib_pibase {
 				$orderBy = '',
 				$limit = 1
 			);
-			if ($res) $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+			if ($res !== false) {
+				$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+				$GLOBALS['TYPO3_DB']->sql_free_result($res);
+				$title = $row['title'];
+			}
 		}
-		
-		if ($row['title']) return $row['title'];
+
+		return $title;
 	}
 	
 	/**
@@ -113,256 +119,24 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	}
 	
 	/**
-	* Function overall() returns whole number of powermails
+	* Function numberOfMails() returns number of powermails
 	*
 	* @param 	array 	$where: array with whole select string
 	* @return 	integer	number of all mails
 	*/
-	public function overall($where) {
-		$this->where = $where;
-		
+	public function numberOfMails($where) {
+		$num = 0;
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
-			$this->where['select'],
-			$this->where['from'],
-			$this->where['where'],
-			$this->where['groupby'],
-			$this->where['orderby'],
-			''
+			$where['select'],
+			$where['from'],
+			$where['where'],
+			$where['groupby'],
+			$where['orderby']
 		);
-		$this->num = $GLOBALS['TYPO3_DB']->sql_num_rows ($res); // numbers of all entries
-		
-		if (!empty($this->num)) return $this->num;
-	}
-	
-	/**
-	* Function sortArray() sorts piVars array
-	*
-	* @param 	array 	$array: whole array to sort
-	* @param 	array 	$conf: TS configuration
-	* @param 	string 	$mode: list, detail, latest
-	* @param 	array 	$piVars: piVars from GET or POST request
-	* @return 	array	new array
-	*/
-	public function sortArray($array, $conf, $mode, $piVars) {
-		// config
-		$this->conf = $conf; // ts and flexform configuration
-		$this->mode = $mode; // given mode (list or latest)
-		$this->piVars = $piVars; // given piVars
-		$this->varray = $array; // array with all variables
-		$this->sort = $this->conf[$this->mode . '.']['orderby']; // sorting
-		if (!empty($this->piVars['sort'])) { // sort from piVars
-			foreach ((array) $this->piVars['sort'] as $key => $value) { // one loop for every sorting entry
-				$this->sort = strtolower($key . ' ' . $value);
-				break; // take first entry and stop loop
-			}
+		if ($res !== false) {
+			$num = $GLOBALS['TYPO3_DB']->sql_num_rows($res); // numbers of all entries
 		}
-		$this->limit = $this->conf[$this->mode . '.']['limit']; // limit
-		$this->filter(); // clears $array
-		
-		// let's go
-		if ($this->conf[$this->mode . '.']['orderby']) usort($this->varray, array('tx_powermailfrontend_div', 'cmp')); // sorting
-		
-		return $this->varray;
-	}
-	
-	/**
-	* Function cmp is a compare function for usort
-	*
-	* @param 	array 	$a: first array
-	* @param 	array 	$b: second array
-	* @return 	boolean
-	*/
-	public function cmp($a, $b) {
-		// config
-		$conf_orderby = t3lib_div::trimExplode(' ', $this->sort, 1); // split on space
-		
-		// let's go
-		$return = strcmp($a[$conf_orderby[0]], $b[$conf_orderby[0]]); // give me 0 or 1 or -1
-		if (strtolower($conf_orderby[1]) == 'desc' && $return !== 0) $return *= -1; // if DESC than change 1 to -1 OR -1 to 1
-		
-		return $return;
-	}
-	
-	/**
-	* changes filter
-	*
-	* @return 	void
-	*/
-	public function filter() {
-		// config
-		$del_listitem = $newArray = $removeFilterPiVars = array();
-		$j = 0;
-		$emptyFormSubmited = true;
-
-		// let's go
-		// 1. if limit set, cut array
-		if ($this->limit > 0) {
-			$this->varray = array_slice($this->varray, 0, $this->limit); // give me only the first X entries of the array
-		}
-		
-		// 2. if new mode is set, clear old values
-		if (!empty($this->conf[$this->mode . '.']['new'])) { // if new mode was set
-			for ($i = 0; $i < count($this->varray); $i++) { // one loop for every list item
-				if ($this->varray[$i][$this->conf[$this->mode . '.']['new']] > time()) { // if this value is greater than today
-					$newArray[] = $this->varray[$i];
-				}
-			}
-			$this->varray = array(); // clear old array
-			$this->varray = $newArray; // define old array
-			$newArray = array(); // clear temp array
-		}
-
-		if (!empty($this->piVars['filter']) && count($this->piVars['filter']) > 0) {
-			foreach ($this->piVars['filter'] as $key => $value) { // one loop for every filter
-				if (!empty($value)) {
-					$emptyFormSubmited = false;
-				}
-				if($value[0] == '*') {
-					$removeFilterPiVars[] .= $key;
-				}
-			}
-		} else {
-			$emptyFormSubmited = false;
-		}
-
-		if (!$emptyFormSubmited) { // if no filter parameter is found in piVars, get filter values from session
-			$this->sessions = t3lib_div::makeInstance('tx_powermailfrontend_sessions'); // New object: session functions
-			$this->piVars['filter'] = $this->sessions->getSession($this->conf, $this->cObj);
-		}
-
-		if (count($removeFilterPiVars) > 0) {
-			foreach($removeFilterPiVars as $filterPiVar) {
-				unset($this->piVars['filter'][$filterPiVar]);
-			}
-			$this->sessions->setSession($this->conf, $this->piVars['filter'], $this->cObj, true);
-		}
-
-		// 3. filter array
-		if (!empty($this->piVars['filter']) && count($this->piVars['filter']) > 0) { // if there are some filter
-			foreach ($this->piVars['filter'] as $key => $value) { // one loop for every filter
-				if (!empty($value)) {
-
-					for ($i = 0; $i < count($this->varray); $i++) { // one loop for every list item
-					
-						if ($key != '_all') { // search in a specified field
-							$del_listitem[$i] = 0; // not to delete is default
-							if (!array_key_exists($key, $this->varray[$i])) {
-								$del_listitem[$i] = 1; // in current list item is not the field which should be filtered - so delete
-							}
-								if ($del_listitem[$i] === 0) { // only if this listitem should not be deleted
-								foreach ($this->varray[$i] as $key2 => $value2) { // one loop for every piVar in current list item
-									if ($key == $key2) { // if current uid is the uid which should be filtered
-										switch (strtolower($value[0])) {
-											case '@': // filter with beginning number
-												if (!is_numeric($value2[0])) {
-													$del_listitem[$i] = 1; // this value don't start with a number
-												}
-												break;
-											
-											case 'a': // filter with beginning letter
-											case 'b':
-											case 'c':
-											case 'd':
-											case 'e':
-											case 'f':
-											case 'g':
-											case 'h':
-											case 'i':
-											case 'j':
-											case 'k':
-											case 'l':
-											case 'm':
-											case 'n':
-											case 'o':
-											case 'p':
-											case 'q':
-											case 'r':
-											case 's':
-											case 't':
-											case 'u':
-											case 'v':
-											case 'w':
-											case 'x':
-											case 'y':
-											case 'z':
-											default:
-												if (strlen($value) == 1) { // only one letter given
-													if (strtolower($value2[0]) != $value) {
-														$del_listitem[$i] = 1; // this value don't start with the right letter
-													}
-												} else { // searchword given
-													if (is_array($value2)) { // second level
-														$tmp_del = 1;
-														foreach ($value2 as $key4 => $value4) {
-															if (stristr(strtolower($value4), strtolower($value))) {
-																$tmp_del = 0;
-																break;
-															}
-														}
-														if ($tmp_del) {
-															$del_listitem[$i] = 1; // this var is not in the value
-														}
-													} else { // first level
-														if (strpos(strtolower($value2), strtolower($value)) === false) {
-															$del_listitem[$i] = 1; // this var is not in the value
-														}
-													}
-												}
-												break;
-										}
-									} 
-								}
-							}
-							
-						} else { // overall search
-							$del_listitem[$i] = 1; // delete is default
-							foreach ($this->varray[$i] as $key2 => $value2) { // one loop for every piVar in current list item
-								if (strpos(strtolower($value2), strtolower($value)) !== false) $del_listitem[$i] = 0; // Match, so don't delete
-							}
-						}
-						
-					}
-				}
-			}
-			
-			foreach ($this->varray as $key3 => $value3) { // finally sort it 
-				if (!$del_listitem[$j]) {
-					$newArray[] = $value3; // fill into a new array
-				}
-				
-				$j++; // increase counter
-			}
-
-			if ($this->conf['filterAnd'] == 1) {
-				foreach ($newArray as $searchResultIndex => $searchResult) {
-					$and = true;
-					foreach ($this->piVars['filter'] as $filterName => $filterValue) { // one loop for every filter
-						if ($filterValue != '') {
-							if ($filterName == '_all') {
-								$and = false;
-								foreach ($searchResult as $resultKey => $resultValue) {
-									if ((strpos(strtolower($searchResult[$resultKey]), strtolower($filterValue)) !== false) || (strlen($filterValue) == 1 && strpos(strtolower($searchResult[$resultKey]), strtolower($filterValue)) == 0)) {
-										$and = true;
-										break;
-									}
-								}
-							} else {
-								if ((strpos(strtolower($searchResult[$filterName]), strtolower($filterValue)) === false) || (strlen($filterValue) == 1 && strpos(strtolower($searchResult[$filterName]), strtolower($filterValue)) != 0)) {
-									$and = false;
-									break;
-								}
-							}
-						}
-					}
-					if (!$and) {
-						unset($newArray[$searchResultIndex]);
-					}
-				}
-			}
-
-			unset($this->varray); // delete old array
-			$this->varray = $newArray; // fill into old array
-		}
+		return $num;
 	}
 	
 	/**
@@ -425,6 +199,7 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	* @return 	array	$row	Returns field array
 	*/
 	public function fieldDetails($uid) {
+		$ret = array();
 		if (strpos($uid, '_') === false) { // We don't want uids like ###UID33_0###
 			$uid = intval(preg_replace('/[^0-9]/', '', $uid)); // keep only the numbers to get the uid of powermail field
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
@@ -435,11 +210,15 @@ class tx_powermailfrontend_div extends tslib_pibase {
 				$orderBy = '',
 				$limit = 1
 			);
-			if ($res) $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-			if (is_array($row) && count($row) > 0) {
-				return $row;
+			if ($res !== false) {
+				$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+				if (is_array($row) && count($row) > 0) {
+					$ret = $row;
+				}
+				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 			}
 		}
+		return $ret;
 	}
 	
 	/**
@@ -449,13 +228,13 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	* @param 	array 	$conf	$this->conf
 	* @return 	string	$error	return Errormessage or void if no error
 	*/
-	public function allowed($uid, $conf) {
+	public function feuserHasAccess($uid, $conf) {
 		// config
 		$this->conf = $conf;
 		$this->pi_loadLL();
-		$error = 0; // no error at the beginning
-		$usersArrayConf = t3lib_div::trimExplode(',', $conf['edit.']['feuser'], 1); // array with all allowed users
-		$groupArrayConf = t3lib_div::trimExplode(',', $conf['edit.']['fegroup'], 1); // array with all allowed groups
+		$error = false; // no error at the beginning
+		$usersArrayConf = t3lib_div::trimExplode(',', $conf['edit.']['feuser'], 1); // array with all feuserHasAccess users
+		$groupArrayConf = t3lib_div::trimExplode(',', $conf['edit.']['fegroup'], 1); // array with all feuserHasAccess groups
 		if (is_numeric(array_search('owner', $usersArrayConf))) $usersArrayConf[array_search('owner', $usersArrayConf)] = $this->userID($uid, 'fe_users'); // replace "owner" with uid of owner
 		if (is_numeric(array_search('ownergroup', $groupArrayConf))) { // if one entry is "ownergroup"
 			$tmp_groupArray = $this->userID($uid, 'fe_groups'); // replace "ownergroup" with uid of group where the owner is listed
@@ -469,17 +248,17 @@ class tx_powermailfrontend_div extends tslib_pibase {
 		}
 		
 		// 2. check for editors
-		if (!empty($conf['edit.']['feuser']) || !empty($conf['edit.']['fegroup'])) { // if min a user or a group is allowed
+		if (!empty($conf['edit.']['feuser']) || !empty($conf['edit.']['fegroup'])) { // if min a user or a group is feuserHasAccess
 			if ($GLOBALS['TSFE']->fe_user->user['uid'] > 0) { // if a FE User is logged in
 				
 				// 1. check group
-				if (count(array_intersect($groupArray, $groupArrayConf)) == 0) { // if there is none of the groups allowed
-					$error = $this->pi_getLL('edit_error_forbiddenuser', 'Logged in user is not allowed to make changes!'); // msg: user is not allowed
+				if (count(array_intersect($groupArray, $groupArrayConf)) == 0) { // if there is none of the groups feuserHasAccess
+					$error = $this->pi_getLL('edit_error_forbiddenuser', 'Logged in user is not feuserHasAccess to make changes!'); // msg: user is not feuserHasAccess
 				}
 				
 				// 2. check user
-				if (in_array($GLOBALS['TSFE']->fe_user->user['uid'], $usersArrayConf)) { // if currently logged in user is allowed
-					$error = 0; // overwrite any error entries
+				if (in_array($GLOBALS['TSFE']->fe_user->user['uid'], $usersArrayConf)) { // if currently logged in user is feuserHasAccess
+					$error = false; // overwrite any error entries
 				}
 				
 			} else {
@@ -537,23 +316,23 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	}
 	
 	/**
-	* Cuts an array and returns only allowed values
+	* Cuts an array and returns only feuserHasAccess values
 	*
 	* @param 	array 	$vars			All variables from database to current powermail mail	array('uid3' => 'Alex')
-	* @param 	string 	$allowed		Commaseparated string with allowed uids 				(uid3,uid4)
+	* @param 	string 	$feuserHasAccessList		Commaseparated string with feuserHasAccess uids 				(uid3,uid4)
 	* @params	string	$fieldsmode		Defines mails / forms mode
 	* @params	int		$powermailuid	Powermail Uid who contains the fields to edit
 	* @return 	array	$vars			Return full array form input or only a part of it
 	*/
-	public function allowedUID($vars, $allowed, $fieldsmode = 'mails', $powermailUid = 0) {
-		$allowedArray = t3lib_div::trimExplode(',', $allowed, 1); // split allowed string to an array
+	public function feuserHasAccessUID($vars, $feuserHasAccessList, $fieldsmode = 'mails', $powermailUid = 0) {
+		$feuserHasAccessArray = t3lib_div::trimExplode(',', $feuserHasAccessList, 1); // split feuserHasAccess string to an array
 		switch ($fieldsmode) {
 			case 'mails':
 			case '':
-				if (count($allowedArray) > 0) { // if there are some fields which are allowed to show (if not show all)
+				if (count($feuserHasAccessArray) > 0) { // if there are some fields which are feuserHasAccess to show (if not show all)
 					$new = array();
 					foreach ($vars as $key => $value) { // one loop for every variable in db
-						if (in_array($key, $allowedArray)) { // if current key of db is in allowed array
+						if (in_array($key, $feuserHasAccessArray)) { // if current key of db is in feuserHasAccess array
 							$new[$key] = $value; // fill array
 						}
 					}
@@ -563,8 +342,8 @@ class tx_powermailfrontend_div extends tslib_pibase {
 
 			case 'forms':
 				$new = array();
-				if (count($allowedArray) > 0) { // if there are some fields which are allowed to show (if not show all)
-					foreach ($allowedArray as $key) {
+				if (count($feuserHasAccessArray) > 0) { // if there are some fields which are feuserHasAccess to show (if not show all)
+					foreach ($feuserHasAccessArray as $key) {
 						if (!empty($vars[$key])) {
 							$new[$key] = $vars[$key];
 						} else {
@@ -607,6 +386,29 @@ class tx_powermailfrontend_div extends tslib_pibase {
 				return $new;
 		}
 	}
+
+	/**
+	* Cuts an array and returns only allowed values
+	*
+	* @param 	array 	$vars		All variables from database to current powermail mail	array('uid3' => 'Alex')
+	* @param 	string 	$allowed	Commaseparated string with allowed uids 				(uid3,uid4)
+	* @return 	array	$vars		Return full array form input or only a part of it
+	*/
+	public function allowedUID($vars, $allowed) {
+		$alwd_arr = t3lib_div::trimExplode(',', $allowed, 1); // split allowed string to an array
+		if (count($alwd_arr) > 0) { // if there are some fields which are allowed to show (if not show all)
+			$new = array();
+
+			foreach ($vars as $key => $value) { // one loop for every variable in db
+				if (in_array($key, $alwd_arr)) { // if current key of db is in allowed array
+					$new[$key] = $value; // fill array
+				}
+			}
+			$vars = $new; // overwrite array with new array
+		}
+
+		return $vars;
+	}
 	
 	/**
 	* Function addWhereClause() adds where clause for DB select (list, latest, abc filter)
@@ -638,8 +440,8 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	 * @return boolean
 	 */
 	public function delEntry($pObj) {
-		// only if something should be deleted and current user is allowed to delete something
-		if ($pObj->piVars['delete'] > 0 && !$this->allowed($pObj->piVars['delete'], $pObj->conf)) { 
+		// only if something should be deleted and current user is feuserHasAccess to delete something
+		if ($pObj->piVars['delete'] > 0 && !$this->feuserHasAccess($pObj->piVars['delete'], $pObj->conf)) {
 			$GLOBALS['TYPO3_DB']->exec_UPDATEquery(
 				'tx_powermail_mails',
 				'uid=' . $pObj->piVars['delete'],

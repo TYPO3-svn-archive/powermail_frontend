@@ -61,16 +61,18 @@ class tx_powermailfrontend_filter_search extends tslib_pibase {
 		$this->searchfields = t3lib_div::trimExplode(',', $this->conf['search.']['search'], 1); // array with all needed search fields
 		$this->sessions = t3lib_div::makeInstance('tx_powermailfrontend_sessions'); // New object: session functions
 
-		if (!empty($this->piVars['filter'])) {
-			if(!empty($this->piVars['filter']['reset'])) {
+		$this->filter = $this->piVars['filter'];
+		if (!empty($this->filter)) {
+			// a new filter value was added
+			if(empty($this->filter['reset'])) {
+				$this->sessions->setSession($this->conf, $this->piVars, $this->cObj, false);
+			} else {
+				// filter reset
 				$this->sessions->deleteSession($this->conf, $this->cObj);
-				unset($this->piVars['filter']['reset']);
-				foreach ($this->piVars['filter'] as $filterKey => $filterValue) {
-					$this->piVars['filter'][$filterKey] = '';
-				}
+				unset($this->filter);
 			}
 		} else {
-			$this->piVars['filter'] = $this->sessions->getSession($this->conf, $this->cObj);
+			$this->filter = $this->sessions->getSession($this->conf, $this->cObj, 'filter');
 		}
 
 		// let's go
@@ -85,8 +87,8 @@ class tx_powermailfrontend_filter_search extends tslib_pibase {
 					$this->markerArray['###POWERMAILFE_SEARCH_LABEL###'] = $this->pi_getLL('label_searchallfields', 'Search in all fields'); // label for search in all fields
 					$this->fieldMarkerArray['###POWERMAILFE_SEARCH_NAME###'] = '_all'; // search in all fields
 				}
-				if (!empty($this->piVars['filter'][$this->searchfields[$i]])) {
-					$this->fieldMarkerArray['###POWERMAILFE_SEARCH_VALUE###'] = $this->piVars['filter'][$this->searchfields[$i]]; // value
+				if (!empty($this->filter[$this->searchfields[$i]])) {
+					$this->fieldMarkerArray['###POWERMAILFE_SEARCH_VALUE###'] = $this->filter[$this->searchfields[$i]]; // value
 				} else {
 					$this->fieldMarkerArray['###POWERMAILFE_SEARCH_VALUE###'] = '';
 				}
@@ -106,11 +108,11 @@ class tx_powermailfrontend_filter_search extends tslib_pibase {
 							$this->innerFieldMarkerArray['###POWERMAILFE_SEARCH_VALUE###'] = $values['label'];
 						}
 						if (
-							($this->piVars['filter'][$this->searchfields[$i]] == $values['value'] || $this->piVars['filter'][$this->searchfields[$i]] == $values['label'])
-							&& $this->piVars['filter'][$this->searchfields[$i]] != ''
+							($this->filter[$this->searchfields[$i]] == $values['value'] || $this->filter[$this->searchfields[$i]] == $values['label'])
+							&& $this->filter[$this->searchfields[$i]] != ''
 						) {
 							$this->innerFieldMarkerArray['###POWERMAILFE_SEARCH_SELECTED###'] = ' selected="selected"';
-						} elseif (isset($values['selected']) && !isset($this->piVars['filter'][$this->searchfields[$i]])) {
+						} elseif (isset($values['selected']) && !isset($this->filter[$this->searchfields[$i]])) {
 							$this->innerFieldMarkerArray['###POWERMAILFE_SEARCH_SELECTED###'] = ' selected="selected"';
 						} else {
 							$this->innerFieldMarkerArray['###POWERMAILFE_SEARCH_SELECTED###'] = '';
@@ -126,9 +128,6 @@ class tx_powermailfrontend_filter_search extends tslib_pibase {
 			$this->subpartArray['###CONTENT###'] = $content_item; // work on subpart 2
 			
 			$this->hook_pmfe_searchfilter(); // hook
-
-			// store filter to session
-			$this->sessions->setSession($this->conf, $this->piVars['filter'], $this->cObj, true);
 
 			$this->content = $this->cObj->substituteMarkerArrayCached($this->tmpl['filter'][$this->mode], $this->outerArray, $this->subpartArray); // substitute Marker in Template
 			$this->content = $this->dynamicMarkers->main($this->conf, $this->cObj, $this->content); // Fill dynamic locallang or typoscript markers

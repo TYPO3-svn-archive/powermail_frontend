@@ -14,7 +14,7 @@ plugin.tx_powermailfrontend_pi1 {
 	admin.feusergroup = {$plugin.powermail_frontend.admin.feusergroup}
 	query.limit = {$plugin.powermail_frontend.query.limit}
 	query.orderby = {$plugin.powermail_frontend.query.orderby}
-	filterAnd = {$plugin.powermail_frontend.filterAnd}
+	search.filterAnd = {$plugin.powermail_frontend.search.filterAnd}
 	
 	# Standardwrap settings for listview
 	list {
@@ -255,6 +255,24 @@ plugin.tx_powermailfrontend_pi1 {
 		enableMorePages = {$plugin.powermail_frontend.pagebrowse.enableMorePages}
 		enableLessPages = {$plugin.powermail_frontend.pagebrowse.enableLessPages}
 		numberOfLinks = {$plugin.powermail_frontend.pagebrowse.numberOfLinks}
+	}
+	export {
+        datetimeFormat = d.m.Y H:i
+        dateFormat = d.m.Y
+        timeFormat = H:i
+        xls {
+        	# Supported format: Excel5, Excel2007
+        	format = Excel2007
+        	encoding = utf-8
+        	autoSize = 1
+        	enable = 1
+        	country_zone_label = State of %s
+        }
+        csv {
+        	encoding = utf-8
+        	enable = 1
+        	country_zone_label = State of %s
+        }
 	}
 }
 

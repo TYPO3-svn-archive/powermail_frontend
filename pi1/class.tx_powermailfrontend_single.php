@@ -88,7 +88,7 @@ class tx_powermailfrontend_single extends tslib_pibase {
 
 			if ( // min one feuser or min one group should be enabled AND current entry is allowed to be edited from current user
 				(!empty($conf['edit.']['feuser']) || !empty($conf['edit.']['fegroup'])) &&
-				!$this->div->allowed($row['uid'], $this->conf)
+				!$this->div->feuserHasAccess($row['uid'], $this->conf)
 			)
 			{
 				$this->markerArray['###POWERMAILFE_EDITLINKTEXT###'] = $this->pi_getLL('edit_label', 'Edit entry'); // edit label

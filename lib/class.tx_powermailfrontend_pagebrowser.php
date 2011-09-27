@@ -24,6 +24,7 @@
 
 require_once(PATH_tslib.'class.tslib_pibase.php');
 require_once(t3lib_extMgm::extPath('powermail_frontend').'lib/class.tx_powermailfrontend_dynamicmarkers.php'); // file for dynamicmarker functions
+require_once(t3lib_extMgm::extPath('powermail_frontend').'lib/class.tx_powermailfrontend_div.php'); // file for dynamicmarker functions
 
 
 class tx_powermailfrontend_pagebrowser extends tslib_pibase {
@@ -34,7 +35,7 @@ class tx_powermailfrontend_pagebrowser extends tslib_pibase {
 	
 	function main($conf, $piVars, $cObj, $pbarray) {
 
-		if ($pbarray['overall'] == 0) {
+		if ($pbarray['numberOfMails'] == 0) {
 			return '';
 		}
 
@@ -46,14 +47,20 @@ class tx_powermailfrontend_pagebrowser extends tslib_pibase {
 		$this->markerArray = array();
 		$this->tmpl = array ('pagebrowser' => $this->cObj->getSubpart($this->cObj->fileResource($this->conf['template.']['pagebrowser']), '###POWERMAILFRONTEND_PAGEBROWSER###')); // Load HTML Template for pagebrowser
 		$this->dynamicMarkers = t3lib_div::makeInstance('tx_powermailfrontend_dynamicmarkers'); // New object: TYPO3 dynamicmarker function
-		
-		$this->markerArray['###CURRENT_MIN###'] = ($this->pbarray['pointer'] * $this->conf['list.']['perPage']) + 1; // Current page: From
-		$this->markerArray['###CURRENT_MAX###'] = ($this->pbarray['pointer'] * $this->conf['list.']['perPage']) + $this->pbarray['overall_cur']; // Current page: up to
-		$this->markerArray['###OVERALL###'] = $this->pbarray['overall']; // Overall addresses
+		$this->div = t3lib_div::makeInstance('tx_powermailfrontend_div'); // Create new instance for div class
 
-		if ($this->conf['list.']['perPage'] < $this->pbarray['overall']) {
+		$this->markerArray['###CURRENT_MIN###'] = ($this->pbarray['pointer'] * $this->conf['list.']['perPage']) + 1; // Current page: From
+		$this->markerArray['###CURRENT_MAX###'] = ($this->pbarray['pointer'] * $this->conf['list.']['perPage']) + $this->pbarray['numberOfMails_cur']; // Current page: up to
+		$this->markerArray['###OVERALL###'] = $this->pbarray['numberOfMails']; // Overall addresses
+
+		$this->markerArray['###POWERMAILFE_EXPORTCSVLINKTEXT###'] = $this->pi_getLL('powermailfe_ll_export_csv_label', 'Export items as CSV'); // edit label
+		$this->wrappedSubpartArray['###POWERMAILFE_EXPORTCSVLINK###'] = array('<a href="/index.php?eID=tx_powermailfrontend_export&format=csv&uid=' . $this->cObj->data['uid'] . '">', '</a>'); // Export CSV Link
+		$this->markerArray['###POWERMAILFE_EXPORTEXCELLINKTEXT###'] = $this->pi_getLL('powermailfe_ll_export_excel_label', 'Export items as EXCEL'); // edit label
+		$this->wrappedSubpartArray['###POWERMAILFE_EXPORTEXCELLINK###'] = array('<a href="/index.php?eID=tx_powermailfrontend_export&format=xls&uid=' . $this->cObj->data['uid'] . '">', '</a>'); // Export Excel Link
+
+		if ($this->conf['list.']['perPage'] < $this->pbarray['numberOfMails']) {
 			if (t3lib_extMgm::isLoaded('pagebrowse', 0)) {
-				$numberOfPages = intval($this->pbarray['overall'] / $this->conf['list.']['perPage']) + (($this->pbarray['overall'] % $this->conf['list.']['perPage']) == 0 ? 0 : 1);
+				$numberOfPages = intval($this->pbarray['numberOfMails'] / $this->conf['list.']['perPage']) + (($this->pbarray['numberOfMails'] % $this->conf['list.']['perPage']) == 0 ? 0 : 1);
 				$pagebrowseConf = array (
 					'includeLibs' => 'EXT:pagebrowse/pi1/class.tx_pagebrowse_pi1.php',
 					'userFunc' => 'tx_pagebrowse_pi1->main',
@@ -74,7 +81,7 @@ class tx_powermailfrontend_pagebrowser extends tslib_pibase {
 				$this->markerArray['###PAGELINKS###'] = $this->cObj->cObjGetSingle($this->conf['pagebrowser'], $this->conf['pagebrowser.']);
 			}
 		}
-		$this->content = $this->cObj->substituteMarkerArrayCached($this->tmpl['pagebrowser'], $this->markerArray); // substitute Marker in Template
+		$this->content = $this->cObj->substituteMarkerArrayCached($this->tmpl['pagebrowser'], $this->markerArray, array(), $this->wrappedSubpartArray); // substitute Marker in Template
 		$this->content = $this->dynamicMarkers->main($this->conf, $this->cObj, $this->content); // Fill dynamic locallang or typoscript markers
 		$this->content = preg_replace("|###.*?###|i","",$this->content); // Finally clear not filled markers
 		return $this->content;

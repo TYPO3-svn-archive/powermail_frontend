@@ -24,6 +24,8 @@
 			<label index="powermailfe_ll_edit_submit_sure">Are you sure to overwrite the old values?</label>
 			<label index="powermailfe_ll_edit_delete">Delete item</label>
 			<label index="powermailfe_ll_edit_delete_sure">Are you sure to delete this item?</label>
+			<label index="powermailfe_ll_export_csv_label">CSV Export</label>
+			<label index="powermailfe_ll_export_excel_label">EXCEL Export</label>
 			<label index="label_searchallfields">Search in all fields</label>
 			<label index="label_sorting">Sort with field %s %s</label>
 			<label index="label_asc">ascending</label>

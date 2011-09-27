@@ -56,7 +56,7 @@ class tx_powermailfrontend_edit extends tslib_pibase {
 		
 		if ($this->piVars['edit'] > 0) { // only if GET param show was set
 			
-			if (!$this->div->allowed($this->piVars['edit'], $this->conf)) { // current user is allowed to make changes
+			if (!$this->div->feuserHasAccess($this->piVars['edit'], $this->conf)) { // current user is allowed to make changes
 
 				if (empty($this->piVars['change']['uid'])) { // no values to save, so show form
 			
@@ -74,7 +74,7 @@ class tx_powermailfrontend_edit extends tslib_pibase {
 					$this->vars = t3lib_div::xml2array($row['piVars'], 'pivars'); // xml to array
 					if (!is_array($this->vars)) $this->vars = utf8_encode(t3lib_div::xml2array($row['piVars'], 'pivars')); // xml to array
 
-					$this->vars = $this->div->allowedUID($this->vars, $this->conf['edit.']['fields'], $this->conf['edit.']['fieldsmode'], $this->conf['edit.']['powermailuid']);
+					$this->vars = $this->div->allowedUID($this->vars, $this->conf['edit.']['fields'], $this->conf['mainconfig.']['fieldsmode'], $this->conf['mainconfig.']['powermailuid']);
 
 					// save values in in session
 					$GLOBALS['TSFE']->fe_user->setKey('ses', 'powermail_'.($this->cObj->data['_LOCALIZED_UID'] > 0 ? $this->cObj->data['_LOCALIZED_UID'] : $this->cObj->data['uid']), $this->vars); // Generate Session with piVars array
@@ -156,7 +156,7 @@ class tx_powermailfrontend_edit extends tslib_pibase {
 					return $this->content;
 				}
 			} else {
-					return $this->div->allowed($this->piVars['edit'], $this->conf); // return error message
+					return $this->div->feuserHasAccess($this->piVars['edit'], $this->conf); // return error message
 			}
 
 		}

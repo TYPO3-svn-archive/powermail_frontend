@@ -47,10 +47,10 @@ class tx_powermailfrontend_markers extends tslib_pibase {
 	
 		// config
 		global $TSFE;
-        $local_cObj = $TSFE->cObj; // cObject
+        $this->cObj = $TSFE->cObj; // local cObject
+		//$this->cObj = $cObj;
 		$this->conf = $conf;
 		$this->piVars = $piVars;
-		$this->cObj = $cObj;
 		$this->pi_loadLL();
 		$this->pi_initPIflexForm();
 		$this->div = t3lib_div::makeInstance('tx_powermailfrontend_div'); // Create new instance for div class

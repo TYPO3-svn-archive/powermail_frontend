@@ -37,6 +37,7 @@ class tx_powermailfrontend_sessions extends tslib_pibase {
 	 * @param	array		$piVars: piVars
 	 * @param	object		$cObj: Content object
 	 * @param	boolean		$overwrite session vars
+	 *
 	 * @return	void
 	 */
 	public function setSession($conf, $piVars, $cObj, $overwrite = true) {
@@ -63,20 +64,28 @@ class tx_powermailfrontend_sessions extends tslib_pibase {
 
 	/** Function getSession() to get all saved session data in an array
 	 *
-	 * @param	array	$conf: Typoscript configuration
-	 * @param	object	$cObj: Content object
+	 * @param	array	$conf: 	Typoscript configuration
+	 * @param	object	$cObj: 	Content object
+	 * @param	string	$key:	if set: return just a subset of piVars e.g. filter
+	 *
 	 * @return	array	piVars from session
 	 */
-	public function getSession($conf, $cObj) {
+	public function getSession($conf, $cObj, $key = '') {
 		// conf
 		$this->conf = $conf;
 		$this->cObj = $cObj;
 
 		// start
-		$piVars = $GLOBALS['TSFE']->fe_user->getKey('ses', $this->extKey . '_' . ($this->cObj->data['_LOCALIZED_UID'] > 0 ? $this->cObj->data['_LOCALIZED_UID']
-				: $this->cObj->data['uid'])); // Get piVars from Session
+		$sessionVars = $GLOBALS['TSFE']->fe_user->getKey('ses', $this->extKey . '_' . ($this->cObj->data['_LOCALIZED_UID'] > 0 ? $this->cObj->data['_LOCALIZED_UID']
+				: $this->cObj->data['uid'])); // Get vars from session
 
-		if (isset($piVars)) return $piVars;
+		if (!empty($sessionVars)) {
+			if (empty($key)) {
+				return $sessionVars;
+			} else {
+				return $sessionVars[$key];
+			}
+		}
 	}
 
 

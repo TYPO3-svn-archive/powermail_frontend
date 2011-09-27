@@ -131,7 +131,8 @@ class tx_powermailfrontend_pi1 extends tslib_pibase {
 			),
 			'sort' => array (
 				'*' => 'alphanum'
-			)
+			),
+			'export' => '"csv", "excel"'
 		);
 		$this->piVars = $this->sec->sec($this->piVars); // overwrite piVars piVars from doorman class
 	}
@@ -145,7 +146,7 @@ class tx_powermailfrontend_pi1 extends tslib_pibase {
 		$error = ''; // init
 		
 		if (intval($this->cObj->data['pages']) === 0) { // if startingpoint is not set
-			$error = '<b>' . $this->pi_getLL('pi1_error', 'powermail_frontend error: No startingpoint was set in backend!') . '</b><br />'; // errormessage
+			$error = '<b>' . $this->pi_getLL('pi1_error', 'powermail_frontend error: No starting point was set in backend!') . '</b><br />'; // errormessage
 		}
 		
 		if (empty($error)) {

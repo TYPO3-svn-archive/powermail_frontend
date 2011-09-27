@@ -89,5 +89,5 @@ plugin.powermail_frontend {
 	pagebrowse.enableLessPages = 1
 
 	# cat=plugin.powermail_frontend/enable/0150; type=boolean; label= Filter AND: Combine more than one filter with AND instead of OR (default)
-	filterAnd = 0
+	search.filterAnd = 0
 }

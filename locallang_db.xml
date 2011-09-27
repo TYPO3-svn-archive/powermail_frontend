@@ -13,12 +13,18 @@
 			<label index="pi_flexform.sheet_search">Search</label>
 			<label index="pi_flexform.sheet_latest">Latest</label>
 			<label index="pi_flexform.sheet_edit">FE Edit</label>
+			<label index="pi_flexform.sheet_export">Export</label>
 			<label index="pi_flexform.mainconfig.mode">Please select the desired views</label>
 			<label index="pi_flexform.mainconfig.mode.0">List view</label>
 			<label index="pi_flexform.mainconfig.mode.1">Latest view</label>
 			<label index="pi_flexform.mainconfig.mode.2">Single view</label>
 			<label index="pi_flexform.mainconfig.mode.3">Search fields</label>
-			<label index="pi_flexform.mainconfig.mode.4">Edit entries in the frontend</label>
+			<label index="pi_flexform.mainconfig.mode.4">Edit view</label>
+			<label index="pi_flexform.mainconfig.fieldsmode">Please select where the fields should be related to the processing</label>
+			<label index="pi_flexform.mainconfig.fieldsmode.0">Fields of found powermail mails (starting point defined at Behavior &gt; Record Storage Page)</label>
+			<label index="pi_flexform.mainconfig.fieldsmode.1">Fields of a powermail form</label>
+			<label index="pi_flexform.mainconfig.powermailforms">Please select one of the found powermail forms</label>
+			<label index="pi_flexform.mainconfig.select">Please select...</label>
 			<label index="pi_flexform.single.pid">Please select page with single view (empty for same page)</label>
 			<label index="pi_flexform.list.fields">Please select some fields to show</label>
 			<label index="pi_flexform.list.pid">Please select page with list view (empty for same page)</label>
@@ -29,17 +35,32 @@
 			<label index="pi_flexform.latest.new">Show only entries in future (only if a field is a timestamp)</label>
 			<label index="pi_flexform.showownonly">Own entries only</label>
 			<label index="pi_flexform.showownonly.0">Show only entries of the currently logged in FEuser</label>
-			<label index="pi_flexform.search.searchfields">Add some searchfields</label>
+			<label index="pi_flexform.search.searchfields">Add some filter/search fields</label>
+			<label index="pi_flexform.search.filterAnd">Filter logic</label>
+			<label index="pi_flexform.search.filterAnd.0">All filter/search inputs must match (AND)</label>
 			<label index="pi_flexform.search.abc">Add ABC Filter</label>
 			<label index="pi_flexform.edit.fields">Please select the fields which should be editable (empty = all fields)</label>
 			<label index="pi_flexform.edit.feuser">Please select one or more FE user(s) that should get right to editing</label>
 			<label index="pi_flexform.edit.fegroup">Please select one or more FE group(s) that should get right to editing</label>
 			<label index="pi_flexform.edit.pid">Please select the page containing the edit plugin (empty for same page)</label>
-			<label index="pi_flexform.edit.mode">Please select where the fields should be related to the processing</label>
-			<label index="pi_flexform.edit.mode.0">Fields of found powermail mails (starting point defined at Behavior &gt; Record Storage Page)</label>
-			<label index="pi_flexform.edit.mode.1">Fields of a powermail form</label>
-			<label index="pi_flexform.edit.powermailforms">Please select one of the found powermail forms</label>
-			<label index="pi_flexform.edit.select">Please select...</label>
+			<label index="pi_flexform.export.enableCsvExport">CSV Export</label>
+			<label index="pi_flexform.export.enableCsvExport.0">Enable</label>
+			<label index="pi_flexform.export.enableExcelExport">EXCEL Export</label>
+			<label index="pi_flexform.export.enableExcelExport.0">Enable</label>
+			<label index="pi_flexform.export.csvEncoding">CSV Encoding</label>
+			<label index="pi_flexform.export.xlsEncoding">EXCEL Encoding</label>
+			<label index="pi_flexform.export.filename">Filename for export (without extension)</label>
+			<label index="pi_flexform.export.fields">Export fields (empty = all fields)</label>
+			<label index="pi_flexform.export.dateFormat">Date format</label>
+			<label index="pi_flexform.export.timeFormat">Time format</label>
+			<label index="pi_flexform.export.datetimeFormat">Datetime format</label>
+			<label index="pi_flexform.export.xlsFormat">Excel format</label>
+			<label index="pi_flexform.export.xlsFormat.0">Excel 2007</label>
+			<label index="pi_flexform.export.xlsFormat.1">Excel 2005</label>
+			<label index="pi_flexform.export.restrict">Restrict access</label>
+			<label index="pi_flexform.export.restrict.0">Restrict access to export to a selected usergroup or user</label>
+			<label index="pi_flexform.export.feuser">Please select one or more FE user(s) that should get right to export</label>
+			<label index="pi_flexform.export.fegroup">Please select one or more FE group(s) that should get right to export</label>
 			<label index="pi_flexform.empty">[Turn off]</label>
 			<label index="pi_flexform.searchAll">[Search in all fields]</label>
 			<label index="pi_flexform.feuser_owner">[Owner]</label>
@@ -48,17 +69,22 @@
 		<languageKey index="de" type="array">
 			<label index="tt_content.list_type_pi1">powermail_frontend</label>
 			<label index="pi_flexform.sheet_mainconfig">Konfiguration</label>
-			<label index="pi_flexform.sheet_list">Listenansicht</label>
-			<label index="pi_flexform.sheet_single">Singleansicht</label>
+			<label index="pi_flexform.sheet_list">Liste</label>
+			<label index="pi_flexform.sheet_single">Detail</label>
 			<label index="pi_flexform.sheet_search">Suche</label>
 			<label index="pi_flexform.sheet_latest">Letzte</label>
-			<label index="pi_flexform.sheet_edit">Änderungen im FE</label>
+			<label index="pi_flexform.sheet_edit">Bearbeitung</label>
 			<label index="pi_flexform.mainconfig.mode">Bitte wählen Sie die gewünschten Ansichten aus</label>
 			<label index="pi_flexform.mainconfig.mode.0">Listenansicht</label>
 			<label index="pi_flexform.mainconfig.mode.1">Zeige Letzte</label>
 			<label index="pi_flexform.mainconfig.mode.2">Detailansicht</label>
 			<label index="pi_flexform.mainconfig.mode.3">Suchfelder</label>
-			<label index="pi_flexform.mainconfig.mode.4">Einträge im Frontend bearbeiten</label>
+			<label index="pi_flexform.mainconfig.mode.4">Bearbeitungsansicht</label>
+			<label index="pi_flexform.mainconfig.fieldsmode">Bitte wählen Sie aus, woher die Felder zur Bearbeitung bezogen werden sollen</label>
+			<label index="pi_flexform.mainconfig.fieldsmode.0">Felder von gefundenen Powermail-Mails (Ausgangspunkt definiert unter Verhalten &gt; Datensatzsammlung)</label>
+			<label index="pi_flexform.mainconfig.fieldsmode.1">Felder von einem Powermail-Formular</label>
+			<label index="pi_flexform.mainconfig.powermailforms">Bitte wählen Sie eines der gefundenen Powermail-Formulare</label>
+			<label index="pi_flexform.mainconfig.select">Bitte wählen Sie...</label>
 			<label index="pi_flexform.single.pid">Bitte wählen Sie die Seite mit der Detailansicht aus (Leer =  Gleiche Seite)</label>
 			<label index="pi_flexform.list.fields">Bitte wählen Sie die anzuzeigenden Felder</label>
 			<label index="pi_flexform.list.pid">Bitte wählen Sie die Seite mit der Listenansicht aus (Leer = Gleiche Seite)</label>
@@ -70,16 +96,29 @@
 			<label index="pi_flexform.showownonly">Nur eigene Einträge</label>
 			<label index="pi_flexform.showownonly.0">Zeige nur Einträge des aktuell angemeldeten FEuser</label>
 			<label index="pi_flexform.search.searchfields">Suchfelder hinzufügen</label>
+			<label index="pi_flexform.search.filterAnd">Filter-Logik</label>
+			<label index="pi_flexform.search.filterAnd.0">Alle Filter/Suche-Eingaben müssen zutreffen (AND)</label>
 			<label index="pi_flexform.search.abc">ABC Filter hinzufügen</label>
 			<label index="pi_flexform.edit.fields">Bitte wählen Sie die Felder die bearbeitbar sein sollen (Leer = Alle Felder)</label>
 			<label index="pi_flexform.edit.feuser">Bitte wählen Sie einen oder mehrere FE-User, die Bearbeitungsrechte erhalten sollen</label>
 			<label index="pi_flexform.edit.fegroup">Bitte wählen Sie einen oder mehrere FE-Gruppen aus, die Bearbeitungsrechte erhalten sollen</label>
 			<label index="pi_flexform.edit.pid">Bitte eine Seite mit Änderungsplugin auswählen (Leer = Diese Seite)</label>
-			<label index="pi_flexform.edit.mode">Bitte wählen Sie aus, woher die Felder zur Bearbeitung bezogen werden sollen</label>
-			<label index="pi_flexform.edit.mode.0">Felder von gefundenen Powermail-Mails (Ausgangspunkt definiert unter Verhalten &gt; Datensatzsammlung)</label>
-			<label index="pi_flexform.edit.mode.1">Felder von einem Powermail-Formular</label>
-			<label index="pi_flexform.edit.powermailforms">Bitte wählen Sie eines der gefundenen Powermail-Formulare</label>
-			<label index="pi_flexform.edit.select">Bitte wählen Sie...</label>
+			<label index="pi_flexform.export.enableCsvExport">CSV Export</label>
+			<label index="pi_flexform.export.enableCsvExport.0">Ein</label>
+			<label index="pi_flexform.export.enableExcelExport">EXCEL Export</label>
+			<label index="pi_flexform.export.enableExcelExport.0">Ein</label>
+			<label index="pi_flexform.export.filename">Datename für Export (ohne Extension)</label>
+			<label index="pi_flexform.export.fields">Export-Felder (Leer = Alle Felder)</label>
+			<label index="pi_flexform.export.dateFormat">Datums-Format</label>
+			<label index="pi_flexform.export.timeFormat">Zeit-Format</label>
+			<label index="pi_flexform.export.datetimeFormat">Datum/Zeit-Format</label>
+			<label index="pi_flexform.export.xlsFormat">Excel format</label>
+			<label index="pi_flexform.export.xlsFormat.0">Excel 2007</label>
+			<label index="pi_flexform.export.xlsFormat.1">Excel 2005</label>
+			<label index="pi_flexform.export.restrict">Eingeschränkter Zugriff</label>
+			<label index="pi_flexform.export.restrict.0">Den Zugriff auf die Export-Funktion nur bestimmten Usergruppen oder User gewähren.</label>
+			<label index="pi_flexform.export.feuser">Bitte wählen Sie einen oder mehrere FE-User, die CSV/Excel-Listen exportieren dürfen</label>
+			<label index="pi_flexform.export.fegroup">Bitte wählen Sie einen oder mehrere FE-Gruppen aus, die CSV/Excel-Listen exportieren dürfen</label>
 			<label index="pi_flexform.empty">[Abgeschalten]</label>
 			<label index="pi_flexform.searchAll">[Felderübergreifende Suche]</label>
 			<label index="pi_flexform.feuser_owner">[Ersteller]</label>
