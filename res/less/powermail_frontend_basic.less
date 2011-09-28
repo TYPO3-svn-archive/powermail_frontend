@@ -230,6 +230,19 @@ div.powermailfe_backtolist {
 
 .powermailfrontend_pagebrowser {
 	margin-top: 30px;
+	.powermailfrontend_pagebrowser_header {
+	    margin:0.5em 0 2em 0;
+		h2 {
+			float:left;
+			width:40%;
+			margin:0;
+		}
+		.powermailfrontend_exportbuttons {
+			float:right;
+			width:60%;
+			text-align:right !important;
+		}
+ 	}
 	ul, li {
 		list-style: none;
 		padding: 0;
@@ -295,8 +308,11 @@ div.powermailfe_backtolist {
 	}
 }
 
-.powermailfe_footer h2 {
-	display: none;
+.powermailfe_footer {
+    h2,
+    .powermailfrontend_exportbuttons {
+		display: none;
+	}
 }
 
 .powermailfe_clearfix:after {

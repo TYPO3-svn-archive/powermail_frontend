@@ -46,7 +46,7 @@ class tx_powermailfrontend_mails_filter extends tslib_pibase {
 			}
 		}
 		if ($this->confArray[$this->viewMode . '.']['orderby']) {
-			usort($this->mailArray, array('tx_powermailfrontend_mails_filter', 'cmp')); // sorting
+			usort($this->mailsArray, array('tx_powermailfrontend_mails_filter', 'cmp')); // sorting
 		}
 	}
 
@@ -69,206 +69,152 @@ class tx_powermailfrontend_mails_filter extends tslib_pibase {
 	}
 
 	/**
+	 * array_search with recursive searching, optional partial matches and optional search by key
+	 *
+	 * @param string	$needle
+	 * @param array		$haystack
+	 * @param bool 		$partial_matches
+	 * @param bool 		$search_keys
+	 * @return bool|int|string
+	 */
+	private function arrayFindRecursive($needle, $haystack, $partial_matches = false, $search_keys = false) {
+        if (!is_array($haystack)) {
+			return ($partial_matches && strpos($haystack, $needle) !== false);
+		}
+        foreach ($haystack as $key => $value) {
+			$key = strtolower($key);
+			$value = strtolower($value);
+            $what = ($search_keys) ? $key : $value;
+            if ($needle === $what) return $key;
+            else if ($partial_matches && strpos($what, $needle) !== false) return $key;
+            else if (is_array($value) && $this->arrayFindRecursive($needle, $value, $partial_matches, $search_keys) !== false) return $key;
+        }
+        return false;
+    }
+
+	/**
 	* changes filter
 	*
 	* @return 	void
 	*/
 	public function filterArray() {
 		// config
-		$del_listitem = $newArray = $removeFilterPiVars = array();
-		$j = 0;
-		$emptyFormSubmited = true;
+		$mailsToInclude = array();
+		$newArray = array();
 
-
-		// let's go
-		// 1. if limit set, cut array
+		// if limit set, cut array
 		if ($this->limit > 0) {
-			$this->mailArray = array_slice($this->mailArray, 0, $this->limit); // give me only the first X entries of the array
+			$this->mailsArray = array_slice($this->mailsArray, 0, $this->limit); // give me only the first X entries of the array
 		}
 
-		// 2. if new mode is set, clear old values
+		// if new mode is set, clear old values
 		if (!empty($this->confArray[$this->viewMode . '.']['new'])) { // if new mode was set
-			for ($i = 0; $i < count($this->mailArray); $i++) { // one loop for every list item
-				if ($this->mailArray[$i][$this->confArray[$this->viewMode . '.']['new']] > time()) { // if this value is greater than today
-					$newArray[] = $this->mailArray[$i];
+			for ($i = 0; $i < count($this->mailsArray); $i++) { // one loop for every list item
+				if ($this->mailsArray[$i][$this->confArray[$this->viewMode . '.']['new']] > time()) { // if this value is greater than today
+					$newArray[] = $this->mailsArray[$i];
 				}
 			}
-			$this->mailArray = array(); // clear old array
-			$this->mailArray = $newArray; // define old array
+			$this->mailsArray = array(); // clear old array
+			$this->mailsArray = $newArray; // define old array
 		}
 
+		// remove empty or "*" filter values and convert all search stings to lowercase
+		$this->filterPiVars = array_filter($this->filterPiVars);
 		if (!empty($this->filterPiVars) && count($this->filterPiVars) > 0) {
 			foreach ($this->filterPiVars as $key => $value) { // one loop for every filter
-				if (!empty($value)) {
-					$emptyFormSubmited = false;
-				}
-				if($value[0] == '*') {
-					$removeFilterPiVars[] .= $key;
+				if ($value == '*') {
+					unset($this->filterPiVars[$key]);
+				} else {
+					$this->filterPiVars[$key] = strtolower($this->filterPiVars[$key]);
 				}
 			}
-		} else {
-			$emptyFormSubmited = false;
 		}
 
-		if (!$emptyFormSubmited) { // if no filter parameter is found in piVars, get filter values from session
-			//$this->sessions = t3lib_div::makeInstance('tx_powermailfrontend_sessions'); // New object: session functions
-			//$this->filterPiVars = $this->sessions->getSession($this->confArray, $this->cObj, 'filter');
-		}
-
-		if (count($removeFilterPiVars) > 0) {
-			foreach($removeFilterPiVars as $filterPiVar) {
-				unset($this->filterPiVars[$filterPiVar]);
-			}
-			//$this->sessions->setSession($this->confArray, $this->filterPiVars, $this->cObj, true);
-		}
-
-		// 3. filter array
+		// filter mail array
 		if (!empty($this->filterPiVars) && count($this->filterPiVars) > 0) { // if there are some filter
-			foreach ($this->filterPiVars as $key => $value) { // one loop for every filter
-				if (!empty($value)) {
 
-					for ($i = 0; $i < count($this->mailArray); $i++) { // one loop for every list item
+			// delete all empty piVars to speedup filter loop
+			$mailsToCheckArray = array();
+			foreach ($this->mailsArray as $mailToFilter) {
+				$mailsToCheckArray[] = array_filter($mailToFilter);
+			}
 
-						if ($key != '_all') { // search in a specified field
-							$del_listitem[$i] = 0; // not to delete is default
-							if (!array_key_exists($key, $this->mailArray[$i])) {
-								$del_listitem[$i] = 1; // in current list item is not the field which should be filtered - so delete
-							}
-							if ($del_listitem[$i] === 0) { // only if this listitem should not be deleted
-								foreach ($this->mailArray[$i] as $key2 => $value2) { // one loop for every piVar in current list item
-									if ($key == $key2) { // if current uid is the uid which should be filtered
-										switch (strtolower($value[0])) {
-											case '@': // filter with beginning number
-												if (!is_numeric($value2[0])) {
-													$del_listitem[$i] = 1; // this value don't start with a number
-												}
-												break;
-
-											case 'a': // filter with beginning letter
-											case 'b':
-											case 'c':
-											case 'd':
-											case 'e':
-											case 'f':
-											case 'g':
-											case 'h':
-											case 'i':
-											case 'j':
-											case 'k':
-											case 'l':
-											case 'm':
-											case 'n':
-											case 'o':
-											case 'p':
-											case 'q':
-											case 'r':
-											case 's':
-											case 't':
-											case 'u':
-											case 'v':
-											case 'w':
-											case 'x':
-											case 'y':
-											case 'z':
-											default:
-												if (strlen($value) == 1) { // only one letter given
-													if (strtolower($value2[0]) != $value) {
-														$del_listitem[$i] = 1; // this value don't start with the right letter
-													}
-												} else { // searchword given
-													if (is_array($value2)) { // second level
-														$tmp_del = 1;
-														foreach ($value2 as $key4 => $value4) {
-															if (stristr(strtolower($value4), strtolower($value))) {
-																$tmp_del = 0;
-																break;
-															}
-														}
-														if ($tmp_del) {
-															$del_listitem[$i] = 1; // this var is not in the value
-														}
-													} else { // first level
-														if (strpos(strtolower($value2), strtolower($value)) === false) {
-															$del_listitem[$i] = 1; // this var is not in the value
-														}
-													}
-												}
-												break;
-										}
-									}
-								}
-							}
-
-						} else { // numberOfMails search
-							$del_listitem[$i] = 1; // delete is default
-							foreach ($this->mailArray[$i] as $key2 => $value2) { // one loop for every piVar in current list item
-								if (strpos(strtolower($value2), strtolower($value)) !== false) $del_listitem[$i] = 0; // Match, so don't delete
-							}
-						}
-
+			if (!empty($this->filterPiVars['_all'])) {
+				// search over all fields
+				foreach ($mailsToCheckArray as $mailToCheckKey => $mailToCheckValueArray) { // one loop for every mail
+					if ($this->arrayFindRecursive($this->filterPiVars['_all'], $mailToCheckValueArray, true, false) !== false) {
+						$mailsToInclude[$mailToCheckKey] = 1; // Match, so include
 					}
 				}
 			}
 
-			$newArray = array(); // clear temp array
-			foreach ($this->mailArray as $key3 => $value3) { // finally sort it
-				if (!$del_listitem[$j]) {
-					$newArray[] = $value3; // fill into a new array
-				}
-
-				$j++; // increase counter
-			}
-
-			if ($this->confArray['search.']['filterAnd'] == 1) {
-				foreach ($newArray as $searchResultIndex => $searchResult) {
-					$and = true;
-					foreach ($this->filterPiVars as $filterName => $filterValue) { // one loop for every filter
-						if ($filterValue != '') {
-							if ($filterName == '_all') {
-								$and = false;
-								foreach ($searchResult as $resultKey => $resultValue) {
-									if ((strpos(strtolower($searchResult[$resultKey]), strtolower($filterValue)) !== false) || (strlen($filterValue) == 1 && strpos(strtolower($searchResult[$resultKey]), strtolower($filterValue)) == 0)) {
-										$and = true;
-										break;
+			foreach ($mailsToCheckArray as $mailToCheckKey => $mailToCheckValueArray) { // one loop for every mail
+				foreach ($this->filterPiVars as $filterKey => $filterValue) { // one loop for every filter
+					if ($filterKey != '_all' && array_key_exists($filterKey, $mailToCheckValueArray)) {
+						foreach ($mailToCheckValueArray as $mailKey => $mailValue) { // one loop for every piVar
+							if ($filterKey == $mailKey) { // if current uid is the uid which should be filtered
+								if ($filterValue[0] == '@' && is_numeric($mailValue[0])) { // filter with beginning number
+									$mailsToInclude[$mailToCheckKey] = 1;
+								} else {
+									if (strlen($filterValue) == 1 && strtolower($mailValue[0]) == $filterValue) { // only one letter given
+										$mailsToInclude[$mailToCheckKey] = 1;
+									} else if ($this->arrayFindRecursive($filterValue, $mailValue, true, false) !== false) { // search word given
+										$mailsToInclude[$mailToCheckKey] = 1;
 									}
 								}
-							} else {
-								if ((strpos(strtolower($searchResult[$filterName]), strtolower($filterValue)) === false) || (strlen($filterValue) == 1 && strpos(strtolower($searchResult[$filterName]), strtolower($filterValue)) != 0)) {
-									$and = false;
+							}
+						}
+					}
+				}
+			}
+
+			// remove not matching mails
+			$this->mailsArray = array_intersect_key($this->mailsArray, $mailsToInclude);
+
+			if ($this->confArray['search.']['filterAnd'] == 1) {
+				foreach ($this->mailsArray as $searchResultIndex => $searchResult) {
+					$and = true;
+					foreach ($this->filterPiVars as $filterName => $filterValue) { // one loop for every filter
+						if ($filterName == '_all') {
+							$and = false;
+							foreach ($searchResult as $resultKey => $resultValue) {
+								if ((strpos(strtolower($searchResult[$resultKey]), $filterValue) !== false) || (strlen($filterValue) == 1 && strpos(strtolower($searchResult[$resultKey]), $filterValue) == 0)) {
+									$and = true;
 									break;
 								}
+							}
+						} else {
+							if ((strpos(strtolower($searchResult[$filterName]), $filterValue) === false) || (strlen($filterValue) == 1 && strpos(strtolower($searchResult[$filterName]), $filterValue) != 0)) {
+								$and = false;
+								break;
 							}
 						}
 					}
 					if (!$and) {
-						unset($newArray[$searchResultIndex]);
+						unset($this->mailsArray[$searchResultIndex]);
 					}
 				}
 			}
-
-			//unset($this->mailArray); // delete old array
-			$this->mailArray = $newArray; // fill into old array
 		}
 	}
 
 	public function getResult() {
-		return $this->mailArray;
+		return $this->mailsArray;
 	}
 
 	public function writeMailUidsToSession() {
 		$sessionArray = array();
 		$mailUidsArray = array();
 		$this->sessions = t3lib_div::makeInstance('tx_powermailfrontend_sessions'); // New object: session functions
-		foreach ($this->mailArray as $mail) {
+		foreach ($this->mailsArray as $mail) {
 			$mailUidsArray[] .= $mail['uid'];
 		}
 		$sessionArray['exportUids'] = implode(',', $mailUidsArray);
 		$this->sessions->setSession($this->confArray, $sessionArray, $this->cObj, false);
-		//t3lib_div::debug($this->cObj);
 	}
 
 	public function __construct($mailsArray, $confArray, $viewMode, $cObj, $filterPiVars) {
-		$this->mailArray = $mailsArray;
+		$this->mailsArray = $mailsArray;
 		$this->confArray = $confArray;
 		$this->viewMode = $viewMode;
 		$this->cObj = $cObj;

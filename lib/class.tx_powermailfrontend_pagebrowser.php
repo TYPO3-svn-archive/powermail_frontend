@@ -45,6 +45,7 @@ class tx_powermailfrontend_pagebrowser extends tslib_pibase {
 		$this->cObj = $cObj;
 		$this->pbarray = $pbarray;
 		$this->markerArray = array();
+		$this->pi_loadLL();
 		$this->tmpl = array ('pagebrowser' => $this->cObj->getSubpart($this->cObj->fileResource($this->conf['template.']['pagebrowser']), '###POWERMAILFRONTEND_PAGEBROWSER###')); // Load HTML Template for pagebrowser
 		$this->dynamicMarkers = t3lib_div::makeInstance('tx_powermailfrontend_dynamicmarkers'); // New object: TYPO3 dynamicmarker function
 		$this->div = t3lib_div::makeInstance('tx_powermailfrontend_div'); // Create new instance for div class
@@ -53,10 +54,19 @@ class tx_powermailfrontend_pagebrowser extends tslib_pibase {
 		$this->markerArray['###CURRENT_MAX###'] = ($this->pbarray['pointer'] * $this->conf['list.']['perPage']) + $this->pbarray['numberOfMails_cur']; // Current page: up to
 		$this->markerArray['###OVERALL###'] = $this->pbarray['numberOfMails']; // Overall addresses
 
-		$this->markerArray['###POWERMAILFE_EXPORTCSVLINKTEXT###'] = $this->pi_getLL('powermailfe_ll_export_csv_label', 'Export items as CSV'); // edit label
-		$this->wrappedSubpartArray['###POWERMAILFE_EXPORTCSVLINK###'] = array('<a href="/index.php?eID=tx_powermailfrontend_export&format=csv&uid=' . $this->cObj->data['uid'] . '">', '</a>'); // Export CSV Link
-		$this->markerArray['###POWERMAILFE_EXPORTEXCELLINKTEXT###'] = $this->pi_getLL('powermailfe_ll_export_excel_label', 'Export items as EXCEL'); // edit label
-		$this->wrappedSubpartArray['###POWERMAILFE_EXPORTEXCELLINK###'] = array('<a href="/index.php?eID=tx_powermailfrontend_export&format=xls&uid=' . $this->cObj->data['uid'] . '">', '</a>'); // Export Excel Link
+		if (empty($conf['export.']['exportrestrict']) || ((!empty($conf['export.']['exportfeuser']) || !empty($conf['export.']['exportfegroup'])) && !$this->div->feuserHasAccess($row['uid'], $this->conf))) {
+			// show export buttons if enabled
+			if (!empty($conf['export.']['enableCsvExport'])) {
+				// Export CSV Link
+				$this->markerArray['###POWERMAILFE_EXPORTCSVLINKTEXT###'] = $this->pi_getLL('powermailfe_ll_export_csv_label', 'CSV-Export');
+				$this->wrappedSubpartArray['###POWERMAILFE_EXPORTCSVLINK###'] = array('<a href="/index.php?eID=tx_powermailfrontend_export&format=csv&uid=' . $this->cObj->data['uid'] . '">', '</a>');
+			}
+			if (!empty($conf['export.']['enableExcelExport'])) {
+				// Export Excel Link
+				$this->markerArray['###POWERMAILFE_EXPORTEXCELLINKTEXT###'] = $this->pi_getLL('powermailfe_ll_export_excel_label', 'EXCEL-Export');
+				$this->wrappedSubpartArray['###POWERMAILFE_EXPORTEXCELLINK###'] = array('<a href="/index.php?eID=tx_powermailfrontend_export&format=xls&uid=' . $this->cObj->data['uid'] . '">', '</a>');
+			}
+		}
 
 		if ($this->conf['list.']['perPage'] < $this->pbarray['numberOfMails']) {
 			if (t3lib_extMgm::isLoaded('pagebrowse', 0)) {

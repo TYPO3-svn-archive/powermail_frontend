@@ -14,9 +14,13 @@ POWERMAIL_FRONTEND HTML Template for pagebrowser
 
 <!-- ###POWERMAILFRONTEND_PAGEBROWSER### begin -->
   <div class="powermailfrontend_pagebrowser">
-    <h2>###POWERMAILFE_LL_PAGEBROWSER_ITEM### ###CURRENT_MIN### ###POWERMAILFE_LL_PAGEBROWSER_UPTO### ###CURRENT_MAX### ###POWERMAILFE_LL_PAGEBROWSER_WITHIN### ###OVERALL###
-		<span class="powermailfe_button"><!-- ###POWERMAILFE_EXPORTCSVLINK### -->###POWERMAILFE_EXPORTCSVLINKTEXT###<!-- ###POWERMAILFE_EXPORTCSVLINK### --></span>
-		<span class="powermailfe_button"><!-- ###POWERMAILFE_EXPORTEXCELLINK### -->###POWERMAILFE_EXPORTEXCELLINKTEXT###<!-- ###POWERMAILFE_EXPORTEXCELLINK### --></span></h2>
+	<div class="powermailfrontend_pagebrowser_header powermailfe_clearfix">
+		<h2>###POWERMAILFE_LL_PAGEBROWSER_ITEM### ###CURRENT_MIN### ###POWERMAILFE_LL_PAGEBROWSER_UPTO### ###CURRENT_MAX### ###POWERMAILFE_LL_PAGEBROWSER_WITHIN### ###OVERALL###</h2>
+		<div class="powermailfrontend_exportbuttons">
+			<span class="powermailfe_button"><!-- ###POWERMAILFE_EXPORTCSVLINK### -->###POWERMAILFE_EXPORTCSVLINKTEXT###<!-- ###POWERMAILFE_EXPORTCSVLINK### --></span>
+			<span class="powermailfe_button"><!-- ###POWERMAILFE_EXPORTEXCELLINK### -->###POWERMAILFE_EXPORTEXCELLINKTEXT###<!-- ###POWERMAILFE_EXPORTEXCELLINK### --></span>
+		</div>
+	</div>
     ###PAGELINKS###
   </div>
 <!-- ###POWERMAILFRONTEND_PAGEBROWSER### stop -->

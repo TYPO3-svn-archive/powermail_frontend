@@ -29,7 +29,7 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	public $extKey = 'powermail_frontend'; // Extension key
 	public $prefixId = 'tx_powermailfrontend_pi1'; // prefix for piVars
 	public $scriptRelPath = 'pi1/class.tx_powermailfrontend_list.php';	// Path to any script in pi1 for locallang
-	
+
 	/**
 	* Function getTitle() gets title for any uid
 	*
