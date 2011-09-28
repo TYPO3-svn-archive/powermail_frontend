@@ -370,7 +370,7 @@ class tx_powermailfrontend_export extends tslib_pibase {
 				if (isset($headerPiVars) && is_array($headerPiVars)) {
 					foreach ($headerPiVars as $key => $value) {
 						$this->fieldUid = $key;
-						$this->getFieldLabelFromBackend();
+						$this->getFieldLabel();
 						$label = $this->charConvert($this->fieldLabel);
 						$csvHeader .= '"' . $this->cleanString($label) . '"' . $this->seperator;
 					}
@@ -561,7 +561,7 @@ class tx_powermailfrontend_export extends tslib_pibase {
 						if (isset($headerPiVars) && is_array($headerPiVars)) {
 							foreach ($headerPiVars as $key => $value) {
 								$this->fieldUid = $key;
-								$this->getFieldLabelFromBackend();
+								$this->getFieldLabel();
 								$label = $this->charConvert($this->fieldLabel);
 								$excelObject->getActiveSheet()->setCellValue($excelColNames[$sheetHeaderCol] . '1', $this->cleanString($this->charConvert($label)));
 								$sheetHeaderCols[$sheetHeaderCol] = $colname;
@@ -915,56 +915,19 @@ class tx_powermailfrontend_export extends tslib_pibase {
 	}
 
 	/**
-	 * Method getFieldLabelFromBackend() to get label to current field for emails and thx message
+	 * Method getFieldLabel() to get label of current field
 	 *
 	 */
-	protected function getFieldLabelFromBackend() {
+	protected function getFieldLabel() {
 
 		$this->fieldLabel = $this->fieldUid;
 
 		if (strpos($this->fieldUid, 'uid') !== FALSE) {
 			$uid = intval(str_replace('uid', '', $this->fieldUid));
 
-			$select = 'f.title, f.formtype';
-			$from = '
-				tx_powermail_fields f
-				LEFT JOIN tx_powermail_fieldsets fs
-				ON (
-					f.fieldset = fs.uid
-				)
-				LEFT JOIN tt_content c
-				ON (
-					c.uid = fs.tt_content
-				)';
-			$where = '
-				c.deleted = 0
-				AND c.hidden = 0
-				AND (
-					c.starttime <= ' . time() . '
-				)
-				AND (
-					c.endtime = 0
-					OR c.endtime>' . time() . '
-				)
-				AND (
-					c.fe_group = ""
-					OR c.fe_group IS NULL
-					OR c.fe_group = "0"
-					OR (
-						c.fe_group LIKE "%,0,%"
-						OR c.fe_group LIKE "0,%"
-						OR c.fe_group LIKE "%,0"
-						OR c.fe_group = "0"
-					)
-					OR (
-						c.fe_group LIKE "%,-1,%"
-						OR c.fe_group LIKE "-1,%"
-						OR c.fe_group LIKE "%,-1"
-						OR c.fe_group = "-1"
-					)
-				)
-				AND f.uid = ' . $uid . '
-				AND f.deleted = 0';
+			$select = 'title, formtype';
+			$from = 'tx_powermail_fields';
+			$where = 'uid = ' . $uid;
 
 			// GET title where fields.flexform LIKE <value index="vDEF">vorname</value>
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($select, $from, $where);
@@ -979,7 +942,7 @@ class tx_powermailfrontend_export extends tslib_pibase {
 					} else if ($uid >= 100000) {
 						// check for country select
 						$this->fieldUid = 'uid' . ($uid - 100000);
-						$this->getFieldLabelFromBackend();
+						$this->getFieldLabel();
 						if ($this->fieldType == 'countryselect') {
 							$this->fieldLabel = sprintf($this->conf['export.'][$this->format . '.']['country_zone_label'], $this->fieldLabel);
 						}

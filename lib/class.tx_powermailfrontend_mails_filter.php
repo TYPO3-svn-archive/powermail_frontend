@@ -79,7 +79,7 @@ class tx_powermailfrontend_mails_filter extends tslib_pibase {
 	 */
 	private function arrayFindRecursive($needle, $haystack, $partial_matches = false, $search_keys = false) {
         if (!is_array($haystack)) {
-			return ($partial_matches && strpos($haystack, $needle) !== false);
+			return ($partial_matches && strpos(strtolower($haystack), strtolower($needle)) !== false);
 		}
         foreach ($haystack as $key => $value) {
 			$key = strtolower($key);
