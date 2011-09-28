@@ -285,13 +285,14 @@ class tx_powermailfrontend_export extends tslib_pibase {
 		$this->setEncoding();
 		$this->setFilenames();
 		$this->generateFormtypesArray();
+		$this->generalRecordsFilter = ' AND hidden = 0 AND deleted = 0';
 
 		$sessionVars = $feUserObj->getKey('ses', $this->extKey . '_' . $this->uid); // Get exportUids from Session
 		$this->uids = $sessionVars['exportUids'];
 
 		$select = '*';
 		$from = 'tx_powermail_mails';
-		$where = 'uid IN (' . $this->uids . ') AND deleted = 0 AND hidden = 0';
+		$where = 'uid IN (' . $this->uids . ')' . $this->generalRecordsFilter ;
 		$groupBy = $limit = '';
 		$orderBy = 'crdate DESC';
 		$this->res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($select, $from, $where, $groupBy, $orderBy, $limit);
