@@ -95,7 +95,7 @@ class user_powermailfe_be_fields {
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
 					'tx_powermail_title, tt_content.pid, tt_content.uid, pages.title',
 					'tt_content LEFT JOIN pages ON pages.uid = tt_content.pid',
-					$where_clause = "CType='powermail_pi1' AND pages.deleted = 0" . t3lib_BEfunc::BEenableFields('tt_content') . t3lib_BEfunc::BEenableFields('pages'),
+					$where_clause = "CType='powermail_pi1' AND pages.deleted = 0 AND tt_content.deleted = 0 AND sys_language_uid = 0",
 					$groupBy = '',
 					$orderBy = 'pages.sorting, tx_powermail_title ASC',
 					$limit = $this->limit
@@ -107,7 +107,7 @@ class user_powermailfe_be_fields {
 					$params['items'][0]['1'] = 0; // Option value
 					$i = 1;
 					while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) { // one loop for every db entry
-						$params['items'][$i]['0'] = $row['title'] . ' [' . $row['pid'] . '] -&gt; ' . $row['tx_powermail_title']; // Option name
+						$params['items'][$i]['0'] = $row['title'] . ' [' . $row['pid'] . '] -&gt; ' . $row['tx_powermail_title'] . ' [' . $row['uid'] . ']'; // Option name
 						$params['items'][$i]['1'] = $row['uid']; // Option value
 						$i ++;
 					}
