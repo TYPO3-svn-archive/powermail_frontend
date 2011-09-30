@@ -132,11 +132,12 @@ class user_powermailfe_be_fields {
 						OR tx_powermail_fields.formtype = 'date'
 						OR tx_powermail_fields.formtype = 'datetime'
 						OR tx_powermail_fields.formtype = 'file')
-						AND tx_powermail_fieldsets.tt_content = " . $powermailUid . t3lib_BEfunc::BEenableFields('tx_powermail_fields') . t3lib_BEfunc::BEenableFields('tx_powermail_fieldsets'),
+						AND tx_powermail_fieldsets.tt_content = " . $powermailUid . ' AND tx_powermail_fields.deleted = 0 AND tx_powermail_fields.hidden = 0 AND tx_powermail_fieldsets.deleted = 0 AND tx_powermail_fieldsets.hidden = 0',
 					$groupBy = '',
 					$orderBy = 'tx_powermail_fields.fieldset, tx_powermail_fields.sorting',
 					$limit = $this->limit
 				);
+				//t3lib_BEfunc::BEenableFields('tx_powermail_fields') . t3lib_BEfunc::BEenableFields('tx_powermail_fieldsets')
 
 				if ($res !== false) { // If there is a result
 					// 1. Collecting different field uids to an array

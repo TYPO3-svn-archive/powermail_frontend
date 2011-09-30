@@ -363,7 +363,7 @@ class tx_powermailfrontend_div extends tslib_pibase {
 						OR tx_powermail_fields.formtype = 'date'
 						OR tx_powermail_fields.formtype = 'datetime'
 						OR tx_powermail_fields.formtype = 'file')
-						AND tx_powermail_fieldsets.tt_content = " . intval($powermailUid),
+						AND tx_powermail_fieldsets.tt_content = " . intval($powermailUid) . ' AND tx_powermail_fields.deleted = 0 AND tx_powermail_fields.hidden = 0 AND tx_powermail_fieldsets.deleted = 0 AND tx_powermail_fieldsets.hidden = 0',
 			'',
 			'tx_powermail_fields.fieldset, tx_powermail_fields.sorting'
 		);
