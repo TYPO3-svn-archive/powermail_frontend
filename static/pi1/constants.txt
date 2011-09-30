@@ -90,4 +90,29 @@ plugin.powermail_frontend {
 
 	# cat=plugin.powermail_frontend/enable/0150; type=boolean; label= Filter AND: Combine more than one filter with AND instead of OR (default)
 	search.filterAnd = 0
+
+	# cat=plugin.powermail_frontend/enable/0200; type=boolean; label= Link files in list view: If you wish that uploaded files get a link, check this option
+	list.files.link = 1
+
+	# cat=plugin.powermail_frontend/enable/0210; type=boolean; label= Link files in latest view: If you wish that uploaded files get a link, check this option
+	latest.files.link = 1
+
+	# cat=plugin.powermail_frontend/enable/0220; type=boolean; label= Link files in single view: If you wish that uploaded files get a link, check this option
+	single.files.link = 1
+
+	# cat=plugin.powermail_frontend/enable/0500; type=boolean; label= Mime check for upload: Checks if uploaded file is really the file which it should be (mime check)
+	edit.upload.mimecheck = 1
+
+	# cat=plugin.powermail_frontend/enable/0540; type=boolean; label= Use form title as upload subfolder name: Uploads from forms will be stored in a subfolder (of the folder defined by upload.folder) defined by the form title
+	useTitleAsUploadSubFolderName = 0
+
+	# cat=plugin.powermail_frontend//0550; type=text; label= Folder for uploaded files: If you are using min. one upload field in frontend, you can change the folder where the uploaded file will be saved
+	uploadfolder = uploads/tx_powermail/files/
+
+	# cat=plugin.powermail_frontend//0560; type=text; label= Allow files for upload: If you are using min. one upload field in frontend, you can set the allowed extension of this files (use small letters)
+	edit.upload.file_extensions = jpg,jpeg,gif,png,tif,txt,doc,docx,xls,xlsx,csv,ppt,pptx,pdf,flv,mpg,mpeg,avi,mp3,zip,rar,ace
+
+	# cat=plugin.powermail_frontend//0570; type=int+; label= Allowed file size for upload: If you are using min. one upload field in frontend, you can set the allowed file size of the files (in kB)
+	edit.upload.filesize = 1000
+
 }

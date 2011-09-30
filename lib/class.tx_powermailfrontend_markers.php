@@ -87,9 +87,25 @@ class tx_powermailfrontend_markers extends tslib_pibase {
 						);
 						$this->cObj->start($ts_array, 'tx_powermail_fields'); // enable .field in typoscript
 						if ($this->cObj->cObjGetSingle($this->conf[$what . '.'][$key], $this->conf[$what . '.'][$key . '.']) != '') { // if ts for current field available (e.g. uid23 = TEXT ...)
-							$this->markerArrayAll['###POWERMAILFE_VALUE###'] .= $this->cObj->cObjGetSingle($this->conf[$what . '.'][$key], $this->conf[$what . '.'][$key.'.']); // value
+							$this->markerArrayAll['###POWERMAILFE_VALUE###'] .= $this->cObj->cObjGetSingle($this->conf[$what . '.'][$key], $this->conf[$what . '.'][$key . '.']); // value
 						} else { // no ts for current field, take default TS
 							$this->markerArrayAll['###POWERMAILFE_VALUE###'] .= $this->cObj->cObjGetSingle($this->conf[$what . '.']['fieldValue'], $this->conf[$what . '.']['fieldValue.']); // add value
+							if ($this->div->getFieldType($key) == 'file') {
+								if ($this->conf[$what . '.']['fieldValue.']['file.']['link'] == 1) {
+									if ($piVars_array['uploadPath'] != '' && 1 == 0) {
+										$fileLink = $this->cObj->typolinkWrap( array('parameter' => $piVars_array['uploadPath'] . $this->markerArrayAll['###POWERMAILFE_VALUE###']));
+									} else {
+										$fieldDetails = $this->div->fieldDetails($key);
+										if ($this->conf[$what . '.']['fieldValue.']['file.']['useTitleAsUploadSubFolderName'] == 1) {
+											$subFolder =  $fieldDetails['c_title'] . '/';
+										} else {
+											$subFolder = '';
+										}
+										$fileLink = $this->cObj->typolinkWrap( array('parameter' => $this->conf[$what . '.']['fieldValue.']['file.']['uploadfolder'] . $subFolder . $this->markerArrayAll['###POWERMAILFE_VALUE###']));
+									}
+									$this->markerArrayAll['###POWERMAILFE_VALUE###'] = $fileLink[0] . $this->markerArrayAll['###POWERMAILFE_VALUE###'] . $fileLink[1];
+								}
+							}
 						}
 					}
 

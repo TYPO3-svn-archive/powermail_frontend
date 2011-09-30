@@ -126,6 +126,7 @@ class tx_powermailfrontend_pi1 extends tslib_pibase {
 				//'*' => 'alphanum ++ @-_\.', // alphanum extended with '@', '-', '.' and '_'
 			),
 			'delete' => 'int',
+			'deleteFile' => 'int',
 			'change' => array (
 				'*' => 'text'
 			),
