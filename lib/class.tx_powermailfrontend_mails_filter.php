@@ -29,13 +29,9 @@ class tx_powermailfrontend_mails_filter extends tslib_pibase {
 	private $mailsArray, $confArray, $viewMode, $filterPiVars;
 	
 	/*
-	* Function sortArray() sorts piVars array
+	* Method sortArray() sorts piVars array
 	*
-	* @param 	array 	$array: whole array to sort
-	* @param 	array 	$conf: TS configuration
-	* @param 	string 	$mode: list, detail, latest
-	* @param 	array 	$piVars: piVars from GET or POST request
-	* @return 	array	new array
+	* @return 	void
 	*/
 	public function sortArray() {
 		$this->sort = $this->confArray[$this->viewMode . '.']['orderby']; // sorting
@@ -75,9 +71,10 @@ class tx_powermailfrontend_mails_filter extends tslib_pibase {
 	 * @param array		$haystack
 	 * @param bool 		$partial_matches
 	 * @param bool 		$search_keys
+	 * @param array		$excludeFromAllfields
 	 * @return bool|int|string
 	 */
-	private function arrayFindRecursive($needle, $haystack, $partial_matches = false, $search_keys = false) {
+	private function arrayFindRecursive($needle, $haystack, $partial_matches = false, $search_keys = false, $excludeFromAllfields = array()) {
         if (!is_array($haystack)) {
 			return ($partial_matches && strpos(strtolower($haystack), strtolower($needle)) !== false);
 		}
@@ -85,9 +82,11 @@ class tx_powermailfrontend_mails_filter extends tslib_pibase {
 			$key = strtolower($key);
 			$value = strtolower($value);
             $what = ($search_keys) ? $key : $value;
-            if ($needle === $what) return $key;
-            else if ($partial_matches && strpos($what, $needle) !== false) return $key;
-            else if (is_array($value) && $this->arrayFindRecursive($needle, $value, $partial_matches, $search_keys) !== false) return $key;
+			if (!in_array($key, $excludeFromAllfields)) {
+				if ($needle === $what) return $key;
+				else if ($partial_matches && strpos($what, $needle) !== false) return $key;
+				else if (is_array($value) && $this->arrayFindRecursive($needle, $value, $partial_matches, $search_keys) !== false) return $key;
+			}
         }
         return false;
     }
@@ -141,8 +140,9 @@ class tx_powermailfrontend_mails_filter extends tslib_pibase {
 
 			if (!empty($this->filterPiVars['_all'])) {
 				// search over all fields
+				$excludeFromAllfields = t3lib_div::trimExplode(',', $this->confArray['search.']['excludeFromAllfields'], 1);
 				foreach ($mailsToCheckArray as $mailToCheckKey => $mailToCheckValueArray) { // one loop for every mail
-					if ($this->arrayFindRecursive($this->filterPiVars['_all'], $mailToCheckValueArray, true, false) !== false) {
+					if ($this->arrayFindRecursive($this->filterPiVars['_all'], $mailToCheckValueArray, true, false, $excludeFromAllfields) !== false) {
 						$mailsToInclude[$mailToCheckKey] = 1; // Match, so include
 					}
 				}
@@ -213,6 +213,13 @@ class tx_powermailfrontend_mails_filter extends tslib_pibase {
 		$this->sessions->setSession($this->confArray, $sessionArray, $this->cObj, false);
 	}
 
+	/**
+	 * @param array		$mailsArray
+	 * @param array		$confArray
+	 * @param string	$viewMode
+	 * @param array		$cObj
+	 * @param array		$filterPiVars
+	 */
 	public function __construct($mailsArray, $confArray, $viewMode, $cObj, $filterPiVars) {
 		$this->mailsArray = $mailsArray;
 		$this->confArray = $confArray;

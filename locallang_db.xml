@@ -39,6 +39,7 @@
 			<label index="pi_flexform.search.filterAnd">Filter logic</label>
 			<label index="pi_flexform.search.filterAnd.0">All filter/search inputs must match (AND)</label>
 			<label index="pi_flexform.search.abc">Add ABC Filter</label>
+			<label index="pi_flexform.search.excludeFromAllfields">Fields to exclude from [Search in all fields]</label>
 			<label index="pi_flexform.edit.fields">Editable fields (empty = all fields)</label>
 			<label index="pi_flexform.edit.feuser">Please select one or more FE user(s) that should get right to editing</label>
 			<label index="pi_flexform.edit.fegroup">Please select one or more FE group(s) that should get right to editing</label>
@@ -99,6 +100,7 @@
 			<label index="pi_flexform.search.filterAnd">Filter-Logik</label>
 			<label index="pi_flexform.search.filterAnd.0">Alle Filter/Suche-Eingaben müssen zutreffen (AND)</label>
 			<label index="pi_flexform.search.abc">ABC Filter hinzufügen</label>
+			<label index="pi_flexform.search.excludeFromAllfields">Felder die von [Felderübergreifender Suche] ausgeschlossen werden sollen</label>
 			<label index="pi_flexform.edit.fields">Wählen Sie die Felder die bearbeitbar sein sollen (Leer = Alle Felder)</label>
 			<label index="pi_flexform.edit.feuser">Wählen Sie einen oder mehrere FE-User, die Bearbeitungsrechte erhalten sollen</label>
 			<label index="pi_flexform.edit.fegroup">Wählen Sie einen oder mehrere FE-Gruppen aus, die Bearbeitungsrechte erhalten sollen</label>
