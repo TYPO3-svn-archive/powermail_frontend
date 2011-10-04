@@ -33,14 +33,17 @@ class user_powermailfe_be_fields {
 			$ffPiVars = utf8_encode(t3lib_div::xml2array($params['row']['pi_flexform'],'piVars'));
 		}
 
-		if ($params['config']['itemsProcFunc_config']['mode'] == 'fields') {
-			$params['config']['itemsProcFunc_config']['mode'] = ($ffPiVars['data']['mainconfig']['lDEF']['fieldsmode']['vDEF'] == 'mails' || $ffPiVars['data']['mainconfig']['lDEF']['fieldsmode']['vDEF'] == '') ? 'mailFields' : 'formFields';
+		$addTurnOff = ($params['config']['itemsProcFunc_config']['mode'] == 'fieldsAndOff');
+		$addSearchInAllFields = $params['config']['itemsProcFunc_config']['mode'] == 'fieldsAndOverall';
+
+		if ($params['config']['itemsProcFunc_config']['mode'] == 'fields' || $addTurnOff || $addSearchInAllFields) {
+			$mode = ($ffPiVars['data']['mainconfig']['lDEF']['fieldsmode']['vDEF'] == 'mails' || $ffPiVars['data']['mainconfig']['lDEF']['fieldsmode']['vDEF'] == '') ? 'mailFields' : 'formFields';
+		} else {
+			$mode = 'powermailforms';
 		}
 
-		switch ($params['config']['itemsProcFunc_config']['mode']) {
+		switch ($mode) {
 			case 'mailFields':
-			case 'fieldsAndOff':
-			case 'fieldsAndOverall':
 				$selectOptions = array();
 				$tree = t3lib_div::makeInstance('t3lib_queryGenerator'); // make instance for query generator class
 				// Get pid where to search for powermails
@@ -90,31 +93,6 @@ class user_powermailfe_be_fields {
 				}
 				break;
 
-			case 'powermailforms':
-				// SQL query
-				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
-					'tx_powermail_title, tt_content.pid, tt_content.uid, pages.title',
-					'tt_content LEFT JOIN pages ON pages.uid = tt_content.pid',
-					$where_clause = "CType='powermail_pi1' AND pages.deleted = 0 AND tt_content.deleted = 0 AND sys_language_uid = 0",
-					$groupBy = '',
-					$orderBy = 'pages.sorting, tx_powermail_title ASC',
-					$limit = $this->limit
-				);
-
-				if ($res !== false) { // If there is a result
-					// 1. Collecting different field uids to an array
-					$params['items'][0]['0'] = $pObj->sL('LLL:EXT:powermail_frontend/locallang_db.xml:pi_flexform.edit.select'); // Option name
-					$params['items'][0]['1'] = 0; // Option value
-					$i = 1;
-					while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) { // one loop for every db entry
-						$params['items'][$i]['0'] = $row['title'] . ' [' . $row['pid'] . '] -&gt; ' . $row['tx_powermail_title'] . ' [' . $row['uid'] . ']'; // Option name
-						$params['items'][$i]['1'] = $row['uid']; // Option value
-						$i ++;
-					}
-					$GLOBALS['TYPO3_DB']->sql_free_result($res);
-				}
-				break;
-
 			case 'formFields':
 
 				$powermailUid = intval($ffPiVars['data']['mainconfig']['lDEF']['powermailuid']['vDEF']);
@@ -151,18 +129,41 @@ class user_powermailfe_be_fields {
 				}
 
 				break;
+
+			case 'powermailforms':
+				// SQL query
+				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
+					'tx_powermail_title, tt_content.pid, tt_content.uid, pages.title',
+					'tt_content LEFT JOIN pages ON pages.uid = tt_content.pid',
+					$where_clause = "CType='powermail_pi1' AND pages.deleted = 0 AND tt_content.deleted = 0 AND sys_language_uid = 0",
+					$groupBy = '',
+					$orderBy = 'pages.sorting, tx_powermail_title ASC',
+					$limit = $this->limit
+				);
+
+				if ($res !== false) { // If there is a result
+					// 1. Collecting different field uids to an array
+					$params['items'][0]['0'] = $pObj->sL('LLL:EXT:powermail_frontend/locallang_db.xml:pi_flexform.edit.select'); // Option name
+					$params['items'][0]['1'] = 0; // Option value
+					$i = 1;
+					while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) { // one loop for every db entry
+						$params['items'][$i]['0'] = $row['title'] . ' [' . $row['pid'] . '] -&gt; ' . $row['tx_powermail_title'] . ' [' . $row['uid'] . ']'; // Option name
+						$params['items'][$i]['1'] = $row['uid']; // Option value
+						$i ++;
+					}
+					$GLOBALS['TYPO3_DB']->sql_free_result($res);
+				}
+				break;
+
 		}
 
-		switch ($params['config']['itemsProcFunc_config']['mode']) {
-			case 'fieldsAndOff':
-				 // Add '[deactivated]'
-				array_unshift($params['items'], array($pObj->sL('LLL:EXT:powermail_frontend/locallang_db.xml:pi_flexform.empty'), '')); // add first param with text and no value
-				break;
-
-			case 'fieldsAndOverall':
-				// Add '[search in all fields]'
-				array_unshift($params['items'], array($pObj->sL('LLL:EXT:powermail_frontend/locallang_db.xml:pi_flexform.searchAll'), '_all')); // add first param with text and * as value
-				break;
+		if ($addTurnOff) {
+			 // Add '[deactivated]'
+			array_unshift($params['items'], array($pObj->sL('LLL:EXT:powermail_frontend/locallang_db.xml:pi_flexform.empty'), '')); // add first param with text and no value
+		}
+		if ($addSearchInAllFields) {
+			// Add '[search in all fields]'
+			array_unshift($params['items'], array($pObj->sL('LLL:EXT:powermail_frontend/locallang_db.xml:pi_flexform.searchAll'), '_all')); // add first param with text and * as value
 		}
 	}
 	
