@@ -59,6 +59,8 @@ class tx_powermailfrontend_markers extends tslib_pibase {
 		$i = 0;
 		$content_item = '';
 		$this->allowedArray = t3lib_div::trimExplode(',', $this->conf[$what . '.']['fields'], 1);
+		$this->allowedArray = $this->div->addFieldUidsFromOtherLanguages($this->allowedArray);
+
 		$this->tmpl['all']['all'] = $this->cObj->getSubpart($this->cObj->fileResource($conf['template.']['all']), '###POWERMAILFE_ALL###'); // Load HTML Template: ALL (works on subpart ###POWERMAILFE_ALL###)
 		$this->tmpl['all']['item'] = $this->cObj->getSubpart($this->tmpl['all']['all'], '###ITEM###'); // Load HTML Template: ALL (works on subpart ###ITEM###)
 		
@@ -66,8 +68,6 @@ class tx_powermailfrontend_markers extends tslib_pibase {
 		$piVars_array = $this->div->arraytwo2arrayone($piVars_array); // changes: array('v1', array('v2')) to array('v1', 'v1_v2)
 		$this->cObj->start($piVars_array, 'tx_powermail_mails'); // enable .field in typoscript
 
-		//t3lib_div::debug($this->conf);
-		
 		if(!empty($piVars_array) && is_array($piVars_array)) { // If array from xml is set
 			foreach ($piVars_array as $key => $value) { // one loop for every field in xml
 				

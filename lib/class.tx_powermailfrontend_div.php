@@ -220,6 +220,33 @@ class tx_powermailfrontend_div extends tslib_pibase {
 		}
 		return $ret;
 	}
+
+	/**
+	 * Add allowed field uid from other languages
+	 *
+	 * @param  array    $fieldUids
+	 * @return array    $fieldUids
+	 */
+	public function addFieldUidsFromOtherLanguages($fieldUids) {
+		foreach($fieldUids as $fieldUid) {
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
+				'uid',
+				'tx_powermail_fields',
+				$where_clause = 'sys_language_uid > 0 AND l18n_parent = ' . intval(str_replace('uid', '', $fieldUid)),
+				$groupBy = '',
+				$orderBy = '',
+				$limit = 1
+			);
+			if ($res !== false) {
+				$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+				if (is_array($row) && count($row) > 0) {
+					$fieldUids[] .= 'uid' . $row['uid'];
+				}
+				$GLOBALS['TYPO3_DB']->sql_free_result($res);
+			}
+		}
+		return $fieldUids;
+	}
 	
 	/**
 	* Check if current logged in user is allowed to make changes
