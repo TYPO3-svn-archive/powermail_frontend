@@ -30,8 +30,7 @@ class tx_powermailfrontend_markers extends tslib_pibase {
 	var $extKey = 'powermail_frontend'; // Extension key
 	var $prefixId = 'tx_powermailfrontend_pi1'; // Same as class name
 	var $scriptRelPath = 'pi1/class.tx_powermailfrontend_list.php';	// Path to any script in pi1 for locallang
-	var $mode = 'default';
-	
+
 	
 	/**
 	* Generate markerArray for list or single view
@@ -70,27 +69,30 @@ class tx_powermailfrontend_markers extends tslib_pibase {
 
 		if(!empty($piVars_array) && is_array($piVars_array)) { // If array from xml is set
 			foreach ($piVars_array as $key => $value) { // one loop for every field in xml
+
+				$fieldLabel = $this->div->getTitle($key, $GLOBALS['TSFE']->sys_language_uid);
+				$fieldType = $this->div->getFieldType($key);
 				
 				// 1. Fill automatic markers
 				if (in_array($this->div->minimize($key, 0), $this->allowedArray) || (count($this->allowedArray) == 0) && is_numeric(str_replace(array('uid', '_'), '', $key))) { // if current uid allowed in flexform or show all uids
 					$this->markerArrayAll = array(); // clear array at the beginning
-					$this->markerArrayAll['###POWERMAILFE_LABEL###'] .= $this->div->getTitle($key); // add label
+					$this->markerArrayAll['###POWERMAILFE_LABEL###'] .= $fieldLabel; // add label
 					$this->markerArrayAll['###POWERMAILFE_KEY###'] .= $key; // add key
 					$this->markerArrayAll['###POWERMAILFE_ALTERNATE###'] .= ($this->div->alternate($i) ? 'odd' : 'even'); // odd or even
 
 					if ($value != '') { // if there is a value
 						$ts_array = array (
-							'type' => $this->div->getFieldType($key), // fieldtype
+							'type' => $fieldType, // fieldtype
 							'uid' => $key, // uid
 							'value' => $value, // value
-							'label' => $this->div->getTitle($key) // label
+							'label' => $fieldLabel // label
 						);
 						$this->cObj->start($ts_array, 'tx_powermail_fields'); // enable .field in typoscript
 						if ($this->cObj->cObjGetSingle($this->conf[$what . '.'][$key], $this->conf[$what . '.'][$key . '.']) != '') { // if ts for current field available (e.g. uid23 = TEXT ...)
 							$this->markerArrayAll['###POWERMAILFE_VALUE###'] .= $this->cObj->cObjGetSingle($this->conf[$what . '.'][$key], $this->conf[$what . '.'][$key . '.']); // value
 						} else { // no ts for current field, take default TS
 							$this->markerArrayAll['###POWERMAILFE_VALUE###'] .= $this->cObj->cObjGetSingle($this->conf[$what . '.']['fieldValue'], $this->conf[$what . '.']['fieldValue.']); // add value
-							if ($this->div->getFieldType($key) == 'file') {
+							if ($fieldType == 'file') {
 								if ($this->conf[$what . '.']['fieldValue.']['file.']['link'] == 1) {
 									if ($piVars_array['uploadPath'] != '' && 1 == 0) {
 										$fileLink = $this->cObj->typolinkWrap( array('parameter' => $piVars_array['uploadPath'] . $this->markerArrayAll['###POWERMAILFE_VALUE###']));
@@ -119,7 +121,7 @@ class tx_powermailfrontend_markers extends tslib_pibase {
 				
 				// 2. Fill individual markers (like ###UID33### and ###LABEL_UID33###)
 				if (is_numeric($this->div->minimize($key))) { // if uid3 or uid3_4 and NOT file
-					$this->markerArray['###LABEL_' . strtoupper($key) . '###'] = $this->div->getTitle($key); // label::uid3 => ###LABEL_UID3###
+					$this->markerArray['###LABEL_' . strtoupper($key) . '###'] = $fieldLabel; // label::uid3 => ###LABEL_UID3###
 				}
 				if ($this->cObj->cObjGetSingle($this->conf[$what . '.'][$key], $this->conf[$what . '.'][$key . '.']) != '') { // if ts for current field available
 					
@@ -129,10 +131,10 @@ class tx_powermailfrontend_markers extends tslib_pibase {
 					
 					if ($value != '') { // if there is a value
 						$ts_array = array (
-							'type' => $this->div->getFieldType($key), // fieldtype
+							'type' => $fieldType, // fieldtype
 							'uid' => $key, // uid
 							'value' => $value, // value
-							'label' => $this->div->getTitle($key) // label
+							'label' => $fieldLabel // label
 						);
 						$this->cObj->start($ts_array, 'tx_powermail_fields'); // enable .field in typoscript
 						$this->markerArray['###' . strtoupper($key) . '###'] .= $this->cObj->cObjGetSingle($this->conf[$what . '.']['fieldValue'], $this->conf[$what . '.']['fieldValue.']); // add value
@@ -144,11 +146,7 @@ class tx_powermailfrontend_markers extends tslib_pibase {
 			$subpartArray['###CONTENT###'] = $content_item; // ###POWERMAILFE_ALL###
 			
 			
-			if ($this->mode == 'default') { // show values
-				$this->markerArray['###POWERMAILFE_ALL###'] = $this->cObj->substituteMarkerArrayCached($this->tmpl['all']['all'], array(), $subpartArray); // Fill ###POWERMAILFE_ALL###
-			} elseif ($this->mode == 'edit') { // edit values
-				$this->markerArray['###POWERMAILFE_ALL###'] = $this->markerArrayAll = $this->div->makeInputFields($this->markerArrayAll, $key, $value, $this->conf, $this->cObj); // wrap values with an input field
-			}
+			$this->markerArray['###POWERMAILFE_ALL###'] = $this->cObj->substituteMarkerArrayCached($this->tmpl['all']['all'], array(), $subpartArray); // Fill ###POWERMAILFE_ALL###
 		}
 		
 		if (!empty($this->markerArray)) return $this->markerArray;

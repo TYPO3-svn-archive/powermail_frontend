@@ -31,32 +31,63 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	public $scriptRelPath = 'pi1/class.tx_powermailfrontend_list.php';	// Path to any script in pi1 for locallang
 
 	/**
-	* Function getTitle() gets title for any uid
+	* Function getTitle() gets title for any uid. If $lang is set, get title from specific language (if available)
 	*
 	* @param 	string 	$uid: field uid
+	* @param    null|int    $language uid
 	* @return 	string	title
 	*/
-	public function getTitle($uid) {
+	public function getTitle($uid, $lang = null) {
 
 		$title = $uid;
+		$uid = $this->minimize($uid);
+
 		// SQL query
-		if (is_numeric($this->minimize($uid))) { // only if uid4 given
+		if (is_numeric($uid)) { // only if uid4 given
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
-				'title',
+				'uid, title, sys_language_uid, l18n_parent',
 				'tx_powermail_fields',
-				$where_clause = 'uid = ' . $this->minimize($uid),
-				$groupBy = '',
-				$orderBy = '',
-				$limit = 1
+				'uid = ' . $uid
 			);
 			if ($res !== false) {
 				$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+				if ($lang === null || $row['sys_language_uid'] == $lang) {
+					$title = $row['title'];
+				} else {
+					if ($lang == 0) {
+						$title = $this->getTitle($row['l18n_parent']);
+					} else {
+						if ($row['l18n_parent'] > 0) {
+							$title = $this->getTitle($this->getParentUid($row['l18n_parent'], $lang));
+						} else {
+							$title = $this->getTitle($this->getParentUid($row['uid'], $lang));
+						}
+					}
+				}
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
-				$title = $row['title'];
 			}
 		}
 
 		return $title;
+	}
+
+	public function getParentUid($uid, $lang) {
+
+		$parentUid = $uid;
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
+			'uid',
+			'tx_powermail_fields',
+			$where_clause = 'l18n_parent = ' . $uid . ' AND sys_language_uid = ' . $lang,
+			$groupBy = '',
+			$orderBy = '',
+			1
+		);
+		if ($res !== false) {
+			$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+			$parentUid = $row['uid'];
+			$GLOBALS['TYPO3_DB']->sql_free_result($res);
+		}
+		return $parentUid;
 	}
 	
 	/**
@@ -234,13 +265,13 @@ class tx_powermailfrontend_div extends tslib_pibase {
 				'tx_powermail_fields',
 				$where_clause = 'sys_language_uid > 0 AND l18n_parent = ' . intval(str_replace('uid', '', $fieldUid)),
 				$groupBy = '',
-				$orderBy = '',
-				$limit = 1
+				$orderBy = ''
 			);
 			if ($res !== false) {
-				$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-				if (is_array($row) && count($row) > 0) {
-					$fieldUids[] .= 'uid' . $row['uid'];
+				while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+					if (is_array($row) && count($row) > 0) {
+						$fieldUids[] .= 'uid' . $row['uid'];
+					}
 				}
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 			}
@@ -390,7 +421,8 @@ class tx_powermailfrontend_div extends tslib_pibase {
 						OR tx_powermail_fields.formtype = 'date'
 						OR tx_powermail_fields.formtype = 'datetime'
 						OR tx_powermail_fields.formtype = 'file')
-						AND tx_powermail_fieldsets.tt_content = " . intval($powermailUid) . ' AND tx_powermail_fields.deleted = 0 AND tx_powermail_fields.hidden = 0 AND tx_powermail_fieldsets.deleted = 0 AND tx_powermail_fieldsets.hidden = 0',
+						AND tx_powermail_fieldsets.tt_content = " . intval($powermailUid) . ' AND tx_powermail_fields.deleted = 0 AND tx_powermail_fields.hidden = 0 AND tx_powermail_fieldsets.deleted = 0 AND tx_powermail_fieldsets.hidden = 0 
+			',
 			'',
 			'tx_powermail_fields.fieldset, tx_powermail_fields.sorting'
 		);

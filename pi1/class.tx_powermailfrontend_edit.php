@@ -63,7 +63,7 @@ class tx_powermailfrontend_edit extends tslib_pibase {
 
 					// Get XML to current entry
 					$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
-						'uid, piVars, crdate, recipient, subject_r, sender, senderIP, uploadPath',
+						'uid, formid, piVars, crdate, recipient, subject_r, sender, senderIP, uploadPath',
 						'tx_powermail_mails',
 						$where_clause = 'tx_powermail_mails.uid = ' . $this->piVars['edit'] . $this->cObj->enableFields('tx_powermail_mails'),
 						$groupBy = '',
@@ -98,7 +98,10 @@ class tx_powermailfrontend_edit extends tslib_pibase {
 						}
 					}
 
-					$this->mailPiVars = $this->div->filterPiVars($this->mailPiVars, $this->conf['edit.']['fields'], $this->conf['mainconfig.']['fieldsmode'], $this->conf['mainconfig.']['powermailuid']);
+					//$powermail_uid = $this->conf['mainconfig.']['powermailuid'];
+					$powermail_uid = $row['formid'];
+
+					$this->mailPiVars = $this->div->filterPiVars($this->mailPiVars, $this->conf['edit.']['fields'], $this->conf['mainconfig.']['fieldsmode'], $powermail_uid);
 
 					// save values in in session
 					$GLOBALS['TSFE']->fe_user->setKey('ses', 'powermail_'.($this->cObj->data['_LOCALIZED_UID'] > 0 ? $this->cObj->data['_LOCALIZED_UID'] : $this->cObj->data['uid']), $this->mailPiVars); // Generate Session with piVars array
@@ -108,6 +111,10 @@ class tx_powermailfrontend_edit extends tslib_pibase {
 					foreach ($this->mailPiVars as $key => $value) { // one loop for every field in xml
 						if($key != 'FILE') {
 							$fieldDetails = $this->div->fieldDetails($key);
+
+							// get field title of current frontend language
+							$fieldDetails['f_title'] = $this->div->getTitle($key, $GLOBALS['TSFE']->sys_language_uid);
+
 							$this->innerMarkerArray['###POWERMAILFE_FIELDS###'] = $this->powermailHtml->main($this->conf['edit.'], array($key => $value), $this->cObj, $fieldDetails, array(), 0); // Get HTML code for each field
 							if ($fieldDetails['f_type'] == 'file' && $value != '') {
 								$dom = new DOMDocument();

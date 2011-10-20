@@ -541,7 +541,7 @@ class tx_powermailfrontend_export extends tslib_pibase {
 				}
 				$sheetHeaderCol = 0;
 				$sheetHeaderCols = array();
-				$excelColNames = $this->getExcelColNames(intval(count($headerPiVars) + count($this->rowConfig)));
+				$excelColNames = $this->getExcelColNames(intval(count($headerPiVars) + count($this->rowConfig)) + 100);
 				if ($this->debug) {
 					t3lib_div::devLog('Generated excelColNames: ', $this->extKey, 0, $excelColNames);
 				}
