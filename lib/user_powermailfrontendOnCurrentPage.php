@@ -55,7 +55,7 @@ function user_powermailfrontendOnCurrentPage($mode) {
 	return false;
 }
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail/lib/user_powermailfrontendOnCurrentPage.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail/lib/user_powermailfrontendOnCurrentPage.php']);
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_frontend/lib/user_powermailfrontendOnCurrentPage.php'])	{
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_frontend/lib/user_powermailfrontendOnCurrentPage.php']);
 }
 ?>
