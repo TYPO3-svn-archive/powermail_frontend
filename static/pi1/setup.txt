@@ -1,5 +1,6 @@
 # POWERMAIL_FRONTEND PLUGIN #
 includeLibs.user_powermailfrontend_pagebrowser = EXT:powermail_frontend/lib/user_powermailfrontend_pagebrowser.php
+includeLibs.user_powermailfrontendParseLinks = EXT:powermail_frontend/lib/user_powermailfrontend_ParseLinks.php
 
 # main settings
 plugin.tx_powermailfrontend_pi1 {
