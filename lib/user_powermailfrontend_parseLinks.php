@@ -23,18 +23,18 @@
 ***************************************************************/
 
 /**
- * user_powermailfrontendParseLinks() parse content and transform e.g. [url="http:://www.test.de"]Test[/url] to a real link <a href="http:://www.test.de">Test</a>
+ * user_powermailfrontend_parseLinks() parse content and transform e.g. [url="http:://www.test.de"]Test[/url] to a real link <a href="http:://www.test.de">Test</a>
  *
  * @param	string		$content: The PlugIn content
  * @param	array		$conf: The PlugIn configuration
- * @return	The content that is displayed on the website
+ * @return	string      The content that is displayed on the website
  */
 
 require_once(PATH_tslib.'class.tslib_pibase.php');
 
-class user_powermailfrontendParseLinks extends tslib_pibase {
+class user_powermailfrontend_parseLinks extends tslib_pibase {
 
-	var $cObj;// The backReference to the mother cObj object set at call time
+	var $cObj; // The backReference to the mother cObj object set at call time
 
 	function user_parseLinks($content = '', $conf = array()) {
 
@@ -62,11 +62,11 @@ class user_powermailfrontendParseLinks extends tslib_pibase {
 			'<a href="mailto:', '</a>',
 			'">'
 		);
-        return str_replace($bbcode, $htmlcode, $content);
+        return nl2br(str_replace($bbcode, $htmlcode, $content));
 	}
 }
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_frontend/lib/user_powermailfrontendParseLinks.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_frontend/lib/user_powermailfrontendParseLinks.php']);
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_frontend/lib/user_powermailfrontend_parseLinks.php'])	{
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_frontend/lib/user_powermailfrontend_parseLinks.php']);
 }
 ?>
