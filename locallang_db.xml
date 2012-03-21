@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>database</type>
+		<description>Language labels for database tables/fields belonging to extension 'powermail_frontend'</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="tt_content.list_type_pi1">powermail_frontend</label>
+			<label index="pi_flexform.sheet_mainconfig">Main configuration</label>
+			<label index="pi_flexform.sheet_list">Listview</label>
+			<label index="pi_flexform.sheet_single">Singleview</label>
+			<label index="pi_flexform.sheet_search">Search</label>
+			<label index="pi_flexform.sheet_latest">Latest</label>
+			<label index="pi_flexform.sheet_edit">FE Edit</label>
+			<label index="pi_flexform.mainconfig.mode">Select mode(s)</label>
+			<label index="pi_flexform.mainconfig.mode.0">List view</label>
+			<label index="pi_flexform.mainconfig.mode.1">Latest view</label>
+			<label index="pi_flexform.mainconfig.mode.2">Single view</label>
+			<label index="pi_flexform.mainconfig.mode.3">Search fields</label>
+			<label index="pi_flexform.mainconfig.mode.4">Edit entries in the frontend</label>
+			<label index="pi_flexform.single.pid">Select page with singleview (empty for same page)</label>
+			<label index="pi_flexform.list.fields">Select some fields to show</label>
+			<label index="pi_flexform.list.pid">Select page with listview (empty for same page)</label>
+			<label index="pi_flexform.latest.fields">Select some fields to show</label>
+			<label index="pi_flexform.latest.pid">Select page with latestview (empty for same page)</label>
+			<label index="pi_flexform.latest.delta">Show entries of the last X days (empty for no limit)</label>
+			<label index="pi_flexform.latest.limit">Show max. X entries (empty for no limit)</label>
+			<label index="pi_flexform.latest.new">Show only entries in future (only if a field is a timestamp)</label>
+			<label index="pi_flexform.showownonly">Own entries only</label>
+			<label index="pi_flexform.showownonly.0">Show only entries of the currently logged in FEuser</label>
+			<label index="pi_flexform.search.searchfields">Add some searchfields</label>
+			<label index="pi_flexform.search.abc">Add ABC Filter</label>
+			<label index="pi_flexform.edit.fields">Choose fields to update (empty for all fields)</label>
+			<label index="pi_flexform.edit.feuser">Define some FE-Users which are allowed to update</label>
+			<label index="pi_flexform.edit.fegroup">Define some FE-Groups which are allowed to update</label>
+			<label index="pi_flexform.edit.pid">Select page with edit plugin (empty for same page)</label>
+			<label index="pi_flexform.empty">[Turn off]</label>
+			<label index="pi_flexform.searchAll">[Search in all fields]</label>
+			<label index="pi_flexform.feuser_owner">[Owner]</label>
+			<label index="pi_flexform.fegroup_owner">[Owner Group]</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="tt_content.list_type_pi1">powermail_frontend</label>
+			<label index="pi_flexform.sheet_mainconfig">Konfiguration</label>
+			<label index="pi_flexform.sheet_list">Listenansicht</label>
+			<label index="pi_flexform.sheet_single">Singleansicht</label>
+			<label index="pi_flexform.sheet_search">Suche</label>
+			<label index="pi_flexform.sheet_latest">Letzte</label>
+			<label index="pi_flexform.sheet_edit">Änderungen im FE</label>
+			<label index="pi_flexform.mainconfig.mode">Ansicht(en) auswählen</label>
+			<label index="pi_flexform.mainconfig.mode.0">Listenansicht</label>
+			<label index="pi_flexform.mainconfig.mode.1">Zeige Letzte</label>
+			<label index="pi_flexform.mainconfig.mode.2">Detailansicht</label>
+			<label index="pi_flexform.mainconfig.mode.3">Suchfelder</label>
+			<label index="pi_flexform.mainconfig.mode.4">Einträge im Frontend bearbeiten</label>
+			<label index="pi_flexform.single.pid">Seite mit Detailansicht auswählen (Leer: gleiche Seite)</label>
+			<label index="pi_flexform.list.fields">Anzuzeigende Felder</label>
+			<label index="pi_flexform.list.pid">Seite mit Listenansicht auswählen (Leer: gleiche Seite)</label>
+			<label index="pi_flexform.latest.fields">Anzuzeigende Felder</label>
+			<label index="pi_flexform.latest.pid">Seite mit der Ansicht der Letzten Datensätze auswählen (Leer: gleiche Seite)</label>
+			<label index="pi_flexform.latest.delta">Zeige Einträge der letzten X Tage (Leer: Funktion deaktiviert)</label>
+			<label index="pi_flexform.latest.limit">Zeige max. X Einträge (Leer: Kein Limit)</label>
+			<label index="pi_flexform.latest.new">Zeige nur künftige Einträge (Nur wenn ein Feld timestamp beinhaltet)</label>
+			<label index="pi_flexform.showownonly">Nur eigene Einträge</label>
+			<label index="pi_flexform.showownonly.0">Zeige nur Einträge des aktuell angemeldeten FEuser</label>
+			<label index="pi_flexform.search.searchfields">Suchfelder hinzufügen</label>
+			<label index="pi_flexform.search.abc">ABC Filter hinzufügen</label>
+			<label index="pi_flexform.edit.fields">Felder zum Bearbeiten auswählen (Leer: alle Felder)</label>
+			<label index="pi_flexform.edit.feuser">Wählen Sie einen oder mehrere FE-User aus, die Datensätze ändern dürfen</label>
+			<label index="pi_flexform.edit.fegroup">Wählen Sie einen oder mehrere FE-Gruppen aus, deren User Datensätze ändern dürfen</label>
+			<label index="pi_flexform.edit.pid">Seite mit Änderungsplugin auswählen (Leer: gleiche Seite)</label>
+			<label index="pi_flexform.empty">[Abgeschalten]</label>
+			<label index="pi_flexform.searchAll">[Felderübergreifende Suche]</label>
+			<label index="pi_flexform.feuser_owner">[Ersteller]</label>
+			<label index="pi_flexform.fegroup_owner">[Ersteller Gruppe]</label>
+		</languageKey>
+	</data>
+</T3locallang>

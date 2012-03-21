@@ -1,0 +1,40 @@
+Powermail_frontend HTML Template for list view
+
+	--- MAIN MARKERS FOR LIST VIEW ---
+	Available markers inside ITEM subparts:
+	###POWERMAILFE_ALL###						Automatic marker with all needed fields (see tmpl_all.html)
+	###UID23###									Value of field uid23
+	###UID23_1###								Subvalue of field uid23_1 (maybe a second checkbox)
+	###LABEL_UID23###							Label to uid23
+    ###CRDATE###								Show crdate (manipulation strftime via typoscript)
+    ###RECIPIENT###								Show recipient
+    ###SUBJECT_R###								Subject of email
+    ###SENDER###								Sendername
+    ###SENDERIP###								IP address of sender
+    ###UID###									UID of powermail mail
+	###POWERMAILFE_LL_MORE###					Linktext ("more...")
+	###POWERMAILFE_EDITLINKTEXT###				Linktext ("edit...")
+	###POWERMAILFE_SPECIAL_DETAILLINK###		Subpartlink ("<a href="[currentPageWithDetails]">[content]</a>") (e.g.: <!-- ###POWERMAILFE_SPECIAL_DETAILLINK### -->more<!-- ###POWERMAILFE_SPECIAL_DETAILLINK### -->)
+	###POWERMAILFE_SPECIAL_EDITLINK###			Subpartlink ("<a href="[currentPageWithEdit]">[content]</a>") (e.g.: <!-- ###POWERMAILFE_SPECIAL_EDITLINK### -->edit<!-- ###POWERMAILFE_SPECIAL_EDITLINK### -->)
+	
+    Available markers outside ITEM subparts:
+	###ALTERNATE###								"odd" or "even"
+    ###POWERMAILFE_PAGEBROWSER###				Add pagebrowser
+	###SORT_UID23###							Text with sorting possibility ("<a href="[currentPageWithSortedField23]">Text from locallang</a>") - Always ###SORT_FIELD###
+	
+    
+	--- GENERAL MARKERS ---
+	Displaying any value from pi1/locallang.xml:		###POWERMAILFE_LL_YOURFIELD### (Could be filled via locallang.xml or typoscript - see manual for details)
+	Displaying any value from typoscript:				###POWERMAILFE_TS_YOURFIELD### (Could be filled via typoscript - see manual for details)
+	
+	
+<!-- ###POWERMAILFE_LIST### begin -->
+	###POWERMAILFE_PAGEBROWSER###
+	<div class="powermailfe_list">
+		<!-- ###CONTENT_LIST### --><!-- ###ITEM_LIST### -->
+        	<div class="powermailfe_listitem powermailfe_listitem_###ALTERNATE### powermailfe_listitem_###UID###">###POWERMAILFE_ALL###</div>
+            <!-- ###POWERMAILFE_SPECIAL_DETAILLINK### -->###POWERMAILFE_LL_MORE###<!-- ###POWERMAILFE_SPECIAL_DETAILLINK### -->
+            <!-- ###POWERMAILFE_SPECIAL_EDITLINK### -->###POWERMAILFE_EDITLINKTEXT###<!-- ###POWERMAILFE_SPECIAL_EDITLINK### -->
+		<!-- ###ITEM_LIST### --><!-- ###CONTENT_LIST### -->
+	</div>
+<!-- ###POWERMAILFE_LIST### end -->

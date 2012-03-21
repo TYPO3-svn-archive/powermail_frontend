@@ -1,0 +1,9 @@
+#include sample CSS for powermail_frontend
+page {
+	includeCSS {
+		file3133 = EXT:powermail_frontend/css/sampleCSS.css
+		#file3133.title = powermail_frontend default CSS
+		#file3133.media = screen
+	}
+}
+seite.includeCSS.file3133 < page.includeCSS.file3133

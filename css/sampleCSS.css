@@ -1,0 +1,48 @@
+div.tx-powermailfrontend-pi1 {
+	background-color: #ccc;
+	padding: 5px;
+}
+div.powermailfe_listitem,
+div.powermailfe_latestitem {
+	background-color: #aaa;
+	border: 1px solid #444;
+	margin: 5px;
+	padding: 0 5px;
+}
+div.powermailfe_listitem_even,
+div.powermailfe_latestitem_even {
+	background-color: #ddd;
+}
+dt.pfe_all_dl {
+	font-weight: bold;
+	float: left;
+	clear: both;
+	width: 150px;
+	height: 20px;
+	display: block;
+}
+dd.pfe_all_dl {
+	height: 20px;
+	display: block;
+}
+div.powermailfe_filter_div label {
+	float: left;
+	clear: both;
+	margin-right: 15px;
+	width: 180px;
+	font-weight: bold;
+}
+div.powermailfe_filter_div {
+	clear: both;
+}
+input.powermailfe_filter_submit {
+	margin: 5px 0 0 195px;
+}
+
+	/* Edit */
+div.powermailfe_edititem dl dd {
+	margin: 10px 0;
+}
+input.powermail_frontend_edit {
+	width: 250px;
+}
