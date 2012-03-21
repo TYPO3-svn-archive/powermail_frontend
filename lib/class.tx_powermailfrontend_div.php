@@ -29,65 +29,28 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	public $extKey = 'powermail_frontend'; // Extension key
 	public $prefixId = 'tx_powermailfrontend_pi1'; // prefix for piVars
 	public $scriptRelPath = 'pi1/class.tx_powermailfrontend_list.php';	// Path to any script in pi1 for locallang
-
+	
 	/**
-	* Function getTitle() gets title for any uid. If $lang is set, get title from specific language (if available)
+	* Function getTitle() gets title for any uid
 	*
 	* @param 	string 	$uid: field uid
-	* @param    null|int    $language uid
 	* @return 	string	title
 	*/
-	public function getTitle($uid, $lang = null) {
-
-		$title = $uid;
-		$uid = $this->minimize($uid);
-
+	public function getTitle($uid) {
 		// SQL query
-		if (is_numeric($uid)) { // only if uid4 given
+		if (is_numeric($this->minimize($uid))) { // only if uid4 given
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
-				'uid, title, sys_language_uid, l18n_parent',
+				'title',
 				'tx_powermail_fields',
-				'uid = ' . $uid
+				$where_clause = 'uid = ' . $this->minimize($uid),
+				$groupBy = '',
+				$orderBy = '',
+				$limit = 1
 			);
-			if ($res !== false) {
-				$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-				if ($lang === null || $row['sys_language_uid'] == $lang) {
-					$title = $row['title'];
-				} else {
-					if ($lang == 0) {
-						$title = $this->getTitle($row['l18n_parent']);
-					} else {
-						if ($row['l18n_parent'] > 0) {
-							$title = $this->getTitle($this->getParentUid($row['l18n_parent'], $lang));
-						} else {
-							$title = $this->getTitle($this->getParentUid($row['uid'], $lang));
-						}
-					}
-				}
-				$GLOBALS['TYPO3_DB']->sql_free_result($res);
-			}
+			if ($res) $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 		}
-
-		return $title;
-	}
-
-	public function getParentUid($uid, $lang) {
-
-		$parentUid = $uid;
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
-			'uid',
-			'tx_powermail_fields',
-			$where_clause = 'l18n_parent = ' . $uid . ' AND sys_language_uid = ' . $lang,
-			$groupBy = '',
-			$orderBy = '',
-			1
-		);
-		if ($res !== false) {
-			$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-			$parentUid = $row['uid'];
-			$GLOBALS['TYPO3_DB']->sql_free_result($res);
-		}
-		return $parentUid;
+		
+		if ($row['title']) return $row['title'];
 	}
 	
 	/**
@@ -150,24 +113,201 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	}
 	
 	/**
-	* Function numberOfMails() returns number of powermails
+	* Function overall() returns whole number of powermails
 	*
 	* @param 	array 	$where: array with whole select string
 	* @return 	integer	number of all mails
 	*/
-	public function numberOfMails($where) {
-		$num = 0;
+	public function overall($where) {
+		$this->where = $where;
+		
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
-			$where['select'],
-			$where['from'],
-			$where['where'],
-			$where['groupby'],
-			$where['orderby']
+			$this->where['select'],
+			$this->where['from'],
+			$this->where['where'],
+			$this->where['groupby'],
+			$this->where['orderby'],
+			''
 		);
-		if ($res !== false) {
-			$num = $GLOBALS['TYPO3_DB']->sql_num_rows($res); // numbers of all entries
+		$this->num = $GLOBALS['TYPO3_DB']->sql_num_rows ($res); // numbers of all entries
+		
+		if (!empty($this->num)) return $this->num;
+	}
+	
+	/**
+	* Function sortArray() sorts piVars array
+	*
+	* @param 	array 	$array: whole array to sort
+	* @param 	array 	$conf: TS configuration
+	* @param 	string 	$mode: list, detail, latest
+	* @param 	array 	$piVars: piVars from GET or POST request
+	* @return 	array	new array
+	*/
+	public function sortArray($array, $conf, $mode, $piVars) {
+		// config
+		$this->conf = $conf; // ts and flexform configuration
+		$this->mode = $mode; // given mode (list or latest)
+		$this->piVars = $piVars; // given piVars
+		$this->varray = $array; // array with all variables
+		$this->sort = $this->conf[$this->mode . '.']['orderby']; // sorting
+		if (!empty($this->piVars['sort'])) { // sort from piVars
+			foreach ((array) $this->piVars['sort'] as $key => $value) { // one loop for every sorting entry
+				$this->sort = strtolower($key . ' ' . $value);
+				break; // take first entry and stop loop
+			}
 		}
-		return $num;
+		$this->limit = $this->conf[$this->mode . '.']['limit']; // limit
+		$this->filter(); // clears $array
+		
+		// let's go
+		if ($this->conf[$this->mode . '.']['orderby']) usort($this->varray, array('tx_powermailfrontend_div', 'cmp')); // sorting
+		
+		return $this->varray;
+	}
+	
+	/**
+	* Function cmp is a compare function for usort
+	*
+	* @param 	array 	$a: first array
+	* @param 	array 	$b: second array
+	* @return 	boolean
+	*/
+	public function cmp($a, $b) {
+		// config
+		$conf_orderby = t3lib_div::trimExplode(' ', $this->sort, 1); // split on space
+		
+		// let's go
+		$return = strcmp($a[$conf_orderby[0]], $b[$conf_orderby[0]]); // give me 0 or 1 or -1
+		if (strtolower($conf_orderby[1]) == 'desc' && $return !== 0) $return *= -1; // if DESC than change 1 to -1 OR -1 to 1
+		
+		return $return;
+	}
+	
+	/**
+	* changes filter
+	*
+	* @return 	void
+	*/
+	public function filter() {
+		// config
+		$del_listitem = $newArray = array();
+		$j = 0;
+		
+		// let's go
+		// 1. if limit set, cut array
+		if ($this->limit > 0) {
+			$this->varray = array_slice($this->varray, 0, $this->limit); // give me only the first X entries of the array
+		}
+		
+		// 2. if new mode is set, clear old values
+		if (!empty($this->conf[$this->mode . '.']['new'])) { // if new mode was set
+			for ($i=0; $i < count($this->varray); $i++) { // one loop for every list item
+				if ($this->varray[$i][$this->conf[$this->mode . '.']['new']] > time()) { // if this value is greater than today
+					$newArray[] = $this->varray[$i];
+				}
+			}
+			$this->varray = array(); // clear old array
+			$this->varray = $newArray; // define old array
+			$newArray = array(); // clear temp array
+		}
+				
+		// 3. filter array
+		if (!empty($this->piVars['filter']) && count($this->piVars['filter']) > 0) { // if there are some filter
+			foreach ($this->piVars['filter'] as $key => $value) { // one loop for every filter
+				if (!empty($value)) {
+					for ($i=0; $i < count($this->varray); $i++) { // one loop for every list item
+					
+						if ($key != '_all') { // search in a specified field
+							$del_listitem[$i] = 0; // not to delete is default
+							if (!array_key_exists($key, $this->varray[$i])) {
+								$del_listitem[$i] = 1; // in current list item is not the field which should be filtered - so delete
+							}
+							if ($del_listitem[$i] === 0) { // only if this listitem should not be deleted
+								foreach ($this->varray[$i] as $key2 => $value2) { // one loop for every piVar in current list item
+									if ($key == $key2) { // if current uid is the uid which should be filtered
+										switch (strtolower($value[0])) {
+											case '@': // filter with beginning number
+												if (!is_numeric($value2[0])) {
+													$del_listitem[$i] = 1; // this value don't start with a number
+												}
+												break;
+											
+											case 'a': // filter with beginning letter
+											case 'b':
+											case 'c':
+											case 'd':
+											case 'e':
+											case 'f':
+											case 'g':
+											case 'h':
+											case 'i':
+											case 'j':
+											case 'k':
+											case 'l':
+											case 'm':
+											case 'n':
+											case 'o':
+											case 'p':
+											case 'q':
+											case 'r':
+											case 's':
+											case 't':
+											case 'u':
+											case 'v':
+											case 'w':
+											case 'x':
+											case 'y':
+											case 'z':
+											default:
+												if (strlen($value) == 1) { // only one letter given
+													if (strtolower($value2[0]) != $value) {
+														$del_listitem[$i] = 1; // this value don't start with the right letter
+													}
+												} else { // searchword given
+													if (is_array($value2)) { // second level
+														$tmp_del = 1;
+														foreach ((array) $value2 as $key4 => $value4) {
+															if (stristr(strtolower($value4), strtolower($value))) {
+																$tmp_del = 0;
+																break;
+															}
+														}
+														if ($tmp_del) {
+															$del_listitem[$i] = 1; // this var is not in the value
+														}
+													} else { // first level
+														if (strpos(strtolower($value2), strtolower($value)) === false) {
+															$del_listitem[$i] = 1; // this var is not in the value
+														}
+													}
+												}
+												break;
+										}
+									} 
+								}
+							}
+							
+						} else { // overall search
+							$del_listitem[$i] = 1; // delete is default
+							foreach ($this->varray[$i] as $key2 => $value2) { // one loop for every piVar in current list item
+								if (strpos(strtolower($value2), strtolower($value)) !== false) $del_listitem[$i] = 0; // Match, so don't delete
+							}
+						}
+						
+					}
+				}
+			}
+			
+			foreach ($this->varray as $key3 => $value3) { // finally sort it 
+				if (!$del_listitem[$j]) {
+					$newArray[] = $value3; // fill into a new array
+				}
+				
+				$j++; // increase counter
+			}
+			unset($this->varray); // delete old array
+			$this->varray = $newArray; // fill into old array
+		} 
 	}
 	
 	/**
@@ -230,7 +370,6 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	* @return 	array	$row	Returns field array
 	*/
 	public function fieldDetails($uid) {
-		$ret = array();
 		if (strpos($uid, '_') === false) { // We don't want uids like ###UID33_0###
 			$uid = intval(preg_replace('/[^0-9]/', '', $uid)); // keep only the numbers to get the uid of powermail field
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
@@ -241,42 +380,11 @@ class tx_powermailfrontend_div extends tslib_pibase {
 				$orderBy = '',
 				$limit = 1
 			);
-			if ($res !== false) {
-				$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-				if (is_array($row) && count($row) > 0) {
-					$ret = $row;
-				}
-				$GLOBALS['TYPO3_DB']->sql_free_result($res);
+			if ($res) $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+			if (is_array($row) && count($row) > 0) {
+				return $row;
 			}
 		}
-		return $ret;
-	}
-
-	/**
-	 * Add allowed field uid from other languages
-	 *
-	 * @param  array    $fieldUids
-	 * @return array    $fieldUids
-	 */
-	public function addFieldUidsFromOtherLanguages($fieldUids) {
-		foreach($fieldUids as $fieldUid) {
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
-				'uid',
-				'tx_powermail_fields',
-				$where_clause = 'sys_language_uid > 0 AND l18n_parent = ' . intval(str_replace('uid', '', $fieldUid)),
-				$groupBy = '',
-				$orderBy = ''
-			);
-			if ($res !== false) {
-				while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
-					if (is_array($row) && count($row) > 0) {
-						$fieldUids[] .= 'uid' . $row['uid'];
-					}
-				}
-				$GLOBALS['TYPO3_DB']->sql_free_result($res);
-			}
-		}
-		return $fieldUids;
 	}
 	
 	/**
@@ -286,13 +394,13 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	* @param 	array 	$conf	$this->conf
 	* @return 	string	$error	return Errormessage or void if no error
 	*/
-	public function feuserHasAccess($uid, $conf) {
+	public function allowed($uid, $conf) {
 		// config
 		$this->conf = $conf;
 		$this->pi_loadLL();
-		$error = false; // no error at the beginning
-		$usersArrayConf = t3lib_div::trimExplode(',', $conf['edit.']['feuser'], 1); // array with all feuserHasAccess users
-		$groupArrayConf = t3lib_div::trimExplode(',', $conf['edit.']['fegroup'], 1); // array with all feuserHasAccess groups
+		$error = 0; // no error at the beginning
+		$usersArrayConf = t3lib_div::trimExplode(',', $conf['edit.']['feuser'], 1); // array with all allowed users
+		$groupArrayConf = t3lib_div::trimExplode(',', $conf['edit.']['fegroup'], 1); // array with all allowed groups
 		if (is_numeric(array_search('owner', $usersArrayConf))) $usersArrayConf[array_search('owner', $usersArrayConf)] = $this->userID($uid, 'fe_users'); // replace "owner" with uid of owner
 		if (is_numeric(array_search('ownergroup', $groupArrayConf))) { // if one entry is "ownergroup"
 			$tmp_groupArray = $this->userID($uid, 'fe_groups'); // replace "ownergroup" with uid of group where the owner is listed
@@ -306,17 +414,17 @@ class tx_powermailfrontend_div extends tslib_pibase {
 		}
 		
 		// 2. check for editors
-		if (!empty($conf['edit.']['feuser']) || !empty($conf['edit.']['fegroup'])) { // if min a user or a group is feuserHasAccess
+		if (!empty($conf['edit.']['feuser']) || !empty($conf['edit.']['fegroup'])) { // if min a user or a group is allowed
 			if ($GLOBALS['TSFE']->fe_user->user['uid'] > 0) { // if a FE User is logged in
 				
 				// 1. check group
-				if (count(array_intersect($groupArray, $groupArrayConf)) == 0) { // if there is none of the groups feuserHasAccess
-					$error = $this->pi_getLL('edit_error_forbiddenuser', 'Logged in user is not feuserHasAccess to make changes!'); // msg: user is not feuserHasAccess
+				if (count(array_intersect($groupArray, $groupArrayConf)) == 0) { // if there is none of the groups allowed
+					$error = $this->pi_getLL('edit_error_forbiddenuser', 'Logged in user is not allowed to make changes!'); // msg: user is not allowed
 				}
 				
 				// 2. check user
-				if (in_array($GLOBALS['TSFE']->fe_user->user['uid'], $usersArrayConf)) { // if currently logged in user is feuserHasAccess
-					$error = false; // overwrite any error entries
+				if (in_array($GLOBALS['TSFE']->fe_user->user['uid'], $usersArrayConf)) { // if currently logged in user is allowed
+					$error = 0; // overwrite any error entries
 				}
 				
 			} else {
@@ -377,74 +485,27 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	* Cuts an array and returns only allowed values
 	*
 	* @param 	array 	$vars		All variables from database to current powermail mail	array('uid3' => 'Alex')
-	* @param 	string 	$allowed	Comma separated string with allowed uids 				(uid3,uid4)
+	* @param 	string 	$allowed	Commaseparated string with allowed uids 				(uid3,uid4)
 	* @return 	array	$vars		Return full array form input or only a part of it
 	*/
-	public function filterPiVars($piVars, $allowed, $fieldsmode, $powermailUid) {
-		$allowedArray = t3lib_div::trimExplode(',', $allowed, 1); // split allowed string to an array and turn values to keys
-		if (count($allowedArray) > 0) { // if there are some fields which are allowed to show (if not show all)
-			$newPiVars = array();
-			foreach ($allowedArray as $value) {
-				if (empty($piVars[$value])) {
-					$newPiVars[$value] = '';
-				} else {
-					$newPiVars[$value] = $piVars[$value];
+	public function allowedUID($vars, $allowed) {
+		if (count($allowed) > 0) { // if there are some fields which are allowed to show (if not show all)
+			$alwd_arr = t3lib_div::trimExplode(',', $allowed, 1); // split allowed string to an array
+			$new = array();
+			
+			foreach ((array) $vars as $key => $value) { // one loop for every variable in db
+				if (in_array($key, $alwd_arr)) { // if current key of db is in allowed array
+					$new[$key] = $value; // fill array
 				}
 			}
-			$piVars = $newPiVars;
-			//$piVars = array_intersect_key($piVars, array_flip($allowedArray));
-		} else if ($fieldsmode == 'forms') {
-			$piVars = $this->orderPiVars($piVars, $powermailUid);
+			$vars = $new; // overwrite array with new array
 		}
-		return $piVars;
+		
+		return $vars;
 	}
-
+	
 	/**
-	* Order piVars fields by fieldset and fields sorting
-	*
-	* @param 	array 	$piVars	to order
-	* @param	int		$powermailUid of a powermail form definition
-	* @param	array	$manualOrderArray if not empty fields will be ordered against this array
-	* @return 	array	$piVars	ordered
-	*/
-	public function orderPiVars($piVars, $powermailUid) {
-		// SQL query
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery ( // DB query
-			'tx_powermail_fields.uid',
-			'tx_powermail_fields LEFT JOIN tx_powermail_fieldsets ON tx_powermail_fieldsets.uid = tx_powermail_fields.fieldset',
-			"(tx_powermail_fields.formtype = 'text'
-						OR tx_powermail_fields.formtype = 'radio'
-						OR tx_powermail_fields.formtype = 'check'
-						OR tx_powermail_fields.formtype = 'select'
-						OR tx_powermail_fields.formtype = 'textarea'
-						OR tx_powermail_fields.formtype = 'countryselect'
-						OR tx_powermail_fields.formtype = 'date'
-						OR tx_powermail_fields.formtype = 'datetime'
-						OR tx_powermail_fields.formtype = 'file')
-						AND tx_powermail_fieldsets.tt_content = " . intval($powermailUid) . ' AND tx_powermail_fields.deleted = 0 AND tx_powermail_fields.hidden = 0 AND tx_powermail_fieldsets.deleted = 0 AND tx_powermail_fieldsets.hidden = 0 
-			',
-			'',
-			'tx_powermail_fields.fieldset, tx_powermail_fields.sorting'
-		);
-
-		if ($res !== false) { // If there is a result
-			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) { // one loop for every db entry
-				if (!empty($piVars['uid' . $row['uid']])) {
-					$orderedPiVars['uid' . $row['uid']] = $piVars['uid' . $row['uid']];
-					unset($piVars['uid' . $row['uid']]);
-				} else {
-					$orderedPiVars['uid' . $row['uid']] = '';
-				}
-			}
-			$piVars = array_merge($orderedPiVars, $piVars);
-
-			$GLOBALS['TYPO3_DB']->sql_free_result($res);
-		}
-		return $piVars;
-	}
-
-	/**
-	* Function addWhereClause() adds where clause for DB select (list, latest, abc filter)
+	* Function addWhereClause() adds whrere clause for DB select (list, latest, abc filter)
 	*
 	* @return 	string		$where		Where clause
 	*/
@@ -473,8 +534,8 @@ class tx_powermailfrontend_div extends tslib_pibase {
 	 * @return boolean
 	 */
 	public function delEntry($pObj) {
-		// only if something should be deleted and current user is feuserHasAccess to delete something
-		if ($pObj->piVars['delete'] > 0 && !$this->feuserHasAccess($pObj->piVars['delete'], $pObj->conf)) {
+		// only if something should be deleted and current user is allowed to delete something
+		if ($pObj->piVars['delete'] > 0 && !$this->allowed($pObj->piVars['delete'], $pObj->conf)) { 
 			$GLOBALS['TYPO3_DB']->exec_UPDATEquery(
 				'tx_powermail_mails',
 				'uid=' . $pObj->piVars['delete'],
@@ -547,6 +608,52 @@ class tx_powermailfrontend_div extends tslib_pibase {
 			}
 		}
 		return $arr;
+	}
+	
+	/**
+	 * Change umlaut characters to plain ASCII with normally two character target
+	 * Only known characters will be converted, so don't expect a result for any character.
+	 * (DEPRECIATED: Works only for western europe single-byte charsets! Use t3lib_cs::specCharsToASCII() instead!)
+	 *
+	 * ä => ae, Ö => Oe
+	 *
+	 * @param    string        String to convert.
+	 * @return    string
+	 */
+	public function convUmlauts($str)    {
+		$pat  = array(
+			'/ä/',
+			'/Ä/',
+			'/ö/',
+			'/Ö/',
+			'/ü/',
+			'/Ü/',
+			'/ß/',
+			'/å/',
+			'/Å/',
+			'/ø/',
+			'/Ø/',
+			'/æ/',
+			'/Æ/'
+		);
+		
+		$repl = array(
+			'ae',
+			'Ae',
+			'oe',
+			'Oe',
+			'ue',
+			'Ue',
+			'ss',
+			'aa',
+			'AA',
+			'oe',
+			'OE',
+			'ae',
+			'AE'
+		);
+		
+		return preg_replace($pat, $repl, $str);
 	}
 }
 
