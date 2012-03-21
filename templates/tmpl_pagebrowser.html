@@ -1,0 +1,26 @@
+POWERMAIL_FRONTEND HTML Template for pagebrowser
+  
+  --- PABEBROWSER MARKERS ---
+  ###CURRENT_MIN###            E.g.: Current page shows 11 up to x
+  ###CURRENT_MAX###            E.g.: Current page shows x up to 20
+  ###OVERALL###              E.g.: There are 347 address records
+  ###PAGELINKS###              E.g.: Page 1 | Page 2 | Page 3 (Can defined via typoscript HMENU)
+  
+    --- GENERAL MARKERS ---
+  Displaying any value from pi1/locallang.xml:    ###POWERMAILFE_LL_YOURFIELD### (Could be filled via locallang.xml or typoscript - see manual for details)
+  Displaying any value from typoscript:        ###POWERMAILFE_TS_YOURFIELD### (Could be filled via typoscript - see manual for details)
+
+
+
+<!-- ###POWERMAILFRONTEND_PAGEBROWSER### begin -->
+  <div class="powermailfrontend_pagebrowser">
+	<div class="powermailfrontend_pagebrowser_header powermailfe_clearfix">
+		<h2>###POWERMAILFE_LL_PAGEBROWSER_ITEM### ###CURRENT_MIN### ###POWERMAILFE_LL_PAGEBROWSER_UPTO### ###CURRENT_MAX### ###POWERMAILFE_LL_PAGEBROWSER_WITHIN### ###OVERALL###</h2>
+		<div class="powermailfrontend_exportbuttons">
+			<span class="powermailfe_button"><!-- ###POWERMAILFE_EXPORTCSVLINK### -->###POWERMAILFE_EXPORTCSVLINKTEXT###<!-- ###POWERMAILFE_EXPORTCSVLINK### --></span>
+			<span class="powermailfe_button"><!-- ###POWERMAILFE_EXPORTEXCELLINK### -->###POWERMAILFE_EXPORTEXCELLINKTEXT###<!-- ###POWERMAILFE_EXPORTEXCELLINK### --></span>
+		</div>
+	</div>
+    ###PAGELINKS###
+  </div>
+<!-- ###POWERMAILFRONTEND_PAGEBROWSER### stop -->

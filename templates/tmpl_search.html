@@ -1,0 +1,97 @@
+POWERMAIL_FRONTEND HTML Template for sort of the filter methods
+
+ALL
+
+  MAIN MARKERS FOR ALL FILTER:
+  ###POWERMAILFE_ABC###        Insert ABC list
+
+  GLOBAL MARKERS:
+  Displaying any value from pi1/locallang.xml:    ###POWERMAILFE_LL_YOURFIELD### (Could be filled via locallang.xml or typoscript - see manual for details)
+  Displaying any value from typoscript:        ###POWERMAILFE_TS_YOURFIELD### (Could be filled via typoscript - see manual for details)
+
+<!-- ###POWERMAILFE_FILTER### begin -->
+  <div class="powermailfe_filter powermailfe_filter_all">
+    ###POWERMAILFE_ABC###
+    ###POWERMAILFE_SEARCH###
+  </div>
+<!-- ###POWERMAILFE_FILTER### end -->
+
+
+
+
+
+POWERMAIL_FRONTEND HTML Template if you want to show an ABC list
+
+ABC list
+
+  MAIN MARKERS FOR ABC LIST:
+  ###POWERMAILFE_ABC_ALL###              Link to show all results (like "all")
+  ###POWERMAILFE_ABC_ABC###              ABC list (like "A B C D E ...")
+  ###POWERMAILFE_ABC_0-9###              0-9 after abc (like "0-9")
+
+  GLOBAL MARKERS:
+  Displaying any value from pi1/locallang.xml:    ###POWERMAILFE_LL_YOURFIELD### (Could be filled via locallang.xml or typoscript - see manual for details)
+  Displaying any value from typoscript:        ###POWERMAILFE_TS_YOURFIELD### (Could be filled via typoscript - see manual for details)
+
+<!-- ###POWERMAILFE_FILTER_ABC### begin -->
+    <fieldset class="powermailfe_filter powermailfe_filter_abc">
+      <legend>###POWERMAILFE_LL_FILTERBYSURNAME###</legend>
+    ###POWERMAILFE_ABC_ALL### ###POWERMAILFE_ABC_ABC### ###POWERMAILFE_ABC_0-9###
+    </fieldset>
+<!-- ###POWERMAILFE_FILTER_ABC### end -->
+
+
+
+
+
+POWERMAIL_FRONTEND HTML Template if you want to add some searchfields
+
+SEARCHFIELD list
+
+  --- MARKERS OUTSIDE SUBPARTS ---
+  ###POWERMAILFE_LL_SEARCHTITLE###          Global searchtitle
+  ###POWERMAILFE_LL_SEARCHSUBMIT###          Submit value
+  ###POWERMAILFE_SEARCH_ACTION###            Form action URL
+
+  --- MARKERS INSIDE SUBPARTS ---
+
+  GLOBAL MARKERS:
+  Displaying any value from pi1/locallang.xml:    ###POWERMAILFE_LL_YOURFIELD### (Could be filled via locallang.xml or typoscript - see manual for details)
+  Displaying any value from typoscript:        ###POWERMAILFE_TS_YOURFIELD### (Could be filled via typoscript - see manual for details)
+
+<!-- ###POWERMAILFE_FILTER_SEARCH### begin -->
+  <div class="powermailfe_filter powermailfe_filter_search">
+	<script type="text/javascript" language="javascript">
+		var powermail_frontend_reset = function (e) {
+			$(e).append('<input type="hidden" name="tx_powermailfrontend_pi1[filter][reset]" value="1" />');
+			$(e.form).submit();
+		}
+	</script>
+    <form action="###POWERMAILFE_SEARCH_ACTION###" method="post">
+      <fieldset class="powermailfe_search_fieldset">
+        <legend>###POWERMAILFE_LL_SEARCHTITLE###</legend>
+      <!-- ###CONTENT### --><!-- ###ITEM### -->
+        <div class="powermailfe_filter_div powermailfe_filter_div_###POWERMAILFE_SEARCH_NAME### powermailfe_clearfix">
+          <label for="###POWERMAILFE_SEARCH_NAME###">###POWERMAILFE_SEARCH_LABEL###</label>
+          ###FIELD###
+        </div>
+      <!-- ###ITEM### --><!-- ###CONTENT### -->
+		<input type="submit" value="###POWERMAILFE_LL_SEARCHSUBMIT###" class="powermailfe_filter_submit" />
+		<input type="button" value="###POWERMAILFE_LL_SEARCHRESET###" class="powermailfe_filter_reset" onclick="powermail_frontend_reset(this);" />
+      </fieldset>
+    </form>
+  </div>
+<!-- ###POWERMAILFE_FILTER_SEARCH### end -->
+
+<!-- ###POWERMAILFE_FILTER_SEARCH_FIELD_TEXT### begin -->
+<input type="text" name="tx_powermailfrontend_pi1[filter][###POWERMAILFE_SEARCH_NAME###]" id="###POWERMAILFE_SEARCH_NAME###" class="powermailfe_filter_text powermailfe_filter_text_###POWERMAILFE_SEARCH_NAME###" value="###POWERMAILFE_SEARCH_VALUE###" />
+<!-- ###POWERMAILFE_FILTER_SEARCH_FIELD_TEXT### end -->
+
+<!-- ###POWERMAILFE_FILTER_SEARCH_FIELD_SELECT### begin -->
+  <select name="tx_powermailfrontend_pi1[filter][###POWERMAILFE_SEARCH_NAME###]" id="###POWERMAILFE_SEARCH_NAME###" class="powermailfe_filter_select powermailfe_filter_select_###POWERMAILFE_SEARCH_NAME###" onchange="this.form.submit()">
+    <option></option>
+    <!-- ###CONTENT### --><!-- ###ITEM### -->
+    <option value="###POWERMAILFE_SEARCH_VALUE###"###POWERMAILFE_SEARCH_SELECTED###>###POWERMAILFE_SEARCH_LABEL###</option>
+    <!-- ###CONTENT### --><!-- ###ITEM### -->
+  </select>
+<!-- ###POWERMAILFE_FILTER_SEARCH_FIELD_SELECT### end -->

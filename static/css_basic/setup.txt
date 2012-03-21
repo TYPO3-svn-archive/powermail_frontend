@@ -1,0 +1,6 @@
+#include basic CSS for powermail_frontend
+page {
+	includeCSS {
+		powermail_frontend = EXT:powermail_frontend/res/css/powermail_frontend_basic.css
+	}
+}

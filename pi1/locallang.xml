@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>module</type>
+		<description>Language labels for plugin &quot;tx_powermailfrontend_pi1&quot;</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="pi1_error">powermail_frontend error: No startingpoint was set in backend!</label>
+			<label index="powermailfe_ll_pagebrowser_upto">to</label>
+			<label index="powermailfe_ll_pagebrowser_within">of</label>
+			<label index="powermailfe_ll_pagebrowser_page">%s</label>
+			<label index="powermailfe_ll_pagebrowser_item">Result</label>
+			<label index="powermailfe_ll_pagebrowser_pageresult">Page:</label>
+			<label index="powermailfe_ll_more">More information</label>
+			<label index="powermailfe_ll_back">Back to list</label>
+			<label index="powermailfe_ll_searchtitle">Search/Filter</label>
+			<label index="powermailfe_ll_search_choose">Please choose...</label>
+			<label index="powermailfe_ll_searchsubmit">Start search</label>
+			<label index="powermailfe_ll_searchreset">Reset filter</label>
+			<label index="powermailfe_ll_abclist_all">All</label>
+			<label index="powermailfe_ll_abclist_numbers">0-9</label>
+			<label index="powermailfe_ll_edit_submit">Save changes</label>
+			<label index="powermailfe_ll_edit_submit_sure">Are you sure to overwrite the old values?</label>
+			<label index="powermailfe_ll_edit_delete">Delete item</label>
+			<label index="powermailfe_ll_edit_delete_sure">Are you sure to delete this item?</label>
+			<label index="powermailfe_ll_export_csv_label">CSV Export</label>
+			<label index="powermailfe_ll_export_excel_label">EXCEL Export</label>
+			<label index="label_searchallfields">Search in all fields</label>
+			<label index="label_sorting">Sort with field %s %s</label>
+			<label index="label_asc">ascending</label>
+			<label index="label_desc">descending</label>
+			<label index="edit_error_nothing">Please enable at least one user or usergroup in the backend to edit entries!</label>
+			<label index="edit_error_nouser">No user logged in!</label>
+			<label index="edit_error_forbiddenuser">Logged in user is not allowed to make changes!</label>
+			<label index="edit_label">Edit item</label>
+			<label index="edit_updateSuccess">Success! Your entries are stored in the database.</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="pi1_error">powermail_frontend Error: Im Backend wurde kein Startpunkt gesetzt!</label>
+			<label index="powermailfe_ll_pagebrowser_upto">bis</label>
+			<label index="powermailfe_ll_pagebrowser_within">von</label>
+			<label index="powermailfe_ll_pagebrowser_page">%s</label>
+			<label index="powermailfe_ll_pagebrowser_item">Treffer</label>
+			<label index="powermailfe_ll_pagebrowser_pageresult">Seite:</label>
+			<label index="powermailfe_ll_more">Mehr Informationen</label>
+			<label index="powermailfe_ll_back">Zurück zur Listenansicht</label>
+			<label index="powermailfe_ll_searchtitle">Suche nach einem Begriff</label>
+			<label index="powermailfe_ll_search_choose">Bitte wählen...</label>
+			<label index="powermailfe_ll_searchsubmit">Suche beginnen</label>
+			<label index="powermailfe_ll_searchreset">Filter zurücksetzen</label>
+			<label index="powermailfe_ll_abclist_all">Alle</label>
+			<label index="powermailfe_ll_abclist_numbers">0-9</label>
+			<label index="powermailfe_ll_edit_submit">Änderungen speichern</label>
+			<label index="powermailfe_ll_edit_submit_sure">Wollen Sie den Datensatz wirklich überschreiben?</label>
+			<label index="powermailfe_ll_edit_delete">Datensatz löschen</label>
+			<label index="powermailfe_ll_edit_delete_sure">Wollen Sie den Datensatz wirklich löschen?</label>
+			<label index="label_searchallfields">Felderübergreifende Suche</label>
+			<label index="label_sorting">Nach Feld %s %s sortieren</label>
+			<label index="label_asc">aufsteigend</label>
+			<label index="label_desc">absteigend</label>
+			<label index="edit_error_nothing">Bitte wählen Sie min. einen Benutzer oder eine Gruppe im Backend aus, die Einträge bearbeiten darf!</label>
+			<label index="edit_error_nouser">Derzeit ist kein Benutzer eingeloggt!</label>
+			<label index="edit_error_forbiddenuser">Eingeloggter Benutzer hat nicht die Berechtigung Änderungen zu machen!</label>
+			<label index="edit_label">Datensatz bearbeiten</label>
+			<label index="edit_updateSuccess">Ihre Daten wurden erfolgreich in der Datenbank gespeichert!</label>
+		</languageKey>
+	</data>
+</T3locallang>
