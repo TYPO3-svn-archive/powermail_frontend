@@ -109,7 +109,7 @@ class tx_powermailfrontend_filter_abc extends tslib_pibase {
 		);
 		if ($res) { // If there is a result
 			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) { // One loop for every tx_powermail_mails entry
-				$row['piVars'] = t3lib_div::convUmlauts($row['piVars']); // rename not allowed signs
+				$row['piVars'] = $this->div->convUmlauts($row['piVars']); // rename not allowed signs
 				$this->piVars_array = t3lib_div::xml2array($row['piVars'], 'pivars'); // xml to array
 				if (!is_array($this->piVars_array)) $this->piVars_array = utf8_encode(t3lib_div::xml2array($row['piVars'], 'pivars')); // xml to array
 				
@@ -160,7 +160,7 @@ class tx_powermailfrontend_filter_abc extends tslib_pibase {
 		);
 		if ($res) { // If there is a result
 			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) { // One loop for every tx_powermail_mails entry
-				$row['piVars'] = t3lib_div::convUmlauts($row['piVars']); // rename not allowed signs
+				$row['piVars'] = $this->div->convUmlauts($row['piVars']); // rename not allowed signs
 				$this->piVars_array = t3lib_div::xml2array($row['piVars'], 'pivars'); // xml to array
 				if (!is_array($this->piVars_array)) $this->piVars_array = utf8_encode(t3lib_div::xml2array($row['piVars'], 'pivars')); // xml to array
 				

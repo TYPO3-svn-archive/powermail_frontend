@@ -22,12 +22,14 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
+require_once(t3lib_extMgm::extPath('powermail_frontend') . 'lib/class.tx_powermailfrontend_div.php'); // load div class
+
 class user_powermailfe_be_fields {
 
-	var $limit = 10000; // limit for select query
+	private $limit = 10000; // limit for select query
 	
-	function main(&$params, &$pObj)	{
-
+	public function main(&$params, &$pObj)	{
+		$this->div = t3lib_div::makeInstance('tx_powermailfrontend_div');
 		$ffPiVars = t3lib_div::xml2array($params['row']['pi_flexform'], 'piVars'); // current xml to array
 		if (!is_array($ffPiVars)) {
 			$ffPiVars = utf8_encode(t3lib_div::xml2array($params['row']['pi_flexform'],'piVars'));
@@ -62,7 +64,7 @@ class user_powermailfe_be_fields {
 				if ($res !== false) { // If there is a result
 					// 1. Collecting different field uids to an array
 					while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) { // one loop for every db entry
-						$row['piVars'] = t3lib_div::convUmlauts($row['piVars']); // converting umlauts
+						$row['piVars'] = $this->div->convUmlauts($row['piVars']); // converting umlauts
 						$array = t3lib_div::xml2array($row['piVars'], 'piVars'); // current xml to array
 						if (!is_array($array)) $array = utf8_encode(t3lib_div::xml2array($row['piVars'],'piVars')); // current xml to array
 
